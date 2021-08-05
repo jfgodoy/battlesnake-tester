@@ -15,6 +15,7 @@
     "vite-plugin-solid": "^2.0.1"
   },
   "dependencies": {
+    "lodash.clonedeep": "^4.5.0",
     "solid-js": "^1.0.7"
   }
 }

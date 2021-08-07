@@ -1,17 +1,27 @@
 import Grid from "./grid";
+import {Snake, Coord} from "../model";
 
-const BOARD_SIZE = 300;
+const BOARD_SIZE = 100;
 
-function Board(props) {
+interface BoardOptions {
+  snakes: Snake[],
+  food: Coord[],
+  hazards: any[],
+  columns: number
+  rows: number
+  turn: number,
+  theme: string,
+}
+
+
+function Board(props: BoardOptions) {
   return <svg viewBox={`0 0 ${BOARD_SIZE} ${BOARD_SIZE}`}>
     <Grid
       snakes={props.snakes}
       food={props.food}
-      foodImage={props.foodImage}
       hazards={props.hazards}
       columns={props.columns}
       rows={props.rows}
-      highlightedSnake={props.highlightedSnake}
       theme={props.theme}
       maxWidth={BOARD_SIZE}
       maxHeight={BOARD_SIZE}

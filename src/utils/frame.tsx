@@ -12,7 +12,7 @@ export function formatFrame(frame: any): Frame {
 
 function formatSnake(snake: any): Snake {
   return {
-    _id: snake.ID,
+    id: snake.ID,
     name: snake.Name,
     body: snake.Body.map(formatPosition),
     color: snake.Color,

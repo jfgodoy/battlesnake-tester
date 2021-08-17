@@ -1,10 +1,10 @@
 export interface Game {
   id: string,
-  board: Board,
-  frames: Frame[],
-}
-
-export interface Board {
+  ruleset: {
+    name: string,
+    version: string,
+  },
+  timeout: number,
   width: number,
   height: number,
 }
@@ -17,7 +17,7 @@ export interface Frame {
 }
 
 export interface Snake {
-  _id: string,
+  id: string,
   name: string,
   url: string,
   body: Coord[],

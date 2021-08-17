@@ -6,15 +6,14 @@ import Board from "./components/board";
 import { formatFrame } from "./utils/frame";
 import { themes } from "./theme";
 import { prefetchSvgs } from "./utils/render";
+import { Game, Frame } from "./model";
 
 
 const App: Component = () => {
-  const columns = 11;
-  const rows = 11;
-
+  const game: Game = {"id":"abf03cb2-b7e8-4723-ae50-8e3045d8f47d","ruleset":{"name":"standard","version":"v.1.2.3"},"width":11,"height":11,"timeout":500};
   const raw_frame = {"Turn":106,"Snakes":[{"ID":"gs_wvYGXWvhGg3SQgDTPqG9fXHT", "Name":"cc-battlesnake","URL":"", "Body":[{"X":9,"Y":11},{"X":9,"Y":10},{"X":9,"Y":9}],"Health":98,"Death":{"Cause":"wall-collision","Turn":2,"EliminatedBy":""},"Color":"#4d004d","HeadType":"silly","TailType":"pixel","Latency":"0","Shout":"","Squad":"","APIVersion":"","Author":"ccntrq"},{"ID":"gs_xjwhQm9cPypTFGPXWd9jW6M8","Name":"samees noodle","URL":"","Body":[{"X":6,"Y":6},{"X":6,"Y":5},{"X":7,"Y":5},{"X":8,"Y":5},{"X":9,"Y":5},{"X":9,"Y":6},{"X":9,"Y":7},{"X":10,"Y":7},{"X":10,"Y":6},{"X":10,"Y":5}],"Health":98,"Death":null,"Color":"#800000","HeadType":"default","TailType":"default","Latency":"220","Shout":"","Squad":"","APIVersion":"","Author":"s11mee"},{"ID":"gs_TKy349Q3d4H8mBQMxJqCY7QB","Name":"Lil Battlesnake","URL":"","Body":[{"X":1,"Y":1},{"X":1,"Y":0},{"X":0,"Y":0},{"X":0,"Y":1}],"Health":67,"Death":null,"Color":"#600080","HeadType":"beluga","TailType":"hook","Latency":"69","Shout":"","Squad":"","APIVersion":"","Author":"JeMorriso"},{"ID":"gs_gWfjdqVttw9G4hcQjHDFMRrK","Name":"caicai-vilu","URL":"","Body":[{"X":1,"Y":2},{"X":2,"Y":2},{"X":2,"Y":1},{"X":2,"Y":0},{"X":3,"Y":0},{"X":3,"Y":1},{"X":3,"Y":2},{"X":3,"Y":3},{"X":2,"Y":3},{"X":1,"Y":3},{"X":1,"Y":4}],"Health":97,"Death":{"Cause":"snake-collision","Turn":51,"EliminatedBy":"gs_TKy349Q3d4H8mBQMxJqCY7QB"},"Color":"#1974D3","HeadType":"default","TailType":"default","Latency":"67","Shout":"","Squad":"","APIVersion":"","Author":"jfgodoy"}],"Food":[{"X":7,"Y":6},{"X":0,"Y":9},{"X":4,"Y":4},{"X":8,"Y":2},{"X":8,"Y":10},{"X":5,"Y":4},{"X":7,"Y":10},{"X":3,"Y":2},{"X":0,"Y":5},{"X":9,"Y":0}],"Hazards":[]}
   const getCurrentFrame = async (input: any) => {
-    const frame = formatFrame(input);
+    const frame: Frame = formatFrame(input);
     await prefetchSvgs(frame.snakes);
     return frame;
   };
@@ -52,19 +51,14 @@ const App: Component = () => {
           <div>
             <p>Test 1</p>
           </div>
-          <div class={styles.Board}>
-            <Show when={!currentFrame.loading}>
-              <Board
-                snakes={currentFrame()!.snakes}
-                food={currentFrame()!.food}
-                hazards={currentFrame()!.hazards}
-                columns={columns}
-                rows={rows}
-                theme={themes.light}
-                turn={currentFrame()!.turn}
-              />
-            </Show>
-          </div>
+          <Show when={!currentFrame.loading}>
+            <Board
+              game={game}
+              frame={currentFrame()!}
+              theme={themes.light}
+              class={styles.Board}
+            />
+          </Show>
           <div>
             <p>Expected: Left</p>
             <p>Your Answer: Right</p>
@@ -83,19 +77,14 @@ const App: Component = () => {
             </div>
           </div>
           <div>
-            <div class={styles.Board}>
-              <Show when={!currentFrame.loading}>
-                <Board
-                  snakes={currentFrame()!.snakes}
-                  food={currentFrame()!.food}
-                  hazards={currentFrame()!.hazards}
-                  columns={columns}
-                  rows={rows}
-                  theme={themes.light}
-                  turn={currentFrame()!.turn}
-                />
-              </Show>
-            </div>
+            <Show when={!currentFrame.loading}>
+              <Board
+                game={game}
+                frame={currentFrame()!}
+                theme={themes.light}
+                class={styles.Board}
+              />
+            </Show>
           </div>
         </div>
       </div>

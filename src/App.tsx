@@ -22,18 +22,83 @@ const App: Component = () => {
   const [currentFrame] = createResource(raw_frame, getCurrentFrame);
 
   return (
-    <div class={styles.Board}>
-      <Show when={!currentFrame.loading}>
-        <Board
-          snakes={currentFrame()!.snakes}
-          food={currentFrame()!.food}
-          hazards={currentFrame()!.hazards}
-          columns={columns}
-          rows={rows}
-          theme={themes.light}
-          turn={currentFrame()!.turn}
-        />
-      </Show>
+    <div class="bg-white p-4" style="min-width:800px">
+      <h1 class="text-center font-bold text-blue-700 text-2xl">Battlesnake Tester</h1>
+      <p>Learn from your own defeats</p>
+
+      <div class="flex mt-4">
+        <div class="w-2/3 m-2">
+          <div class="flex justify-between">
+            <p>Tests available:</p>
+            <button class="bg-blue-400 text-white px-2 font-bold rounded">Run all tests</button>
+          </div>
+          <p class="flex items-center py-2 font-medium leading-5">
+            <svg class="inline-block w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="12" fill="#FECDD3"></circle>
+              <path d="M8 8l8 8M16 8l-8 8" stroke="#B91C1C" stroke-width="2"></path>
+            </svg>
+            <span>test 1</span>
+          </p>
+
+          <p class="flex items-center py-2 font-medium leading-5">
+            <svg class="inline-block w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="12" fill="#A7F3D0"></circle>
+              <path d="M18 8l-8 8-4-4" stroke="#047857" stroke-width="2"></path>
+            </svg>
+            <span>test 2</span>
+          </p>
+        </div>
+        <div class="m-2">
+          <div>
+            <p>Test 1</p>
+          </div>
+          <div class={styles.Board}>
+            <Show when={!currentFrame.loading}>
+              <Board
+                snakes={currentFrame()!.snakes}
+                food={currentFrame()!.food}
+                hazards={currentFrame()!.hazards}
+                columns={columns}
+                rows={rows}
+                theme={themes.light}
+                turn={currentFrame()!.turn}
+              />
+            </Show>
+          </div>
+          <div>
+            <p>Expected: Left</p>
+            <p>Your Answer: Right</p>
+            <button class="bg-blue-400 text-white px-2 font-bold rounded">Run Test</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-4">
+        <h3>Game importer</h3>
+        <div class="flex">
+          <div class="w-2/3 m-2">
+            <div>
+            <span>Game ID:</span>
+            <input class="ml-1 bg-gray-100 round"></input>
+            </div>
+          </div>
+          <div>
+            <div class={styles.Board}>
+              <Show when={!currentFrame.loading}>
+                <Board
+                  snakes={currentFrame()!.snakes}
+                  food={currentFrame()!.food}
+                  hazards={currentFrame()!.hazards}
+                  columns={columns}
+                  rows={rows}
+                  theme={themes.light}
+                  turn={currentFrame()!.turn}
+                />
+              </Show>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

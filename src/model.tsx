@@ -44,3 +44,36 @@ export interface Coord {
 }
 
 export enum Direction { Up, Down, Left, Right };
+export type DirectionStr = keyof typeof Direction;
+
+export interface Test {
+  id: string,
+  description: string,
+  game: Game,
+  frames: Frame[],
+  frameToTest: number,
+  snakeToTest: string,
+  expectedResult: DirectionStr[],
+}
+
+
+
+
+export type Ok<T> = {
+  type: "ok",
+  value: T,
+}
+export type Error = {
+  type: "error",
+  msg: string,
+}
+
+export type Result<T> = Ok<T> | Error;
+
+export function ok<T>(val: T): Ok<T> {
+  return { type: "ok", value: val};
+}
+
+export function error(msg: string): Error {
+  return { type: "error", msg};
+}

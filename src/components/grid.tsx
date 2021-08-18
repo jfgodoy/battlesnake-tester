@@ -1,6 +1,7 @@
 import { colors, themes } from "../theme/index";
 import { Snake, Game, Frame, Direction } from "../model";
 import { createRenderableSnake, PartType, RenderableSnake, SnakePart } from "../utils/render";
+import { createMemo } from "solid-js";
 
 const HIGHLIGHT_DIM = 0.15;
 const DEAD_OPACITY = 0.1;
@@ -193,7 +194,7 @@ function getHeadTransform(direction: Direction, viewBox: DOMRect) {
       return `scale(-1,1) translate(-100, 0)`;
     case Direction.Up:
       return `rotate(-90 ${halfX} ${halfY})`;
-    case Direction.Right:
+    case Direction.Down:
       return `rotate(90 ${halfX} ${halfY})`;
     default:
       return "";
@@ -414,7 +415,7 @@ interface GridOptions {
   theme: string,
 }
 
-function Grid(props: GridOptions) {
+function renderGrid(props: GridOptions) {
   const unsortedSnakes = props.frame.snakes || [];
   const food = props.frame.food || [];
   const hazards = props.frame.hazards || [];
@@ -523,6 +524,12 @@ function Grid(props: GridOptions) {
       ))}
     </svg>
   );
+}
+
+function Grid(props: GridOptions) {
+  // hack to rerender all the Grid
+  const el = createMemo(() => renderGrid(props));
+  return el;
 }
 
 export default Grid;

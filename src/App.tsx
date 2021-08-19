@@ -227,8 +227,11 @@ const Importer = () => {
 
   const snakeNames = createMemo((): string[] => {
     if (state.frames.length > 0) {
-      const firstFrame: Frame = state.frames[0];
-      return firstFrame.snakes.map(s => s.name)
+      const lastFrame: Frame = state.frames[state.frames.length - 1];
+      return lastFrame.snakes.map(s => {
+        const info = s.death ? `(rip in turn ${s.death.turn})` : `(winner)`;
+        return s.name + ' ' + info;
+      });
     }
     return [];
   })

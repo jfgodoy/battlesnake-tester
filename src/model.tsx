@@ -53,7 +53,7 @@ export interface Test {
   game: Game,
   frames: Frame[],
   frameToTest: number,
-  snakeToTest: string,
+  snakeToTest: number,
   expectedResult: DirectionStr[],
 }
 

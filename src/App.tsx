@@ -195,7 +195,7 @@ const Importer = () => {
     frameToTest: 0,
     game: undefined as Game | undefined,
     frames: [] as Frame[],
-    snakeToTest: "",
+    snakeToTest: 0,
     description: "",
     expectedResult: [] as DirectionStr[],
   });
@@ -221,7 +221,7 @@ const Importer = () => {
   function handleSnakeSelector(e: Event) {
     const el = e.target as HTMLInputElement;
     if (el.checked) {
-      setState("snakeToTest", el.value);
+      setState("snakeToTest", +el.value);
     }
   }
 
@@ -237,10 +237,10 @@ const Importer = () => {
     const data = state[$RAW]!;
     const game = data.game;
     const frames = data.frames;
-    const snakeName = data.snakeToTest;
-    if (game && frames && snakeName) {
+    const snakeToTest = data.snakeToTest;
+    if (game && frames && snakeToTest >= 0) {
       let lastFrame = frames[frames.length - 1];
-      let snake = lastFrame.snakes.find(s => s.name == snakeName)!;
+      let snake = lastFrame.snakes[snakeToTest]!;
       let death = snake.death && snake.death.turn || lastFrame.turn;
       return {
         id: nanoid(10),
@@ -318,8 +318,8 @@ const Importer = () => {
           </div>
           <div>
             <span>snake to test:</span><br />
-            <For each={snakeNames()}>{(snakeName) => <>
-              <label><input type="radio" name="snakeToTest" value={snakeName} checked={state.snakeToTest == snakeName} onChange={e => handleSnakeSelector(e)} />{snakeName}</label><br />
+            <For each={snakeNames()}>{(snakeName, i) => <>
+              <label><input type="radio" name="snakeToTest" value={i()} checked={state.snakeToTest == i()} onChange={e => handleSnakeSelector(e)} />{snakeName}</label><br />
             </>}</For>
           </div>
           <div>

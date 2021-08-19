@@ -16,6 +16,7 @@ export type Pending = {
 
 export async function runTest(url: string, test: Test): Promise<Passed | Failed>  {
   const frame = test.frames.find(fr => fr.turn == test.frameToTest)!;
+  const you = createSnakeRequest(frame.snakes[test.snakeToTest]);
   const snakes = frame.snakes.filter(s => !s.death).map(createSnakeRequest);
   const moveRequest: MoveRequest = {
     board: {
@@ -30,7 +31,7 @@ export async function runTest(url: string, test: Test): Promise<Passed | Failed>
       timeout: test.game.timeout,
     },
     turn: frame.turn,
-    you: snakes.find(s => s.name == test.snakeToTest)!,
+    you,
   }
   const result = await sendRequest(url, moveRequest);
   const expected: DirectionStr[] = test.expectedResult;

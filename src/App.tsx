@@ -1,4 +1,4 @@
-import { Component, Show, createMemo, createSignal, For, Switch, Match, createSelector, createResource, createEffect } from "solid-js";
+import { Component, Show, createMemo, createSignal, For, Switch, Match, createSelector, createResource, createEffect, batch } from "solid-js";
 import type { Accessor } from "solid-js";
 import { createStore, $RAW } from "solid-js/store";
 import { nanoid } from "nanoid";
@@ -30,6 +30,7 @@ const TestList = () => {
   const isSelected = createSelector(() => state.selected);
 
   const [selectedTest, setSelectedTest] = createSignal(null as Test | null);
+  const [displayTurn, setDisplayTurn] = createSignal(0);
 
 
   const loadTest = async (index: number) => {
@@ -37,8 +38,11 @@ const TestList = () => {
     const test = await testStorage.read(testId);
     const snakes = test.frames[0].snakes;
     await prefetchSvgs(snakes);
-    setState("selected", index);
-    setSelectedTest(test);
+    batch(() => {
+      setDisplayTurn(test.frameToTest);
+      setState("selected", index);
+      setSelectedTest(test);
+    });
   }
 
   testStorage.list().then(tests => {
@@ -78,6 +82,22 @@ const TestList = () => {
       setState("testResults", state.selected, "result", res);
     }
   }
+
+
+  const handleDisplayTurn = (e: Event) => {
+    const test = selectedTest();
+    if (test) {
+      const el = e.target as HTMLInputElement;
+      const value = el.value.trim() != "" ? +el.value : 0;
+      const firstTurn = test.frames[0].turn;
+      const lastFrame = test.frames[test.frames.length - 1];
+      const lastTurn = lastFrame.turn;
+      const new_val = Math.max(firstTurn, Math.min(value, lastTurn));
+      el.value = el.value.trim() != "" ? new_val.toString() : "";
+      setDisplayTurn(new_val);
+    }
+  }
+
 
   const FormattedAnswer = (props: {testResult: Accessor<TestResult> }) => {
     const result = createMemo(() => props.testResult().result);
@@ -146,12 +166,17 @@ const TestList = () => {
             <div>
               <p>{test.description}</p>
             </div>
-            <Board
-              game={test.game}
-              frame={test.frames.find(fr => fr.turn == test.frameToTest)!}
-              theme={themes.light}
-              class={styles.Board}
-            />
+            <div>
+              <Board
+                game={test.game}
+                frame={test.frames.find(fr => fr.turn == displayTurn())!}
+                theme={themes.light}
+                class={styles.Board}
+              />
+              <div>
+                <span>turn:</span><input type="number" value={test.frameToTest} onInput={(e) => handleDisplayTurn(e)} />
+              </div>
+            </div>
             <div>
               <p>Expected: {test.expectedResult.join(" or ") }</p>
               <p>Your Answer: <FormattedAnswer testResult={testResult} /> </p>

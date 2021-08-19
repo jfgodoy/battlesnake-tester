@@ -255,6 +255,15 @@ const Importer = () => {
     }
   };
 
+  const [testAnswer, setTestAnswer] = createSignal("");
+  const runSingleTest = async () => {
+    let test = prepareTest();
+    if (test) {
+      const res = await runTest("http://localhost:8080/move", test);
+      setTestAnswer(res.move || res.msg);
+    }
+  }
+
   const saveTest = () => {
     const test = prepareTest();
     if (test) {
@@ -317,8 +326,14 @@ const Importer = () => {
             <span>expected direction(s):</span><br />
             <RadioDirections options={["Up", "Down", "Left", "Right"]} items={() => state.expectedResult} setItems={setExpectedResult} />
           </div>
+          <Show when={testAnswer()}>
+            <div>
+              <span>your answer: {testAnswer} </span>
+            </div>
+          </Show>
           <div>
-            <button class="bg-blue-400 text-white px-2 font-bold rounded" onclick={() => saveTest()}>Save test</button>
+            <button class="bg-blue-400 text-white px-2 font-bold rounded" onclick={() => runSingleTest()}>Run test</button>
+            <button class="bg-blue-400 text-white px-2 ml-2 font-bold rounded" onclick={() => saveTest()}>Save test</button>
           </div>
         </div>
         <div>

@@ -49,6 +49,7 @@ export type DirectionStr = keyof typeof Direction;
 export interface Test {
   id: string,
   description: string,
+  timestamp: number,
   game: Game,
   frames: Frame[],
   frameToTest: number,

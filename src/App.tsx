@@ -59,6 +59,23 @@ const TestList = () => {
   const [selectedTest, setSelectedTest] = createSignal(null as Test | null);
   const [displayTurn, setDisplayTurn] = createSignal(0);
 
+  const frame = createMemo(() => {
+    const test = selectedTest();
+    if (test) {
+      let frame = test.frames.find(fr => fr.turn == displayTurn())!;
+
+      // use styles from config in the tested snake
+      let snakes = frame.snakes.map((s, i) => {
+        if (i == test.snakeToTest) {
+          return {...s, ...config.testedSnake.style};
+        }
+        return s;
+      });
+
+      return {...frame, snakes};
+    }
+  })
+
 
   const loadTest = async (index: number) => {
     const testId = state.testResults[index].id;
@@ -196,7 +213,7 @@ const TestList = () => {
             <div>
               <Board
                 game={test.game}
-                frame={test.frames.find(fr => fr.turn == displayTurn())!}
+                frame={frame()!}
                 theme={themes.light}
                 class={styles.Board}
               />

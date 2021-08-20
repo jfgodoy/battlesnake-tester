@@ -198,15 +198,15 @@ const Importer = () => {
     snakeToTest: 0,
     description: "",
     expectedResult: [] as DirectionStr[],
+    testAnswer: "",
   });
-
   const setExpectedResult = (val: DirectionStr[]) => setState("expectedResult", val);
 
   const doImport = async () => {
     const res = await importGame(state.gameId);
     const firstFrame = res.frames[0];
     await prefetchSvgs(firstFrame.snakes);
-    setState({game: res.game, frames: res.frames, frameToTest: 0})
+    setState({game: res.game, frames: res.frames, frameToTest: 0, description: "", snakeToTest: 0, expectedResult: [], testAnswer: ""})
   }
 
   function handleFrameToTest(e: Event) {
@@ -258,12 +258,12 @@ const Importer = () => {
     }
   };
 
-  const [testAnswer, setTestAnswer] = createSignal("");
+
   const runSingleTest = async () => {
     let test = prepareTest();
     if (test) {
       const res = await runTest("http://localhost:8080/move", test);
-      setTestAnswer(res.move || res.msg);
+      setState("testAnswer", res.move || res.msg);
     }
   }
 
@@ -329,9 +329,9 @@ const Importer = () => {
             <span>expected direction(s):</span><br />
             <RadioDirections options={["Up", "Down", "Left", "Right"]} items={() => state.expectedResult} setItems={setExpectedResult} />
           </div>
-          <Show when={testAnswer()}>
+          <Show when={state.testAnswer}>
             <div>
-              <span>your answer: {testAnswer} </span>
+              <span>your answer: {state.testAnswer} </span>
             </div>
           </Show>
           <div>

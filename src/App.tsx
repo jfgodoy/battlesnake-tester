@@ -1,10 +1,11 @@
-import { Component, Show, createMemo, createSignal, For, Switch, Match, createSelector, createResource, createEffect, batch } from "solid-js";
+import { Component, Show, createMemo, createSignal, For, Switch, Match, createSelector, createEffect, batch } from "solid-js";
 import type { Accessor } from "solid-js";
 import { createStore, $RAW } from "solid-js/store";
 import { nanoid } from "nanoid";
 
 import styles from "./App.module.css";
 import Board from "./components/board";
+import Snake from "./components/snake";
 
 import { themes } from "./theme";
 import { prefetchSvgs } from "./utils/render";
@@ -15,6 +16,32 @@ import { importGame } from "./utils/importer";
 import { indexdbTestStore, TestPreview } from "./test-store";
 
 const testStorage = indexdbTestStore();
+const [config, setConfig] = createStore({
+  server: "http://localhost:8080",
+  testedSnake: {
+    style: null as {color: string, head: string, tail: string} | null,
+  },
+});
+
+
+const Config = () => {
+  createEffect(async function fetchSnake() {
+    setConfig("testedSnake", "style", null);
+    const resp = await fetch(config.server).then(res => res.json());
+    const {color, head, tail} = resp;
+    setConfig("testedSnake", "style", {color, head, tail});
+  });
+
+  return (
+    <div class="flex items-center mt-2">
+      <span>Server:</span>
+      <input class="ml-1 px-2 rounded bg-gray-100 round" value={config.server} onBlur={(e) => setConfig("server", (e.target as HTMLInputElement).value)} />
+      <Show when={config.testedSnake.style}>
+        {(s) => <Snake color={s.color} head={s.head} tail={s.tail} />}
+      </Show>
+    </div>
+  );
+}
 
 
 const TestList = () => {
@@ -69,7 +96,7 @@ const TestList = () => {
     const promises = state.testResults
       .map(t => t.id)
       .map(id => testStorage.read(id))
-      .map(testPromise => testPromise.then(test => runTest("http://localhost:8080/move", test)));
+      .map(testPromise => testPromise.then(test => runTest(`${config.server}/move`, test)));
 
     const results = await Promise.all(promises);
     setState("testResults", state.testResults.map((t, i) => ({...t, result: results[i]})));
@@ -78,7 +105,7 @@ const TestList = () => {
   const runSingleTest = async () => {
     let test = selectedTest();
     if (test) {
-      const res = await runTest("http://localhost:8080/move", test);
+      const res = await runTest(`${config.server}/move`, test);
       setState("testResults", state.selected, "result", res);
     }
   }
@@ -262,7 +289,7 @@ const Importer = () => {
   const runSingleTest = async () => {
     let test = prepareTest();
     if (test) {
-      const res = await runTest("http://localhost:8080/move", test);
+      const res = await runTest(`${config.server}/move`, test);
       setState("testAnswer", res.move || res.msg);
     }
   }
@@ -360,7 +387,7 @@ const App: Component = () => {
     <div class="bg-white p-4" style="min-width:800px">
       <h1 class="text-center font-bold text-blue-700 text-2xl">Battlesnake Tester</h1>
       <p>Learn from your own defeats</p>
-
+      <Config />
       <TestList />
       <Importer />
     </div>

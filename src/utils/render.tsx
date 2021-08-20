@@ -23,8 +23,8 @@ export function createRenderableSnake(snake: Snake): RenderableSnake {
   return Object.assign({}, snake, {
     parts: snake.body.map((_, i) => formatSnakePart(snake, i)),
     effectiveSpace: renderedParts.length,
-    headSvg: getHead(snake.headType),
-    tailSvg: getTail(snake.tailType),
+    headSvg: getHead(snake.headType)(),
+    tailSvg: getTail(snake.tailType)(),
   });
 }
 

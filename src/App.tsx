@@ -14,6 +14,7 @@ import { Game, Frame, Test, DirectionStr } from "./model";
 import { importGame } from "./utils/importer";
 
 import { indexdbTestStore, TestPreview } from "./test-store";
+import * as R from "ramda";
 
 const testStorage = indexdbTestStore();
 const [config, setConfig] = createStore({
@@ -37,7 +38,7 @@ const Config = () => {
       <span>Server:</span>
       <input class="ml-1 px-2 rounded bg-gray-100 round" value={config.server} onBlur={(e) => setConfig("server", (e.target as HTMLInputElement).value)} />
       <Show when={config.testedSnake.style}>
-        {(s) => <Snake color={s.color} head={s.head} tail={s.tail} />}
+        {(s) => <Snake class="mx-2" color={s.color} head={s.head} tail={s.tail} />}
       </Show>
     </div>
   );
@@ -59,7 +60,7 @@ const TestList = () => {
   const [selectedTest, setSelectedTest] = createSignal(null as Test | null);
   const [displayTurn, setDisplayTurn] = createSignal(0);
 
-  const frame = createMemo(() => {
+  const selectedFrame = createMemo(() => {
     const test = selectedTest();
     if (test) {
       let frame = test.frames.find(fr => fr.turn == displayTurn())!;
@@ -74,6 +75,19 @@ const TestList = () => {
 
       return {...frame, snakes};
     }
+  });
+
+  const snakesSortedByDeath = createMemo(() => {
+    const frame = selectedFrame();
+    if (frame) {
+      const frames = selectedTest()!.frames;
+      const lastFrame = frames[frames.length - 1];
+      const deaths = lastFrame.snakes.map(s => s.death ? s.death.turn : lastFrame.turn + 1);
+      const pairs = R.zip(frame.snakes, deaths);
+      const sortedPairs = R.sortBy(pair => -pair[1], pairs);
+      return sortedPairs.map(pair => pair[0]);
+    }
+    return [];
   })
 
 
@@ -213,7 +227,7 @@ const TestList = () => {
             <div>
               <Board
                 game={test.game}
-                frame={frame()!}
+                frame={selectedFrame()!}
                 theme={themes.light}
                 class={styles.Board}
               />
@@ -222,6 +236,19 @@ const TestList = () => {
               </div>
             </div>
             <div>
+                <table>
+              <For each={snakesSortedByDeath()}>
+                {(snake) => (
+                  <tr class="" style={{opacity: snake.death ? 0.2 : 1}}>
+                    <td class="pr-2 py-1" style="font-size:0"><Snake color={snake.color} head={snake.headType} tail={snake.tailType}/></td>
+                    <td>length:</td>
+                    <td class="px-2 text-right tabular-nums">{snake.body.length}</td>
+                    <td>health:</td>
+                    <td class="px-2 text-right tabular-nums">{snake.health}</td>
+                  </tr>
+                )}
+              </For>
+                </table>
               <p>Expected: {test.expectedResult.join(" or ") }</p>
               <p>Your Answer: <FormattedAnswer testResult={testResult} /> </p>
               <button class="bg-blue-400 text-white px-2 font-bold rounded" onclick={() => runSingleTest()}>Run Test</button>

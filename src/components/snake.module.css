@@ -1,3 +1,8 @@
+.snake {
+  font-size: 0;
+  display: inline-block;
+}
+
 .head {
   width: 20px;
   height: 20px;

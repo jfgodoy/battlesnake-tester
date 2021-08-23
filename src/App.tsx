@@ -5,12 +5,12 @@ import { nanoid } from "nanoid";
 
 import styles from "./App.module.css";
 import Board from "./components/board";
-import Snake from "./components/snake";
+import {default as SnakeComponent} from "./components/snake";
 
 import { themes } from "./theme";
 import { prefetchSvgs } from "./utils/render";
 import { Passed, Failed, Pending, runTest } from "./utils/tester";
-import { Game, Frame, Test, DirectionStr } from "./model";
+import { Game, Frame, Test, DirectionStr, Snake } from "./model";
 import { importGame } from "./utils/importer";
 
 import { indexdbTestStore, TestPreview } from "./test-store";
@@ -38,7 +38,7 @@ const Config = () => {
       <span>Server:</span>
       <input class="ml-1 px-2 rounded bg-gray-100 round" value={config.server} onBlur={(e) => setConfig("server", (e.target as HTMLInputElement).value)} />
       <Show when={config.testedSnake.style}>
-        {(s) => <Snake class="mx-2" color={s.color} head={s.head} tail={s.tail} />}
+        {(s) => <SnakeComponent class="mx-2" color={s.color} head={s.head} tail={s.tail} />}
       </Show>
     </div>
   );
@@ -240,7 +240,7 @@ const TestList = () => {
               <For each={snakesSortedByDeath()}>
                 {(snake) => (
                   <tr class="" style={{opacity: snake.death ? 0.2 : 1}}>
-                    <td class="pr-2 py-1" style="font-size:0"><Snake color={snake.color} head={snake.headType} tail={snake.tailType}/></td>
+                    <td class="pr-2 py-1" style="font-size:0"><SnakeComponent color={snake.color} head={snake.headType} tail={snake.tailType}/></td>
                     <td>length:</td>
                     <td class="px-2 text-right tabular-nums">{snake.body.length}</td>
                     <td>health:</td>
@@ -296,16 +296,22 @@ const Importer = () => {
     }
   }
 
-  const snakeNames = createMemo((): string[] => {
+  const snakesAvailable = createMemo((): {name: string, deathInfo: string, isDeathNow: boolean}[] => {
     if (state.frames.length > 0) {
-      const lastFrame: Frame = state.frames[state.frames.length - 1];
-      return lastFrame.snakes.map(s => {
-        const info = s.death ? `(rip in turn ${s.death.turn})` : `(winner)`;
-        return s.name + ' ' + info;
-      });
+      const currentFrameSnakes = state.frames[state.frameToTest].snakes;
+      const lastFrameSnakes = state.frames[state.frames.length - 1].snakes;
+      const res = [];
+      for (let i = 0; i < currentFrameSnakes.length; i++) {
+        res.push({
+          name: currentFrameSnakes[i].name,
+          deathInfo: lastFrameSnakes[i].death ? `rip in turn ${lastFrameSnakes[i].death!.turn}` : "winner",
+          isDeathNow: !!currentFrameSnakes[i].death,
+        })
+      }
+      return res;
     }
     return [];
-  })
+  });
 
   const prepareTest = (): Test | undefined => {
     const data = state[$RAW]!;
@@ -392,8 +398,19 @@ const Importer = () => {
           </div>
           <div>
             <span>snake to test:</span><br />
-            <For each={snakeNames()}>{(snakeName, i) => <>
-              <label><input type="radio" name="snakeToTest" value={i()} checked={state.snakeToTest == i()} onChange={e => handleSnakeSelector(e)} />{snakeName}</label><br />
+            <For each={snakesAvailable()}>{(snakeInfo, i) => <>
+              <label style={{opacity: snakeInfo.isDeathNow ? 0.4 : 1}}>
+                <input
+                  type="radio"
+                  name="snakeToTest"
+                  value={i()}
+                  checked={state.snakeToTest == i()}
+                  disabled={snakeInfo.isDeathNow}
+                  onChange={e => handleSnakeSelector(e)}
+                />
+                {snakeInfo.name} ({snakeInfo.deathInfo})
+              </label>
+              <br />
             </>}</For>
           </div>
           <div>

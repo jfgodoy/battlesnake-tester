@@ -16,8 +16,7 @@ import { importGame } from "./utils/importer";
 
 import { indexdbTestStore, TestPreview } from "./test-store";
 import * as R from "ramda";
-import {autoresize, model, onInput, onBlur, useDirective} from "./solid-extensions";
-import { signalFromStore } from "./utils/signalFromStore";
+import { signalFromStore, autoresize, model, useDirective} from "./solid-utils";
 
 useDirective(autoresize);
 useDirective(model);

@@ -1,5 +1,5 @@
 import { Switch, Match, createEffect, createResource } from "solid-js";
-import { Signal, onBlur, model, autoresize, useDirective } from "../solid-extensions";
+import { Signal, onBlur, model, autoresize, useDirective } from "../solid-utils";
 import SnakeComponent from "./snake";
 
 useDirective(model);

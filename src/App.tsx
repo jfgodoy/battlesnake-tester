@@ -1,4 +1,4 @@
-import { Component, Show, createMemo, createSignal, For, Switch, Match, createSelector, createEffect, batch } from "solid-js";
+import { Component, Show, createMemo, createSignal, For, Switch, Match, createSelector, createEffect, batch, createResource } from "solid-js";
 import type { Accessor } from "solid-js";
 import { createStore, $RAW } from "solid-js/store";
 import { nanoid } from "nanoid";
@@ -15,6 +15,11 @@ import { importGame } from "./utils/importer";
 
 import { indexdbTestStore, TestPreview } from "./test-store";
 import * as R from "ramda";
+import {autoresize, model, onInput, onBlur, useDirective} from "./solid-extensions";
+
+useDirective(autoresize);
+useDirective(model);
+
 
 const testStorage = indexdbTestStore();
 const [config, setConfig] = createStore({
@@ -26,20 +31,42 @@ const [config, setConfig] = createStore({
 
 
 const Config = () => {
-  createEffect(async function fetchSnake() {
-    setConfig("testedSnake", "style", null);
-    const resp = await fetch(config.server).then(res => res.json());
+  const server = () => config.server;
+  const setServer = (val: string) => setConfig("server", val);
+
+  const fetchStyle = async () => {
+    const resp = await fetch(config.server).then(res => res.json())
     const {color, head, tail} = resp;
-    setConfig("testedSnake", "style", {color, head, tail});
+    return {color, head, tail};
+  }
+
+  const [style] = createResource(server, fetchStyle);
+
+  createEffect(() => {
+    if (style.loading) {
+      setConfig("testedSnake", "style", null);
+    } else if (!style.error) {
+      setConfig("testedSnake", "style", style)
+    }
   });
 
   return (
-    <div class="flex items-center mt-2">
-      <span>Server:</span>
-      <input class="ml-1 px-2 rounded bg-gray-100 round" value={config.server} onBlur={(e) => setConfig("server", (e.target as HTMLInputElement).value)} />
-      <Show when={config.testedSnake.style}>
-        {(s) => <SnakeComponent class="mx-2" color={s.color} head={s.head} tail={s.tail} />}
-      </Show>
+    <div class="flex items-center">
+      <span class="font-bold text-gray-500">Server:</span>
+      <input
+        class="ml-1 px-3 rounded bg-gray-100 text-gray-700 round min-w-44 w-0"
+        use:autoresize
+        use:model={onBlur(server, setServer)}
+      />
+      <Switch>
+        <Match when={style.loading}><span>loading...</span></Match>
+        <Match when={style.error}>
+          {(e) => <span class="text-red-400 font-bold">Error: {e.message}</span>}
+        </Match>
+        <Match when={style()}>
+          {(s) => <SnakeComponent class="mx-2" color={s.color} head={s.head} tail={s.tail} />}
+        </Match>
+      </Switch>
     </div>
   );
 }
@@ -444,15 +471,19 @@ const Importer = () => {
 
 const App: Component = () => {
 
-  return (
-    <div class="bg-white p-4" style="min-width:800px">
-      <h1 class="text-center font-bold text-blue-700 text-2xl">Battlesnake Tester</h1>
-      <p>Learn from your own defeats</p>
+  return (<>
+    <div class="p-4" style="background-color:#72268c;">
+      <h1 class="text-center text-white text-2xl font-semibold tracking-wide">Battlesnake Tester</h1>
+    </div>
+    <div class="p-4 mb-4 bg-white" style="box-shadow:0 1px 1px 1px rgb(18 106 211 / 8%);" >
       <Config />
+    </div>
+    <div class="bg-white p-4" style="min-width:800px">
+      <p>Learn from your own defeats</p>
       <TestList />
       <Importer />
     </div>
-  );
+  </>);
 };
 
 export default App;

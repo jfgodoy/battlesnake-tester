@@ -5,7 +5,8 @@ import { nanoid } from "nanoid";
 
 import styles from "./App.module.css";
 import Board from "./components/board";
-import {default as SnakeComponent} from "./components/snake";
+import SnakeComponent from "./components/snake";
+import ConfigComponent from "./components/config";
 
 import { themes } from "./theme";
 import { prefetchSvgs } from "./utils/render";
@@ -16,6 +17,7 @@ import { importGame } from "./utils/importer";
 import { indexdbTestStore, TestPreview } from "./test-store";
 import * as R from "ramda";
 import {autoresize, model, onInput, onBlur, useDirective} from "./solid-extensions";
+import { signalFromStore } from "./utils/signalFromStore";
 
 useDirective(autoresize);
 useDirective(model);
@@ -30,46 +32,6 @@ const [config, setConfig] = createStore({
 });
 
 
-const Config = () => {
-  const server = () => config.server;
-  const setServer = (val: string) => setConfig("server", val);
-
-  const fetchStyle = async () => {
-    const resp = await fetch(config.server).then(res => res.json())
-    const {color, head, tail} = resp;
-    return {color, head, tail};
-  }
-
-  const [style] = createResource(server, fetchStyle);
-
-  createEffect(() => {
-    if (style.loading) {
-      setConfig("testedSnake", "style", null);
-    } else if (!style.error) {
-      setConfig("testedSnake", "style", style)
-    }
-  });
-
-  return (
-    <div class="flex items-center">
-      <span class="font-bold text-gray-500">Server:</span>
-      <input
-        class="ml-1 px-3 rounded bg-gray-100 text-gray-700 round min-w-44 w-0"
-        use:autoresize
-        use:model={onBlur(server, setServer)}
-      />
-      <Switch>
-        <Match when={style.loading}><span>loading...</span></Match>
-        <Match when={style.error}>
-          {(e) => <span class="text-red-400 font-bold">Error: {e.message}</span>}
-        </Match>
-        <Match when={style()}>
-          {(s) => <SnakeComponent class="mx-2" color={s.color} head={s.head} tail={s.tail} />}
-        </Match>
-      </Switch>
-    </div>
-  );
-}
 
 
 const TestList = () => {
@@ -476,7 +438,7 @@ const App: Component = () => {
       <h1 class="text-center text-white text-2xl font-semibold tracking-wide">Battlesnake Tester</h1>
     </div>
     <div class="p-4 mb-4 bg-white" style="box-shadow:0 1px 1px 1px rgb(18 106 211 / 8%);" >
-      <Config />
+      <ConfigComponent server={signalFromStore(config, setConfig, "server")} style={signalFromStore(config, setConfig, "testedSnake.style")} />
     </div>
     <div class="bg-white p-4" style="min-width:800px">
       <p>Learn from your own defeats</p>

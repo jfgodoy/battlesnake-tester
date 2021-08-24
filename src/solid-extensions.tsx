@@ -1,5 +1,10 @@
 import { Accessor, createRenderEffect } from "solid-js";
 
+/* simplified solid types */
+export type Getter<T> = () => T;
+export type Setter<T> = (value: T) => void;
+export type Signal<T> = [Getter<T>, Setter<T>];
+
 export function autoresize(el: HTMLInputElement) {
   let old_value = el.value;
   el.addEventListener("input", () => {
@@ -11,11 +16,9 @@ export function autoresize(el: HTMLInputElement) {
   });
 }
 
-type Getter = () => string;
-type Setter = (value: string) => void;
 type ModelOpts = {
-  get: Getter,
-  set: Setter,
+  get: Getter<string>,
+  set: Setter<string>,
   updateOn: "blur" | "input",
 }
 export function model(el: HTMLInputElement, value: Accessor<ModelOpts>) {
@@ -24,8 +27,8 @@ export function model(el: HTMLInputElement, value: Accessor<ModelOpts>) {
   el.addEventListener(opts.updateOn, (e) => opts.set((e.target as HTMLInputElement).value));
 }
 
-export const onInput = (get: Getter, set: Setter): ModelOpts => ({get, set, updateOn: "input" })
-export const onBlur = (get: Getter, set: Setter): ModelOpts => ({get, set, updateOn: "blur" })
+export const onInput = (get: Getter<string>, set: Setter<string>): ModelOpts => ({get, set, updateOn: "input" })
+export const onBlur = (get: Getter<string>, set: Setter<string>): ModelOpts => ({get, set, updateOn: "blur" })
 
 export function useDirective(_directive: any) {
   /* this function does nothing. It's just a workaround to avoid

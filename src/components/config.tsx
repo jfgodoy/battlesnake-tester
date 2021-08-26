@@ -1,11 +1,11 @@
 import { Switch, Match, createEffect, createResource } from "solid-js";
-import { Signal, onBlur, model, autoresize, useDirective } from "../solid-utils";
+import { Signal, Setter, onBlur, model, autoresize, useDirective } from "../solid-utils";
 import SnakeComponent from "./snake";
 
 useDirective(model);
 useDirective(autoresize);
 
-export default function Config(props: { server: Signal<string>, style: Signal<{color: string, head: string, tail: string} | null>}) {
+export default function Config(props: { server: Signal<string>, style: Signal<{color: string, head: string, tail: string} | null>, setView: Setter<string>}) {
   const [server, setServer] = props.server;
   const [style, setStyle] = props.style;
 
@@ -15,7 +15,7 @@ export default function Config(props: { server: Signal<string>, style: Signal<{c
     return {color, head, tail};
   }
 
-  const [resource] = createResource(server, fetchStyle);
+  const [resource, { refetch }] = createResource(server, fetchStyle);
 
   createEffect(() => setStyle(resource.loading ? null : resource.error ? null : resource()!));
 
@@ -30,12 +30,16 @@ export default function Config(props: { server: Signal<string>, style: Signal<{c
       <Switch>
         <Match when={resource.loading}><span>loading...</span></Match>
         <Match when={resource.error}>
-          {(e) => <span class="text-red-400 font-bold">Error: {e.message}</span>}
+          {(e) => <>
+            <span class="text-red-400 font-bold">Error: {e.message}</span>
+            <button class="border border-gray-400 rounded text-xs px-2 ml-3 text-gray-600" onclick={() => refetch()}>retry</button>
+          </>}
         </Match>
         <Match when={style()}>
           {(s) => <SnakeComponent class="mx-2" color={s.color} head={s.head} tail={s.tail} />}
         </Match>
       </Switch>
+      <button class="bg-blue-400 text-white ml-8 px-2 font-bold rounded" onclick={() => props.setView("importer")}>Import Game</button>
     </div>
   );
 }

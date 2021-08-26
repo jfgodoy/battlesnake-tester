@@ -1,4 +1,4 @@
 .Board {
-  width: 300px;
-  height: 300px;
+  position: relative;
+  left: -4px;
 }

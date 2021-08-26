@@ -4,7 +4,7 @@ import { splitProps } from "solid-js";
 import type { JSX } from "solid-js";
 import styles from "./board.module.css";
 
-const BOARD_SIZE = 100;
+const BOARD_SIZE = 300;
 
 interface BoardOptions {
   frame: Frame,
@@ -15,7 +15,7 @@ interface BoardOptions {
 
 function Board(allProps: BoardOptions & JSX.StylableSVGAttributes) {
   const [props, otherProps] = splitProps(allProps, ["frame", "game", "theme"]);
-  return <svg class={styles.Board} viewBox={`0 0 ${BOARD_SIZE} ${BOARD_SIZE}`} {...otherProps}>
+  return <div class={styles.Board} {...otherProps}>
     <Grid
       {...props}
       maxWidth={BOARD_SIZE}
@@ -23,7 +23,7 @@ function Board(allProps: BoardOptions & JSX.StylableSVGAttributes) {
       x={0}
       y={0}
     />
-  </svg>
+  </div>
 }
 
 export default Board;

@@ -129,20 +129,25 @@ export default function Importer(props: { server: Getter<string>, saveTest: Sett
 
 
   return (
-    <div class="mt-4">
-      <h3>Game importer</h3>
-      <div class="flex">
-        <div class="w-2/3 m-2">
+    <div class="m-4 p-4 bg-white">
+      <h3 class="text-lg text-gray-700">Game importer</h3>
+      <div class="flex my-4">
+        <div class="space-y-2">
+          <Show when={!state.game}>
           <div>
             <span>Game ID:</span>
-            <input class="ml-1 bg-gray-100 round" value={state.gameId} onBlur={(e) => setState("gameId", (e.target as HTMLInputElement).value)} />
+            <input class="py-0 rounded border-gray-400 mx-2" type="text" value={state.gameId} onBlur={(e) => setState("gameId", (e.target as HTMLInputElement).value)} />
             <button class="bg-blue-400 text-white px-2 font-bold rounded" onclick={() => doImport()}>Import game</button>
           </div>
+          </Show>
+          <Show when={state.game}>
           <div>
-            <span>test description:</span><input type="text" value={state.description} onBlur={(e) => setState("description", (e.target as HTMLInputElement).value)} />
+            <span class="inline-block w-1/3">test description:</span>
+            <input class="inline-block w-3/6 py-0 rounded border-gray-400 ml-2" type="text" value={state.description} onBlur={(e) => setState("description", (e.target as HTMLInputElement).value)} />
           </div>
           <div>
-            <span>frame to test:</span><input type="number" value={state.frameToTest} onInput={(e) => handleFrameToTest(e)} />
+            <span class="inline-block w-1/3">frame to test:</span>
+            <input class="inline-block w-3/6 py-0 rounded border-gray-400 ml-2" type="number" value={state.frameToTest} onInput={(e) => handleFrameToTest(e)} />
           </div>
           <div>
             <span>snake to test:</span><br />
@@ -174,6 +179,7 @@ export default function Importer(props: { server: Getter<string>, saveTest: Sett
             <button class="bg-blue-400 text-white px-2 font-bold rounded" onclick={() => runSingleTest()}>Run test</button>
             <button class="bg-blue-400 text-white px-2 ml-2 font-bold rounded" onclick={() => saveTest()}>Save test</button>
           </div>
+          </Show>
         </div>
         <div>
           <Show when={state.game}>

@@ -57,7 +57,26 @@ export interface Test {
   expectedResult: DirectionStr[],
 }
 
+export type Passed = {
+  type: "passed",
+  move: DirectionStr,
+}
 
+export type Failed = {
+  type: "failed",
+  move?: DirectionStr,
+  msg: string,
+}
+
+export type Pending = {
+  type: "pending"
+}
+
+export type TestPreview = Pick<Test, "id" | "description" | "timestamp">;
+
+export interface TestResult extends TestPreview {
+  result: Passed | Failed | Pending
+};
 
 
 export type Ok<T> = {

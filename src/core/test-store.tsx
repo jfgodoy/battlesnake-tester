@@ -1,8 +1,7 @@
-import { Test } from "./model";
+import { Test, TestPreview } from "../model";
 import { openDB, IDBPDatabase } from 'idb';
 import * as R from "ramda";
 
-export type TestPreview = Pick<Test, "id" | "description" | "timestamp">;
 export type Subscriber = (before?: Test, after?: Test) => void;
 export interface TestStore {
   list(): Promise<TestPreview[]>,

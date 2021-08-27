@@ -2,9 +2,9 @@ import { createMemo, For, Show } from "solid-js";
 import { createStore, $RAW } from "solid-js/store";
 import { nanoid } from "nanoid";
 import { Game, Frame, DirectionStr, Test } from "../model";
-import { importGame } from "../utils/importer";
+import { importGame } from "../core/importer";
 import { prefetchSvgs } from "../utils/render";
-import { runTest } from "../utils/tester";
+import { runTest } from "../core/tester";
 import { Getter, Setter } from "../solid-utils";
 import Board from "./board";
 
@@ -23,7 +23,7 @@ export default function Importer(props: { server: Getter<string>, saveTest: Sett
 
   const doImport = async () => {
     const res = await importGame(state.gameId);
-    const firstFrame = res.frames[0];
+    const firstFrame = res.frames[0]!;
     await prefetchSvgs(firstFrame.snakes);
     setState({game: res.game, frames: res.frames, frameToTest: 0, description: "", snakeToTest: 0, expectedResult: [], testAnswer: ""})
   }
@@ -46,14 +46,14 @@ export default function Importer(props: { server: Getter<string>, saveTest: Sett
 
   const snakesAvailable = createMemo((): {name: string, deathInfo: string, isDeathNow: boolean}[] => {
     if (state.frames.length > 0) {
-      const currentFrameSnakes = state.frames[state.frameToTest].snakes;
-      const lastFrameSnakes = state.frames[state.frames.length - 1].snakes;
+      const currentFrameSnakes = state.frames[state.frameToTest]!.snakes;
+      const lastFrameSnakes = state.frames[state.frames.length - 1]!.snakes;
       const res = [];
       for (let i = 0; i < currentFrameSnakes.length; i++) {
         res.push({
-          name: currentFrameSnakes[i].name,
-          deathInfo: lastFrameSnakes[i].death ? `rip in turn ${lastFrameSnakes[i].death!.turn}` : "winner",
-          isDeathNow: !!currentFrameSnakes[i].death,
+          name: currentFrameSnakes[i]!.name,
+          deathInfo: lastFrameSnakes[i]!.death ? `rip in turn ${lastFrameSnakes[i]!.death!.turn}` : "winner",
+          isDeathNow: !!currentFrameSnakes[i]!.death,
         })
       }
       return res;
@@ -67,7 +67,7 @@ export default function Importer(props: { server: Getter<string>, saveTest: Sett
     const frames = data.frames;
     const snakeToTest = data.snakeToTest;
     if (game && frames && snakeToTest >= 0) {
-      let lastFrame = frames[frames.length - 1];
+      let lastFrame = frames[frames.length - 1]!;
       let snake = lastFrame.snakes[snakeToTest]!;
       let death = snake.death && snake.death.turn || lastFrame.turn;
       return {
@@ -185,7 +185,7 @@ export default function Importer(props: { server: Getter<string>, saveTest: Sett
           <Show when={state.game}>
             <Board
               game={state.game!}
-              frame={state.frames[state.frameToTest]}
+              frame={state.frames[state.frameToTest]!}
               theme={props.theme}
             />
           </Show>

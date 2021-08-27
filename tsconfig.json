@@ -10,5 +10,6 @@
     "types": ["vite/client"],
     "strictNullChecks": true,
     "noImplicitAny": true,
+    "noUncheckedIndexedAccess": true,
   }
 }

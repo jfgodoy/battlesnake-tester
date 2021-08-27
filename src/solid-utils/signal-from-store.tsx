@@ -1,15 +1,22 @@
 import { Get } from 'type-fest';
 import { Store, SetStoreFunction } from "solid-js/store";
 
-export function	signalFromStore<T, PathType extends string>(store: Store<T>, setStore: SetStoreFunction<T>, path: PathType extends "" ? never : PathType):
-  Get<T,PathType> extends never ? undefined : [() => Get<T,PathType>, (value: Get<T,PathType>) => void] {
+export type SignalFromStoreReturnType<T, PathType> = PathType extends string
+? PathType extends ""
+  ? never : Get<T,PathType> extends never
+    ? undefined
+    : [() => Get<T,PathType>, (value: Get<T,PathType>) => void]
+  : never;
+
+export function	signalFromStore<T, PathType extends string>(store: Store<T>, setStore: SetStoreFunction<T>, path: PathType extends "" ? never : PathType): SignalFromStoreReturnType<T, PathType>
+ {
 		const pathArray = path.split('.');
 
     const getter = () => {
       let current: any = store;
 
       for (let i = 0; i < pathArray.length; i++) {
-        current = current[pathArray[i]];
+        current = current[pathArray[i]!];
 
         if (current === undefined || current === null) {
           // `object` is either `undefined` or `null` so we want to stop the loop, and

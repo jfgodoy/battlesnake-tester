@@ -54,7 +54,7 @@ export function fetchAllFrames(url: string, parseToFrame: (obj: any) => Frame ):
     ws.addEventListener('close', function close() {
       const arrayFrames = sort((a, b) => a.turn - b.turn, [...frames.values()]);
       const lastIdx = arrayFrames.length - 1;
-      const last = arrayFrames[lastIdx];
+      const last = arrayFrames[lastIdx]!;
       if (last.turn !== lastIdx) {
         reject(new Error("missing some frames"));
       } else {

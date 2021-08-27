@@ -228,8 +228,8 @@ function checkIfCornerPart(snake: RenderableSnake, partIndex: number) {
   // If head or tail of the snake, then false
   if (partIndex === 0 || partIndex === snake.parts.length - 1) return false;
 
-  const behind = snake.parts[partIndex + 1];
-  const current = snake.parts[partIndex];
+  const behind = snake.parts[partIndex + 1]!;
+  const current = snake.parts[partIndex]!;
 
   // Return false if the behind part has the same position as the current.
   // Relevant for when the snake initially spawns.
@@ -241,12 +241,12 @@ function checkIfCornerPart(snake: RenderableSnake, partIndex: number) {
 }
 
 function determineCornerType(snake: RenderableSnake, partIndex: number): CornerType {
-  if (snake.parts[partIndex].type != PartType.BODY) {
+  if (snake.parts[partIndex]!.type != PartType.BODY) {
     throw new Error("do not call determineCornerType on a non body part");
   }
 
-  const current = snake.parts[partIndex].direction;
-  const behind = snake.parts[partIndex + 1].direction;
+  const current = snake.parts[partIndex]!.direction;
+  const behind = snake.parts[partIndex + 1]!.direction;
 
   if (current == Direction.Up && behind == Direction.Right || current == Direction.Left && behind == Direction.Down) {
     return CornerType.TopLeft;
@@ -264,7 +264,7 @@ function determineCornerType(snake: RenderableSnake, partIndex: number): CornerT
 }
 
 function isOverlappedByTail(snake: RenderableSnake, part: SnakePart) {
-  const tail = snake.body[snake.body.length - 1];
+  const tail = snake.body[snake.body.length - 1]!;
   return part.isOverlapped && tail.x === part.x && tail.y === part.y;
 }
 
@@ -436,10 +436,10 @@ function renderGrid(props: GridOptions) {
   // Go through each snake, in the order they will be drawn and mark the cells they will occupy.
   // flag parts that would be drawn in cells that are already claimed
   for (let i = 0; i < renderableSnakes.length; i++) {
-    let snake = renderableSnakes[i];
+    let snake = renderableSnakes[i]!;
     if (!isDead(snake)) {
       for (let x = 0; x < snake.parts.length; x++) {
-        let part = snake.parts[x];
+        let part = snake.parts[x]!;
         if (!isOverlappedByTail(snake, part)) {
           if (gridCellsWithSnakeParts[part.y][part.x]) {
             part.shadeForOverlap = true;

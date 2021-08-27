@@ -68,7 +68,7 @@ export function createSnakeRequest(snake: Snake): SnakeRequest {
     health: snake.health,
     body: snake.body,
     latency: +snake.latency,
-    head: snake.body[0],
+    head: snake.body[0]!,
     length: snake.body.length,
     shout: snake.shout,
     squad: snake.squad,

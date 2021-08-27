@@ -1,22 +1,9 @@
-import { Direction, DirectionStr, Test } from "../model";
+import { Direction, DirectionStr, Test, Passed, Failed } from "../model";
 import { createSnakeRequest, MoveRequest, sendRequest } from "./request";
-
-export type Passed = {
-  type: "passed",
-  move: DirectionStr,
-}
-export type Failed = {
-  type: "failed",
-  move?: DirectionStr,
-  msg: string,
-}
-export type Pending = {
-  type: "pending"
-}
 
 export async function runTest(url: string, test: Test): Promise<Passed | Failed>  {
   const frame = test.frames.find(fr => fr.turn == test.frameToTest)!;
-  const you = createSnakeRequest(frame.snakes[test.snakeToTest]);
+  const you = createSnakeRequest(frame.snakes[test.snakeToTest]!);
   const snakes = frame.snakes.filter(s => !s.death).map(createSnakeRequest);
   const moveRequest: MoveRequest = {
     board: {

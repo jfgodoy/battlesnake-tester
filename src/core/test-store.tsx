@@ -1,5 +1,5 @@
 import { Test, TestPreview } from "../model";
-import { openDB, IDBPDatabase } from 'idb';
+import { openDB } from "idb";
 import * as R from "ramda";
 
 export type Subscriber = (before?: Test, after?: Test) => void;
@@ -39,15 +39,15 @@ export function indexdbTestStore(): TestStore {
 
     async save(test) {
       const db = await dbPromise;
-      const store = db.transaction(STORE_NAME, 'readwrite').objectStore(STORE_NAME);
+      const store = db.transaction(STORE_NAME, "readwrite").objectStore(STORE_NAME);
       await store.add(test);
       notify(undefined, test);
-      return
+      return;
     },
 
     async remove(id) {
       const db = await dbPromise;
-      const store = db.transaction(STORE_NAME, 'readwrite').objectStore(STORE_NAME);
+      const store = db.transaction(STORE_NAME, "readwrite").objectStore(STORE_NAME);
       const test = await store.get(id);
       await store.delete(id);
       notify(test, undefined);
@@ -62,7 +62,7 @@ export function indexdbTestStore(): TestStore {
     suscribe(fn) {
       subscribers.push(fn);
     },
-  }
+  };
 }
 
 

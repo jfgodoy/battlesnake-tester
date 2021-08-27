@@ -1,4 +1,6 @@
-import type {Frame, Snake, Death, Coord} from "../model";
+/* eslint @typescript-eslint/no-explicit-any: "off", @typescript-eslint/explicit-module-boundary-types: "off" */
+
+import type {Frame, Snake, Death } from "../model";
 
 export function formatFrame(frame: any): Frame {
   cleanFrame(frame);
@@ -34,8 +36,8 @@ function formatDeath(death: any): Death | undefined {
       cause: death.Cause,
       turn: death.Turn || 0,
       eliminatedBy: death.EliminatedBy,
-    }
-  };
+    };
+  }
 }
 
 function formatPosition(pos: any) {

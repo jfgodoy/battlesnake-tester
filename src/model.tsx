@@ -13,7 +13,7 @@ export interface Frame {
   turn: number,
   snakes: Snake[],
   food: Coord[],
-  hazards: any[],
+  hazards: unknown[],
 }
 
 export interface Snake {
@@ -43,7 +43,7 @@ export interface Coord {
   y: number,
 }
 
-export enum Direction { Up, Down, Left, Right };
+export enum Direction { Up, Down, Left, Right }
 export type DirectionStr = keyof typeof Direction;
 
 export interface Test {
@@ -72,11 +72,11 @@ export type Pending = {
   type: "pending"
 }
 
-export type TestPreview = Pick<Test, "id" | "description" | "timestamp">;
+export type TestPreview = Pick<Test, "id" | "description" | "timestamp">
 
 export interface TestResult extends TestPreview {
   result: Passed | Failed | Pending
-};
+}
 
 
 export type Ok<T> = {

@@ -60,7 +60,7 @@ const App: Component = () => {
         </main>
       </div>
     </div>
-  )
+  );
 };
 
 export default App;

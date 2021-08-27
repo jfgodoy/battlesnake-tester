@@ -1,9 +1,8 @@
 import { colors, themes } from "../theme/index";
 import { Snake, Game, Frame, Direction } from "../model";
 import { createRenderableSnake, PartType, RenderableSnake, SnakePart } from "../utils/render";
-import { createMemo } from "solid-js";
+import { createMemo, JSX } from "solid-js";
 
-const HIGHLIGHT_DIM = 0.15;
 const DEAD_OPACITY = 0.1;
 const OVERLAP_OPACITY = 0.3;
 const SNAKE_ON_SNAKE_OPACITY = 0.8;
@@ -15,7 +14,7 @@ const FOOD_SIZE = (CELL_SIZE / 3.25).toFixed(2);
 const END_OVERLAP = 0.2;
 const DIRECTIONS_CW = [Direction.Up, Direction.Right, Direction.Down, Direction.Left];
 
-enum CornerType { TopLeft, TopRight, BottomRight, BottomLeft };
+enum CornerType { TopLeft, TopRight, BottomRight, BottomLeft }
 
 function toGridSpaceX(slot: number) {
   return (CELL_SIZE + CELL_SPACING) * slot + CELL_SPACING;
@@ -48,7 +47,7 @@ function getPartXOffset(part: SnakePart) {
 
 function getPartYOffset(part: SnakePart, rows: number) {
   const yBias =
-    part.direction === Direction.Up || part.direction === Direction.Down? -CELL_SPACING : 0;
+    part.direction === Direction.Up || part.direction === Direction.Down ? -CELL_SPACING : 0;
   return toGridSpaceY(part.y, rows) + yBias;
 }
 
@@ -180,8 +179,8 @@ function range(size: number) {
 
 function sortAliveSnakesOnTop(snakes: Snake[]): Snake[] {
   return snakes.concat().sort((a, b) => {
-    let aOrder = isDead(a) ? 0 : 1;
-    let bOrder = isDead(b) ? 0 : 1;
+    const aOrder = isDead(a) ? 0 : 1;
+    const bOrder = isDead(b) ? 0 : 1;
     return aOrder - bOrder;
   });
 }
@@ -226,14 +225,14 @@ function areAdjacentDirections(d1: Direction, d2: Direction) {
 
 function checkIfCornerPart(snake: RenderableSnake, partIndex: number) {
   // If head or tail of the snake, then false
-  if (partIndex === 0 || partIndex === snake.parts.length - 1) return false;
+  if (partIndex === 0 || partIndex === snake.parts.length - 1) { return false; }
 
-  const behind = snake.parts[partIndex + 1]!;
-  const current = snake.parts[partIndex]!;
+  const behind = snake.parts[partIndex + 1];
+  const current = snake.parts[partIndex];
 
   // Return false if the behind part has the same position as the current.
   // Relevant for when the snake initially spawns.
-  if (behind.x === current.x && behind.y === current.y) return false;
+  if (behind.x === current.x && behind.y === current.y) { return false; }
 
   // Check if the directions are adjacent in the circular directions array
   // Otherwise they are the same or opposite directions and should be rendered with a straight part
@@ -241,12 +240,12 @@ function checkIfCornerPart(snake: RenderableSnake, partIndex: number) {
 }
 
 function determineCornerType(snake: RenderableSnake, partIndex: number): CornerType {
-  if (snake.parts[partIndex]!.type != PartType.BODY) {
+  if (snake.parts[partIndex].type != PartType.BODY) {
     throw new Error("do not call determineCornerType on a non body part");
   }
 
-  const current = snake.parts[partIndex]!.direction;
-  const behind = snake.parts[partIndex + 1]!.direction;
+  const current = snake.parts[partIndex].direction;
+  const behind = snake.parts[partIndex + 1].direction;
 
   if (current == Direction.Up && behind == Direction.Right || current == Direction.Left && behind == Direction.Down) {
     return CornerType.TopLeft;
@@ -264,12 +263,12 @@ function determineCornerType(snake: RenderableSnake, partIndex: number): CornerT
 }
 
 function isOverlappedByTail(snake: RenderableSnake, part: SnakePart) {
-  const tail = snake.body[snake.body.length - 1]!;
+  const tail = snake.body[snake.body.length - 1];
   return part.isOverlapped && tail.x === part.x && tail.y === part.y;
 }
 
 function renderPart(snake: RenderableSnake, snakeIndex: number, part: SnakePart, partIndex: number, rows: number) {
-  if (isOverlappedByTail(snake, part)) return;
+  if (isOverlappedByTail(snake, part)) { return; }
   switch (part.type) {
     case PartType.HEAD:
       return renderHeadPart(snake, snakeIndex, part, rows);
@@ -290,8 +289,8 @@ function renderHeadPart(snake: RenderableSnake, snakeIndex: number, part: SnakeP
   const box = snake.headSvg.viewBox.baseVal;
   const transform = getHeadTransform(part.direction, box);
   const viewBoxStr = `${box.x} ${box.y} ${box.width} ${box.height}`;
-  let color = getPartColor(snake, part);
-  let opacity = getPartOpacity(part);
+  const color = getPartColor(snake, part);
+  const opacity = getPartOpacity(part);
 
   return (
     <g>
@@ -325,8 +324,8 @@ function renderHeadPart(snake: RenderableSnake, snakeIndex: number, part: SnakeP
 }
 
 function renderMiddlePart(snake: Snake, snakeIndex: number, part: SnakePart, partIndex: number, rows: number) {
-  let color = getPartColor(snake, part);
-  let opacity = getPartOpacity(part);
+  const color = getPartColor(snake, part);
+  const opacity = getPartOpacity(part);
 
   return (
     <rect
@@ -341,12 +340,11 @@ function renderMiddlePart(snake: Snake, snakeIndex: number, part: SnakePart, par
 }
 
 function renderCornerPart(snake: RenderableSnake, snakeIndex: number, part: SnakePart, partIndex: number, rows: number) {
-  let viewBox, transform;
-  let path = "M0,20 h60 a60,60 0 0 1 60,60 v60 h-100 v-20 h-20 z";
-  let color = getPartColor(snake, part);
-  let opacity = getPartOpacity(part);
-
-  viewBox = "0 0 140 140";
+  const path = "M0,20 h60 a60,60 0 0 1 60,60 v60 h-100 v-20 h-20 z";
+  const color = getPartColor(snake, part);
+  const opacity = getPartOpacity(part);
+  const viewBox = "0 0 140 140";
+  let transform;
 
   const cornerType = determineCornerType(snake, partIndex);
   switch (cornerType) {
@@ -384,8 +382,8 @@ function renderTailPart(snake: RenderableSnake, snakeIndex: number, part: SnakeP
   const box = snake.tailSvg.viewBox.baseVal;
   const transform = getTailTransform(part.direction, box);
   const viewBoxStr = `${box.x} ${box.y} ${box.width} ${box.height}`;
-  let color = getPartColor(snake, part);
-  let opacity = getPartOpacity(part);
+  const color = getPartColor(snake, part);
+  const opacity = getPartOpacity(part);
 
   return (
     <svg
@@ -421,11 +419,11 @@ function renderGrid(props: GridOptions) {
   const hazards = props.frame.hazards || [];
 
   // Make alive snakes render on top of dead snakes and create renderable snakes
-  const renderableSnakes = sortAliveSnakesOnTop(unsortedSnakes).map(s => createRenderableSnake(s))
+  const renderableSnakes = sortAliveSnakesOnTop(unsortedSnakes).map(s => createRenderableSnake(s));
 
   // track all of the grid cells that will have a snake part drawn in them.  Successive snake parts
   // drawn in the same cell need to be flagged so they render differently and layer properly
-  let gridCellsWithSnakeParts = Array(props.game.height);
+  const gridCellsWithSnakeParts = Array(props.game.height);
   for (let i = 0; i < gridCellsWithSnakeParts.length; i++) {
     gridCellsWithSnakeParts[i] = Array(props.game.width);
     for (let j = 0; j < props.game.width; j++) {
@@ -436,10 +434,10 @@ function renderGrid(props: GridOptions) {
   // Go through each snake, in the order they will be drawn and mark the cells they will occupy.
   // flag parts that would be drawn in cells that are already claimed
   for (let i = 0; i < renderableSnakes.length; i++) {
-    let snake = renderableSnakes[i]!;
+    const snake = renderableSnakes[i];
     if (!isDead(snake)) {
       for (let x = 0; x < snake.parts.length; x++) {
-        let part = snake.parts[x]!;
+        const part = snake.parts[x];
         if (!isOverlappedByTail(snake, part)) {
           if (gridCellsWithSnakeParts[part.y][part.x]) {
             part.shadeForOverlap = true;
@@ -504,12 +502,12 @@ function renderGrid(props: GridOptions) {
       })}
 
       {food.map(f => (
-            <circle
-              cx={toGridSpaceX(f.x) + CELL_SIZE / 2}
-              cy={toGridSpaceY(f.y, props.game.height) + CELL_SIZE / 2}
-              r={FOOD_SIZE}
-              fill={colors.food}
-            />
+        <circle
+          cx={toGridSpaceX(f.x) + CELL_SIZE / 2}
+          cy={toGridSpaceY(f.y, props.game.height) + CELL_SIZE / 2}
+          r={FOOD_SIZE}
+          fill={colors.food}
+        />
       ))}
 
       {hazards.map(o => (
@@ -526,10 +524,10 @@ function renderGrid(props: GridOptions) {
   );
 }
 
-function Grid(props: GridOptions) {
+function Grid(props: GridOptions): JSX.Element {
   // hack to rerender all the Grid
   const el = createMemo(() => renderGrid(props));
-  return el;
+  return el();
 }
 
 export default Grid;

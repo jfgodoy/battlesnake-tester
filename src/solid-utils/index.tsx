@@ -1,19 +1,10 @@
-import { ModelOpts } from "./directive-model";
+import { JSX } from "solid-js/jsx-runtime";
 
-declare module "solid-js" {
-  namespace JSX {
-    interface Directives {
-      "autoresize": boolean,
-      "model": ModelOpts,
-      "model:input": ModelOpts,
-    }
-  }
-}
-
-export function useDirective(_directive: any) {
-  /* this function does nothing. It's just a workaround to avoid
-  babel tree shake our directive before solidjs has the oportunity to use it
-  */
+// eslint-disable-next-line
+export function useDirective(...directives: Array<(el: JSX.Element) => void>): (el: JSX.Element) => void {
+  return (el: JSX.Element) => {
+    directives.forEach(f => f(el));
+  };
 }
 
 export * from "./directive-model";

@@ -1,22 +1,21 @@
 
-import { createSignal, createMemo, createEffect, batch, Show, Switch, Match, For } from "solid-js"
-import type { Accessor } from "solid-js";
+import { createSignal, createMemo, createEffect, batch, Show, Switch, Match, For, JSX } from "solid-js";
 import Board from "./board";
 import SnakeComponent from "./snake";
 import { Test, TestResult, Passed, Failed, Pending } from "../model";
 import { prefetchSvgs } from "../utils/render";
-import { Signal, Getter, Setter } from "../solid-utils";
+import { Getter } from "../solid-utils";
 import * as R from "ramda";
 
 type DisplayTestProps = {
   theme: string,
-  mySnakeStyle: Getter<{color: string, head: string, tail: string} | null>,
+  mySnakeStyle: Getter<{color: string, head: string, tail: string} | undefined>,
   testResult: Getter<TestResult | undefined>,
-  runSingleTest: (id: string) => any,
+  runSingleTest: (id: string) => unknown,
   readTest: (id: string) => Promise<Test>,
 }
 
-export default function DisplayTest(props: DisplayTestProps) {
+export default function DisplayTest(props: DisplayTestProps): JSX.Element {
   const mySnakeStyle = props.mySnakeStyle;
   const testResult = props.testResult;
 
@@ -25,9 +24,8 @@ export default function DisplayTest(props: DisplayTestProps) {
 
   const selectedFrame = createMemo(() => {
     const test = selectedTest();
-    if (test) {
-      const frame = test.frames.find(fr => fr.turn == displayTurn())!;
-
+    const frame = test?.frames.find(fr => fr.turn == displayTurn());
+    if (test && frame) {
       // use styles from config in the tested snake
       const snakes = frame.snakes.map((s, i) => {
         if (i == test.snakeToTest) {
@@ -48,7 +46,7 @@ export default function DisplayTest(props: DisplayTestProps) {
     }
     const testId = tr.id;
     const test = await props.readTest(testId);
-    const snakes = test.frames[0]!.snakes;
+    const snakes = test.frames[0].snakes;
     await prefetchSvgs(snakes);
     batch(() => {
       setDisplayTurn(test.frameToTest);
@@ -57,31 +55,32 @@ export default function DisplayTest(props: DisplayTestProps) {
   });
 
   const snakesSortedByDeath = createMemo(() => {
+    const test = selectedTest();
     const frame = selectedFrame();
-    if (frame) {
-      const frames = selectedTest()!.frames;
-      const lastFrame = frames[frames.length - 1]!;
+    if (test && frame) {
+      const frames = test.frames;
+      const lastFrame = frames[frames.length - 1];
       const deaths = lastFrame.snakes.map(s => s.death ? s.death.turn : lastFrame.turn + 1);
       const pairs = R.zip(frame.snakes, deaths);
       const sortedPairs = R.sortBy(pair => -pair[1], pairs);
       return sortedPairs.map(pair => pair[0]);
     }
     return [];
-  })
+  });
 
   const handleDisplayTurn = (e: Event) => {
     const test = selectedTest();
     if (test) {
       const el = e.target as HTMLInputElement;
       const value = el.value.trim() != "" ? +el.value : 0;
-      const firstTurn = test.frames[0]!.turn;
-      const lastFrame = test.frames[test.frames.length - 1]!;
+      const firstTurn = test.frames[0].turn;
+      const lastFrame = test.frames[test.frames.length - 1];
       const lastTurn = lastFrame.turn;
       const new_val = Math.max(firstTurn, Math.min(value, lastTurn));
       el.value = el.value.trim() != "" ? new_val.toString() : "";
       setDisplayTurn(new_val);
     }
-  }
+  };
 
   const FormattedAnswer = (props: {testResult: TestResult }) => {
     const result = createMemo(() => props.testResult.result);
@@ -104,7 +103,7 @@ export default function DisplayTest(props: DisplayTestProps) {
         </Match>
       </Switch>
     );
-  }
+  };
 
   return (
     <div class="flex flex-col m-4 p-4 bg-white">

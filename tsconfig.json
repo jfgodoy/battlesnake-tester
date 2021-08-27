@@ -9,7 +9,6 @@
     "jsxImportSource": "solid-js",
     "types": ["vite/client"],
     "strictNullChecks": true,
-    "noImplicitAny": true,
-    "noUncheckedIndexedAccess": true,
+    "noImplicitAny": true
   }
 }

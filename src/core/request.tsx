@@ -32,33 +32,35 @@ export interface SnakeRequest {
 }
 
 export function sendRequest(url: string, board: MoveRequest): Promise<Result<Direction>> {
-  return fetch(url, {
+  const fetchOpts = {
     body:  JSON.stringify(board),
     method: "POST",
-    mode : "cors",
+    mode : "cors" as const,
     headers: [
       ["content-type", "application/json"]
     ]
-  })
-  .then(res => res.json())
-  .then((res) => {
-    switch(res.move) {
-      case("up"):
-        return ok(Direction.Up);
-      case("down"):
-        return ok(Direction.Down);
-      case("left"):
-        return ok(Direction.Left);
-      case("right"):
-        return ok(Direction.Right);
-      default:
-        return error("invalid move");
-    }
-  })
-  .catch(e => {
-    console.log(e);
-    return error("invalid move");
-  });
+  };
+
+  return fetch(url, fetchOpts)
+    .then(res => res.json())
+    .then((res) => {
+      switch (res.move) {
+        case ("up"):
+          return ok(Direction.Up);
+        case ("down"):
+          return ok(Direction.Down);
+        case ("left"):
+          return ok(Direction.Left);
+        case ("right"):
+          return ok(Direction.Right);
+        default:
+          return error("invalid move");
+      }
+    })
+    .catch(e => {
+      console.log(e);
+      return error("invalid move");
+    });
 }
 
 export function createSnakeRequest(snake: Snake): SnakeRequest {
@@ -68,7 +70,7 @@ export function createSnakeRequest(snake: Snake): SnakeRequest {
     health: snake.health,
     body: snake.body,
     latency: +snake.latency,
-    head: snake.body[0]!,
+    head: snake.body[0],
     length: snake.body.length,
     shout: snake.shout,
     squad: snake.squad,

@@ -4,9 +4,9 @@ import {Snake, Coord, Direction} from "../model";
 
 const DEFAULT_DIRECTION = Direction.Up;
 
-export async function prefetchSvgs(snakes: Snake[]) {
-  const heads = R.uniq(R.map(R.prop("headType"), snakes))
-  const tails = R.uniq(R.map(R.prop("tailType"), snakes))
+export async function prefetchSvgs(snakes: Snake[]): Promise<void> {
+  const heads = R.uniq(R.map(R.prop("headType"), snakes));
+  const tails = R.uniq(R.map(R.prop("tailType"), snakes));
   await Promise.all(heads.map(fetchHead));
   await Promise.all(tails.map(fetchTail));
 }
@@ -36,7 +36,7 @@ export interface SnakePart extends Coord {
 }
 
 function formatSnakePart(snake: Snake, partIndex: number): SnakePart {
-  const part = snake.body[partIndex]!;
+  const part = snake.body[partIndex];
   const type = getType(snake, partIndex);
   const { x, y } = part;
   const direction = formatDirection(type, snake, part, partIndex);
@@ -55,9 +55,9 @@ function formatSnakePart(snake: Snake, partIndex: number): SnakePart {
 function shouldRenderPart(snake: Snake, partIndex: number): boolean {
   const headIndex = 0;
   const tailIndex = snake.body.length - 1;
-  const head = snake.body[headIndex]!;
-  const tail = snake.body[tailIndex]!;
-  const currPart = snake.body[partIndex]!;
+  const head = snake.body[headIndex];
+  const tail = snake.body[tailIndex];
+  const currPart = snake.body[partIndex];
 
   // always render head
   if (partIndex === headIndex) {
@@ -82,12 +82,12 @@ function shouldRenderPart(snake: Snake, partIndex: number): boolean {
 function formatDirection(type: PartType, snake: Snake, part: Coord, partIndex: number) {
   let direction;
   if (type === PartType.HEAD) {
-    direction = getDirection(snake.body[1]!, snake.body[0]!);
+    direction = getDirection(snake.body[1], snake.body[0]);
   } else {
     // handle special case where parts overlap
     let prevPart;
     do {
-      prevPart = snake.body[Math.max(partIndex - 1, 0)]!;
+      prevPart = snake.body[Math.max(partIndex - 1, 0)];
       --partIndex;
     } while (partIndex > 0 && prevPart.x === part.x && prevPart.y === part.y);
 

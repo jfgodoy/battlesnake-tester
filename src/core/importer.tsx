@@ -1,3 +1,4 @@
+/* eslint @typescript-eslint/no-explicit-any: "off" */
 
 import { formatFrame } from "./frame";
 import { Game, Frame } from "../model";
@@ -17,8 +18,8 @@ async function get(url: string) {
   }
 }
 
-export async function importGame(gameId: string) {
-  const url = `https://engine.battlesnake.com/games/${gameId}`
+export async function importGame(gameId: string): Promise<{game: Game, frames: Frame[]}> {
+  const url = `https://engine.battlesnake.com/games/${gameId}`;
   const res = await get(url);
   const game: Game = {
     id: res.Game.ID,
@@ -29,8 +30,8 @@ export async function importGame(gameId: string) {
     width: res.Game.Width,
     height: res.Game.Height,
     timeout: res.Game.SnakeTimeout,
-  }
-  const framesUrl = `wss://engine.battlesnake.com/socket/${gameId}`
+  };
+  const framesUrl = `wss://engine.battlesnake.com/socket/${gameId}`;
   const frames = await fetchAllFrames(framesUrl, formatFrame);
   return {game, frames};
 }
@@ -42,19 +43,19 @@ export function fetchAllFrames(url: string, parseToFrame: (obj: any) => Frame ):
   const frames: Map<string, Frame> = new Map();
   return new Promise((resolve, reject) => {
     const ws = new WebSocket(url);
-    ws.addEventListener('message', ({data}) => {
+    ws.addEventListener("message", ({data}) => {
       try {
         const obj: any = JSON.parse(data);
         const frame = parseToFrame(obj);
         frames.set(frame.turn.toString(), frame);
-      } catch(err) {
+      } catch (err) {
         reject(err);
       }
     });
-    ws.addEventListener('close', function close() {
+    ws.addEventListener("close", function close() {
       const arrayFrames = sort((a, b) => a.turn - b.turn, [...frames.values()]);
       const lastIdx = arrayFrames.length - 1;
-      const last = arrayFrames[lastIdx]!;
+      const last = arrayFrames[lastIdx];
       if (last.turn !== lastIdx) {
         reject(new Error("missing some frames"));
       } else {

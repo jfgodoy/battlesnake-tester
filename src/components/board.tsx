@@ -13,17 +13,19 @@ interface BoardOptions {
 }
 
 
-function Board(allProps: BoardOptions & JSX.StylableSVGAttributes) {
+function Board(allProps: BoardOptions & JSX.StylableSVGAttributes): JSX.Element {
   const [props, otherProps] = splitProps(allProps, ["frame", "game", "theme"]);
-  return <div class={styles.Board} {...otherProps}>
-    <Grid
-      {...props}
-      maxWidth={BOARD_SIZE}
-      maxHeight={BOARD_SIZE}
-      x={0}
-      y={0}
-    />
-  </div>
+  return (
+    <div class={styles.Board} {...otherProps}>
+      <Grid
+        {...props}
+        maxWidth={BOARD_SIZE}
+        maxHeight={BOARD_SIZE}
+        x={0}
+        y={0}
+      />
+    </div>
+  );
 }
 
 export default Board;

@@ -7,11 +7,13 @@ export type ModelOpts = {
   updateOn: "blur" | "input",
 }
 
-export function model(el: HTMLInputElement, value: Getter<ModelOpts>) {
-  const opts = value();
-  createRenderEffect(() => (el.value = opts.get()));
-  el.addEventListener(opts.updateOn, (e) => opts.set((e.target as HTMLInputElement).value));
+export function useModel(value: ModelOpts): (el: HTMLInputElement) => void {
+  return (el: HTMLInputElement) => {
+    const opts = value;
+    createRenderEffect(() => (el.value = opts.get()));
+    el.addEventListener(opts.updateOn, (e) => opts.set((e.target as HTMLInputElement).value));
+  };
 }
 
-export const onInput = (get: Getter<string>, set: Setter<string>): ModelOpts => ({get, set, updateOn: "input" })
-export const onBlur = (get: Getter<string>, set: Setter<string>): ModelOpts => ({get, set, updateOn: "blur" })
+export const onInput = (get: Getter<string>, set: Setter<string>): ModelOpts => ({get, set, updateOn: "input" });
+export const onBlur = (get: Getter<string>, set: Setter<string>): ModelOpts => ({get, set, updateOn: "blur" });

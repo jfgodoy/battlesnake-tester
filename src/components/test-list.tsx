@@ -1,4 +1,4 @@
-import { createSelector, For, Switch, Match, batch } from "solid-js";
+import { createSelector, For, Switch, Match, batch, JSX } from "solid-js";
 import { Signal, Getter, Setter } from "../solid-utils";
 import { TestResult } from "../model";
 
@@ -9,7 +9,7 @@ type TestListProps = {
   testResults: Getter<TestResult[]>
 }
 
-export default function TestList(props: TestListProps) {
+export default function TestList(props: TestListProps): JSX.Element {
   const [selected, setSelected] = props.selected;
   const setView = props.setView;
   const testResults = props.testResults;

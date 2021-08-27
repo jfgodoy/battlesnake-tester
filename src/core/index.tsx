@@ -10,7 +10,7 @@ const testStorage = indexdbTestStore();
 const [state, setState] = createStore({
   server: "http://localhost:8080",
   testedSnake: {
-    style: null as {color: string, head: string, tail: string} | null,
+    style: undefined as {color: string, head: string, tail: string} | undefined,
   },
   testResults: [] as TestResult[],
   selected: 0,
@@ -36,7 +36,7 @@ const [state, setState] = createStore({
       setState("testResults", l => [...l, testResult]);
     }
   });
-})()
+})();
 
 export const selectedTestResult = createMemo(() => state.testResults[state.selected]);
 
@@ -50,21 +50,26 @@ export async function runSingleTest(id: string): Promise<Passed | Failed> {
   return res;
 }
 
-export async function runAllTests() {
-  const promises = state.testResults
-    .map(t => t.id)
+export async function runAllTests(): Promise<void> {
+  const testIds = state.testResults.map(t => t.id);
+  const promises = testIds
     .map(id => testStorage.read(id))
     .map(testPromise => testPromise.then(test => runTest(`${state.server}/move`, test)));
 
   const results = await Promise.all(promises);
-  setState("testResults", state.testResults.map((t, i) => ({...t, result: results[i]!})));
+  const updatedTestResults = state.testResults.map(t => {
+    const idx = testIds.indexOf(t.id);
+    return (idx >= 0) ? {...t, result: results[idx]} : t;
+  });
+
+  setState("testResults", updatedTestResults);
 }
 
-export const saveTest = (test: Test) => testStorage.save(test);
-export const readTest = (id: string) => testStorage.read(id);
+export const saveTest = (test: Test): Promise<void> => testStorage.save(test);
+export const readTest = (id: string): Promise<Test> => testStorage.read(id);
 
 export function signalFor<PathType extends string>(path: PathType extends "" ? never : PathType): SignalFromStoreReturnType<typeof state, PathType> {
-  return signalFromStore(state, setState, path) as any;
+  return signalFromStore(state, setState, path);
 }
 
 

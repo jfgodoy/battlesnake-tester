@@ -6,7 +6,6 @@ import { Test, TestResult, Passed, Failed, Pending } from "../model";
 import { prefetchSvgs } from "../utils/render";
 import { Getter } from "../solid-utils";
 import * as R from "ramda";
-import allOrNothing from "../utils/all-or-nothing";
 
 
 type DisplayTestProps = {
@@ -99,18 +98,22 @@ export default function DisplayTest(props: DisplayTestProps): JSX.Element {
 
   return (
     <div class="flex flex-col m-4 p-4 bg-white">
-      <Show when={allOrNothing([testResult(), selectedTest(), selectedFrame()] as const)}>
-        {([testResult, test, frame]) => <>
+      <Show when={selectedTest()}>
+        {(test) => <>
           <div class="my-2">
             <h3 class="text-lg text-gray-700">{test.description}</h3>
           </div>
           <div class="flex items-start flex-wrap">
             <div class="inline-block">
-              <Board
-                game={test.game}
-                frame={frame}
-                theme={props.theme}
-              />
+              <Show when={selectedFrame()}>
+                {(frame) =>
+                  <Board
+                    game={test.game}
+                    frame={frame}
+                    theme={props.theme}
+                  />
+                }
+              </Show>
               <div>
                 <span>turn:</span><input class="py-0 w-24 text-center focus:ring-0 border-none" type="number" value={test.frameToTest} onInput={(e) => handleDisplayTurn(e)} />
               </div>
@@ -131,7 +134,7 @@ export default function DisplayTest(props: DisplayTestProps): JSX.Element {
           </div>
           <div>
             <p>Expected: {test.expectedResult.join(" or ") }</p>
-            <p>Your Answer: <FormattedAnswer testResult={testResult} /> </p>
+            <p>Your Answer: <FormattedAnswer testResult={testResult()} /> </p>
             <button class="bg-blue-400 text-white my-2 px-2 font-bold rounded" onclick={() => props.runSingleTest(test.id)}>Run Test</button>
           </div>
         </>}

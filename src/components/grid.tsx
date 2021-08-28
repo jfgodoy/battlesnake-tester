@@ -527,7 +527,7 @@ function renderGrid(props: GridOptions) {
 function Grid(props: GridOptions): JSX.Element {
   // hack to rerender all the Grid
   const el = createMemo(() => renderGrid(props));
-  return el();
+  return el;
 }
 
 export default Grid;

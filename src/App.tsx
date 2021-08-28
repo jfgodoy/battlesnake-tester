@@ -39,7 +39,7 @@ const App: Component = () => {
         <main class="flex-1 p-4">
           <div class="flex">
             <Switch>
-              <Match when={view() == "test"}>
+              <Match when={view() == "test" && core.selectedTestResult()}>
                 <DisplayTest
                   mySnakeStyle={style}
                   theme={themes.light}

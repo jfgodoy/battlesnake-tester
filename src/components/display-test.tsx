@@ -6,11 +6,13 @@ import { Test, TestResult, Passed, Failed, Pending } from "../model";
 import { prefetchSvgs } from "../utils/render";
 import { Getter } from "../solid-utils";
 import * as R from "ramda";
+import allOrNothing from "../utils/all-or-nothing";
+
 
 type DisplayTestProps = {
   theme: string,
   mySnakeStyle: Getter<{color: string, head: string, tail: string} | undefined>,
-  testResult: Getter<TestResult | undefined>,
+  testResult: Getter<TestResult>,
   runSingleTest: (id: string) => unknown,
   readTest: (id: string) => Promise<Test>,
 }
@@ -22,29 +24,8 @@ export default function DisplayTest(props: DisplayTestProps): JSX.Element {
   const [selectedTest, setSelectedTest] = createSignal(null as Test | null);
   const [displayTurn, setDisplayTurn] = createSignal(0);
 
-  const selectedFrame = createMemo(() => {
-    const test = selectedTest();
-    const frame = test?.frames.find(fr => fr.turn == displayTurn());
-    if (test && frame) {
-      // use styles from config in the tested snake
-      const snakes = frame.snakes.map((s, i) => {
-        if (i == test.snakeToTest) {
-          return {...s, ...mySnakeStyle()};
-        }
-        return s;
-      });
-
-      return {...frame, snakes};
-    }
-  });
-
   createEffect(async () => {
-    const tr = testResult();
-    if (!tr) {
-      setSelectedTest(null);
-      return;
-    }
-    const testId = tr.id;
+    const testId = testResult().id;
     const test = await props.readTest(testId);
     const snakes = test.frames[0].snakes;
     await prefetchSvgs(snakes);
@@ -52,6 +33,17 @@ export default function DisplayTest(props: DisplayTestProps): JSX.Element {
       setDisplayTurn(test.frameToTest);
       setSelectedTest(test);
     });
+  });
+
+  const selectedFrame = createMemo(() => {
+    const test = selectedTest();
+    const frame = test?.frames.find(fr => fr.turn == displayTurn());
+    if (test && frame) {
+      // use styles from config in the tested snake
+      const snakes = [...frame.snakes];
+      Object.assign(snakes[test.snakeToTest], mySnakeStyle());
+      return {...frame, snakes};
+    }
   });
 
   const snakesSortedByDeath = createMemo(() => {
@@ -107,8 +99,8 @@ export default function DisplayTest(props: DisplayTestProps): JSX.Element {
 
   return (
     <div class="flex flex-col m-4 p-4 bg-white">
-      <Show when={selectedTest()}>
-        {(test) => <>
+      <Show when={allOrNothing([testResult(), selectedTest(), selectedFrame()] as const)}>
+        {([testResult, test, frame]) => <>
           <div class="my-2">
             <h3 class="text-lg text-gray-700">{test.description}</h3>
           </div>
@@ -116,7 +108,7 @@ export default function DisplayTest(props: DisplayTestProps): JSX.Element {
             <div class="inline-block">
               <Board
                 game={test.game}
-                frame={selectedFrame()!}
+                frame={frame}
                 theme={props.theme}
               />
               <div>
@@ -139,7 +131,7 @@ export default function DisplayTest(props: DisplayTestProps): JSX.Element {
           </div>
           <div>
             <p>Expected: {test.expectedResult.join(" or ") }</p>
-            <p>Your Answer: <FormattedAnswer testResult={testResult()!} /> </p>
+            <p>Your Answer: <FormattedAnswer testResult={testResult} /> </p>
             <button class="bg-blue-400 text-white my-2 px-2 font-bold rounded" onclick={() => props.runSingleTest(test.id)}>Run Test</button>
           </div>
         </>}

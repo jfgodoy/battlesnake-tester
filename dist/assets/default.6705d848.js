@@ -1,0 +1,1 @@
+import{d as o,t as s}from"./vendor.b0d0fef8.js";const t=s('<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><path d="M50 0H0v100h50l50-50L50 0z"/></svg>');var e=(s={})=>{const e=t.cloneNode(!0);return o(e,s,!0),e};export{e as default};

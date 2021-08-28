@@ -20,7 +20,8 @@ module.exports = {
   },
   "rules": {
     "keyword-spacing": 2,
-    "indent": [2, 2, {"VariableDeclarator": { "var": 2, "let": 2, "const": 3}, "SwitchCase": 1}],
+    //"indent": [2, 2, {"VariableDeclarator": { "var": 2, "let": 2, "const": 3}, "SwitchCase": 1}], // disable due to issue
+    "indent": "off",
     "semi": [2, "always"],
     "space-before-blocks": 2,
     "quotes": [2, "double", {"allowTemplateLiterals": true}],
@@ -31,6 +32,6 @@ module.exports = {
     "one-var": ["error", "never"],
     "comma-spacing": ["error", { "before": false, "after": true }],
     "prefer-const": "error",
-    "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_", "varsIgnorePattern": "^_" }]
+    "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_", "varsIgnorePattern": "^[_$]" }],
   }
 };

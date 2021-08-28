@@ -13,7 +13,7 @@ export interface Frame {
   turn: number,
   snakes: Snake[],
   food: Coord[],
-  hazards: unknown[],
+  hazards: Coord[],
 }
 
 export interface Snake {

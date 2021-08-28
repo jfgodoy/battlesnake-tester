@@ -1,10 +1,13 @@
-import { JSX } from "solid-js/jsx-runtime";
+import { ModelOpts } from "./directive-model";
 
-// eslint-disable-next-line
-export function useDirective(...directives: Array<(el: JSX.Element) => void>): (el: JSX.Element) => void {
-  return (el: JSX.Element) => {
-    directives.forEach(f => f(el));
-  };
+declare module "solid-js" {
+  // eslint-disable-next-line @typescript-eslint/no-namespace
+  namespace JSX {
+    interface Directives {
+      "$autoresize": boolean,
+      "$model": ModelOpts,
+    }
+  }
 }
 
 export * from "./directive-model";

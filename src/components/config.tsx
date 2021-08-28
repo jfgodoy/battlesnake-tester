@@ -1,5 +1,5 @@
 import { Switch, Match, createEffect, createResource, JSX } from "solid-js";
-import { Signal, Setter, onBlur, useModel, useAutoresize, useDirective } from "../solid-utils";
+import { Setter, Signal, onBlur, $model, $autoresize } from "../solid-utils";
 import SnakeComponent from "./snake";
 
 export default function Config(props: { server: Signal<string>, style: Signal<{color: string, head: string, tail: string} | undefined>, setView: Setter<string>}): JSX.Element {
@@ -21,7 +21,8 @@ export default function Config(props: { server: Signal<string>, style: Signal<{c
       <span class="font-bold text-gray-500">Server:</span>
       <input
         class="ml-1 px-3 rounded bg-gray-100 text-gray-700 round min-w-44 w-0"
-        ref={useDirective(useAutoresize, useModel(onBlur(server, setServer)))}
+        use:$autoresize
+        use:$model={onBlur(server, setServer)}
       />
       <Switch>
         <Match when={resource.loading}><span>loading...</span></Match>

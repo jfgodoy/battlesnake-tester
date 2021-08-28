@@ -1,4 +1,4 @@
-export function useAutoresize(el: HTMLInputElement): void {
+export function $autoresize(el: HTMLInputElement): void {
   let old_value = el.value;
   el.addEventListener("input", () => {
     if (old_value.length > el.value.length) {

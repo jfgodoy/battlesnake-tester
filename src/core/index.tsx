@@ -1,5 +1,5 @@
 import { createMemo } from "solid-js";
-import { createStore } from "solid-js/store";
+import { createStore, Store, SetStoreFunction } from "solid-js/store";
 import { Test, TestResult, Passed, Failed } from "../model";
 import { indexdbTestStore } from "./test-store";
 import { signalFromStore, SignalFromStoreReturnType } from "../solid-utils";
@@ -7,7 +7,7 @@ import { runTest } from "../core/tester";
 
 const testStorage = indexdbTestStore();
 
-const [state, setState] = createStore({
+const storeDefaults = {
   server: "http://localhost:8080",
   testedSnake: {
     style: undefined as {color: string, head: string, tail: string} | undefined,
@@ -15,10 +15,25 @@ const [state, setState] = createStore({
   testResults: [] as TestResult[],
   selected: 0,
   view: "test",
-});
+};
+type MyStore = typeof storeDefaults;
 
+const [state, setState] = (function bootstrap(): [Store<MyStore>, SetStoreFunction<MyStore>] {
+  const savedProps = JSON.parse(localStorage.getItem("state") || "{}");
+  const storeData: MyStore = Object.assign({}, storeDefaults, savedProps);
+  const [state, setStateRaw] = createStore(storeData);
+  type SetStateType = typeof setStateRaw;
+  type SetStateReturnType = ReturnType<typeof setStateRaw>
 
-(function bootstrap() {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const setState: SetStateType = (...args: any[]): SetStateReturnType => {
+    const res =  setStateRaw.call(null, ...args);
+    const savedProps = JSON.parse(localStorage.getItem("state") || "{}");
+    savedProps.server = state.server;
+    localStorage.setItem("state", JSON.stringify(savedProps));
+    return res;
+  };
+
   testStorage.list().then(tests => {
     const testResults: TestResult[] = tests.map(preview => ({...preview, result: {type: "pending"}}));
     setState("testResults", testResults);
@@ -36,6 +51,8 @@ const [state, setState] = createStore({
       setState("testResults", l => [...l, testResult]);
     }
   });
+
+  return [state, setState];
 })();
 
 export const selectedTestResult = createMemo(() => state.testResults[state.selected]);

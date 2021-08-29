@@ -126,7 +126,7 @@ export default function DisplayTest(props: DisplayTestProps): JSX.Element {
                     <td>length:</td>
                     <td class="px-2 text-right tabular-nums">{snake.body.length}</td>
                     <td>health:</td>
-                    <td class="px-2 text-right tabular-nums">{snake.health}</td>
+                    <td class="text-right tabular-nums w-10">{snake.health}</td>
                   </tr>
                 )}
               </For>

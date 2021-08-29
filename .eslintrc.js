@@ -33,5 +33,6 @@ module.exports = {
     "comma-spacing": ["error", { "before": false, "after": true }],
     "prefer-const": "error",
     "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_", "varsIgnorePattern": "^[_$]" }],
+    "@typescript-eslint/no-non-null-assertion": "off",
   }
 };

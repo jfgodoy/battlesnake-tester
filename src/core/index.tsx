@@ -50,6 +50,10 @@ const [state, setState] = (function bootstrap(): [Store<MyStore>, SetStoreFuncti
       };
       setState("testResults", l => [...l, testResult]);
     }
+    if (before && !after) {
+      const filtered = state.testResults.filter(t => t.id != before.id);
+      setState("testResults", filtered);
+    }
   });
 
   return [state, setState];
@@ -84,6 +88,7 @@ export async function runAllTests(): Promise<void> {
 
 export const saveTest = (test: Test): Promise<void> => testStorage.save(test);
 export const readTest = (id: string): Promise<Test> => testStorage.read(id);
+export const deleteTest = (id: string): Promise<void> => testStorage.delete(id);
 
 export function signalFor<PathType extends string>(path: PathType extends "" ? never : PathType): SignalFromStoreReturnType<typeof state, PathType> {
   return signalFromStore(state, setState, path);

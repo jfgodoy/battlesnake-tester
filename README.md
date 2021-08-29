@@ -10,7 +10,7 @@ This project is in active development. Suggestions of new features are welcome.
 
 ## TODO List
 
-- [ ] remove a saved test
+- [x] remove a saved test
 - [ ] edit a saved test
 - [ ] export test to curl
 - [ ] export/import database

@@ -6,6 +6,7 @@ import { Test, TestResult, Passed, Failed, Pending } from "../model";
 import { prefetchSvgs } from "../utils/render";
 import { Getter } from "../solid-utils";
 import * as R from "ramda";
+import { FiMoreVertical } from "solid-icons/fi";
 
 
 type DisplayTestProps = {
@@ -14,6 +15,7 @@ type DisplayTestProps = {
   testResult: Getter<TestResult>,
   runSingleTest: (id: string) => unknown,
   readTest: (id: string) => Promise<Test>,
+  deleteTest: (id: string) => Promise<void>,
 }
 
 export default function DisplayTest(props: DisplayTestProps): JSX.Element {
@@ -98,14 +100,39 @@ export default function DisplayTest(props: DisplayTestProps): JSX.Element {
     );
   };
 
+  const [showMenu, setMenu] = createSignal(false);
+  const handleAction = <T extends Array<unknown>>(fn: (...args: T) => void, ...args: T): (() => void) => {
+    return () => {
+      setMenu(false);
+      fn(...args);
+    };
+  };
+
   return (
-    <div class="flex flex-col m-4 p-4 bg-white">
+    <div class="flex flex-col m-4 bg-white">
       <Show when={selectedTest()}>
         {(test) => <>
-          <div class="my-2">
+          <div style="border-bottom:1px solid rgba(210,221,234,.5)" class="flex items-center justify-between px-4 py-4">
             <h3 class="text-lg text-gray-700">{test.description}</h3>
+            <div class="relative">
+              <button onclick={() => setMenu(!showMenu())} class="relative z-10 block rounded-md bg-white p-2 focus:outline-none">
+                <FiMoreVertical color="gray" size="16px" className="custom-icon" title="a11y" />
+              </button>
+
+              <Show when={showMenu()}>
+                <div onclick={() => setMenu(false)} class="fixed inset-0 h-full w-full z-10"></div>
+                <div class="absolute right-0 mt-2 py-2 w-48 bg-white rounded-md shadow-md z-20 border border-gray-100">
+                  {/* <button onclick={() => {setMenu(false);  console.log("edit");}} class="block w-full text-left px-4 py-2 text-sm capitalize text-gray-700 hover:bg-yellow-100">
+                    edit
+                  </button> */}
+                  <button onclick={handleAction(props.deleteTest, test.id)} class="block w-full text-left px-4 py-2 text-sm capitalize text-red-700 hover:bg-yellow-100">
+                    delete
+                  </button>
+                </div>
+              </Show>
+            </div>
           </div>
-          <div class="flex items-start flex-wrap">
+          <div class="flex items-start flex-wrap p-4">
             <div class="inline-block">
               <Show when={selectedFrame()}>
                 {(frame) =>
@@ -134,10 +161,10 @@ export default function DisplayTest(props: DisplayTestProps): JSX.Element {
               </For>
             </table>
           </div>
-          <div>
+          <div class="p-4">
             <p>Expected: {test.expectedResult.join(" or ") }</p>
             <p>Your Answer: <FormattedAnswer testResult={testResult()} /> </p>
-            <button class="bg-blue-400 text-white my-2 px-2 font-bold rounded" onclick={() => props.runSingleTest(test.id)}>Run Test</button>
+            <button class="bg-blue-400 text-white mt-2 px-2 font-bold rounded" onclick={() => props.runSingleTest(test.id)}>Run Test</button>
           </div>
         </>}
       </Show>

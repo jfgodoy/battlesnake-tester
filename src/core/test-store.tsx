@@ -6,7 +6,7 @@ export type Subscriber = (before?: Test, after?: Test) => void;
 export interface TestStore {
   list(): Promise<TestPreview[]>,
   save(test: Test): Promise<void>,
-  remove(id: string): Promise<void>,
+  delete(id: string): Promise<void>,
   read(id: string): Promise<Test>,
   suscribe(fn: Subscriber): void,
 }
@@ -45,7 +45,7 @@ export function indexdbTestStore(): TestStore {
       return;
     },
 
-    async remove(id) {
+    async delete(id) {
       const db = await dbPromise;
       const store = db.transaction(STORE_NAME, "readwrite").objectStore(STORE_NAME);
       const test = await store.get(id);

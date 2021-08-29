@@ -28,8 +28,10 @@ export default function DisplayTest(props: DisplayTestProps): JSX.Element {
     const test = await props.readTest(testId);
     const snakes = test.frames[0].snakes;
     await prefetchSvgs(snakes);
+    const previousTest = selectedTest();
+    const turn = previousTest?.id == testId ? displayTurn() : test.frameToTest;
     batch(() => {
-      setDisplayTurn(test.frameToTest);
+      setDisplayTurn(turn);
       setSelectedTest(test);
     });
   });
@@ -115,7 +117,7 @@ export default function DisplayTest(props: DisplayTestProps): JSX.Element {
                 }
               </Show>
               <div>
-                <span>turn:</span><input class="py-0 w-24 text-center focus:ring-0 border-none" type="number" value={test.frameToTest} onInput={(e) => handleDisplayTurn(e)} />
+                <span>turn:</span><input class="py-0 w-24 text-center focus:ring-0 border-none" type="number" value={displayTurn()} onInput={(e) => handleDisplayTurn(e)} />
               </div>
             </div>
             <table>

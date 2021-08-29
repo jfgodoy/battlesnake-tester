@@ -28,7 +28,7 @@ export default function TestList(props: TestListProps): JSX.Element {
         <p class="font-bold text-gray-500">Tests available:</p>
         <button class="bg-blue-400 text-white px-2 font-bold rounded" onclick={props.runAllTests}>Run all tests</button>
       </div>
-      <div class="overflow-y-scroll">
+      <div class="overflow-y-auto">
         <ul>
           <For each={testResults()}>
             {(tr, i) => (

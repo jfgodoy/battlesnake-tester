@@ -6,7 +6,7 @@ import { Test, TestResult, Passed, Failed, Pending } from "../model";
 import { prefetchSvgs } from "../utils/render";
 import { Getter, $model, onBlur } from "../solid-utils";
 import * as R from "ramda";
-import { FiMoreVertical } from "solid-icons/fi";
+import IconMoreVertical from "~icons/feather/more-vertical";
 
 
 type DisplayTestProps = {
@@ -137,7 +137,7 @@ export default function DisplayTest(props: DisplayTestProps): JSX.Element {
             />
             <div class="relative">
               <button onclick={() => setMenu(!showMenu())} class="relative z-10 block rounded-md bg-white m-2 ml-4 focus:outline-none">
-                <FiMoreVertical color="gray" size="16px" className="custom-icon" title="a11y" />
+                <IconMoreVertical class="text-gray-500" />
               </button>
 
               <Show when={showMenu()}>

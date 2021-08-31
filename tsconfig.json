@@ -7,7 +7,7 @@
     "esModuleInterop": true,
     "jsx": "preserve",
     "jsxImportSource": "solid-js",
-    "types": ["vite/client"],
+    "types": ["vite/client", "unplugin-icons/types/solid"],
     "strictNullChecks": true,
     "noImplicitAny": true
   }

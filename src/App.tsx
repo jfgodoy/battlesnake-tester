@@ -47,6 +47,7 @@ const App: Component = () => {
                   runSingleTest={core.runSingleTest}
                   readTest={core.readTest}
                   deleteTest={core.deleteTest}
+                  saveTest={core.saveTest}
                 />
               </Match>
               <Match when={view() == "importer"}>

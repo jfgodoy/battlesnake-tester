@@ -40,8 +40,9 @@ export function indexdbTestStore(): TestStore {
     async save(test) {
       const db = await dbPromise;
       const store = db.transaction(STORE_NAME, "readwrite").objectStore(STORE_NAME);
-      await store.add(test);
-      notify(undefined, test);
+      const previous = await store.get(test.id);
+      await store.put(test);
+      notify(previous, test);
       return;
     },
 

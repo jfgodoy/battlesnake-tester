@@ -40,8 +40,8 @@ const [state, setState] = (function bootstrap(): [Store<MyStore>, SetStoreFuncti
   });
 
   testStorage.suscribe((before, after) => {
+    // added
     if (!before && after) {
-      // added
       const testResult: TestResult = {
         id: after.id,
         description: after.description,
@@ -50,9 +50,24 @@ const [state, setState] = (function bootstrap(): [Store<MyStore>, SetStoreFuncti
       };
       setState("testResults", l => [...l, testResult]);
     }
+    // deleted
     if (before && !after) {
       const filtered = state.testResults.filter(t => t.id != before.id);
       setState("testResults", filtered);
+    }
+    // updated
+    if (before && after) {
+      const previousMove = state.testResults.find(t => t.id != after.id)?.result?.move || undefined;
+      const resultType = previousMove ? (after.expectedResult.includes(previousMove) ? "passed" : "failed") : "pending";
+      const updatedResult = previousMove ? {type: resultType, move: previousMove} : {type: resultType};
+      const testResult: TestResult = {
+        id: after.id,
+        description: after.description,
+        timestamp: after.timestamp,
+        result: updatedResult,
+      };
+      const updated = state.testResults.map(t => t.id == after.id ? testResult : t);
+      setState("testResults", updated);
     }
   });
 

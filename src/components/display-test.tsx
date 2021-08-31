@@ -4,7 +4,7 @@ import Board from "./board";
 import SnakeComponent from "./snake";
 import { Test, TestResult, Passed, Failed, Pending } from "../model";
 import { prefetchSvgs } from "../utils/render";
-import { Getter } from "../solid-utils";
+import { Getter, $model, onBlur } from "../solid-utils";
 import * as R from "ramda";
 import { FiMoreVertical } from "solid-icons/fi";
 
@@ -15,6 +15,7 @@ type DisplayTestProps = {
   testResult: Getter<TestResult>,
   runSingleTest: (id: string) => unknown,
   readTest: (id: string) => Promise<Test>,
+  saveTest: (test: Test) => Promise<void>,
   deleteTest: (id: string) => Promise<void>,
 }
 
@@ -24,6 +25,14 @@ export default function DisplayTest(props: DisplayTestProps): JSX.Element {
 
   const [selectedTest, setSelectedTest] = createSignal(null as Test | null);
   const [displayTurn, setDisplayTurn] = createSignal(0);
+
+  const getter = <K extends keyof Test>(prop: K) => () => selectedTest()[prop];
+  const setter = <K extends keyof Test, V extends Test[K]>(prop: K) => (value: V) => setSelectedTest({...selectedTest(), [prop]: value});
+  const setProp = <K extends keyof Test, V extends Test[K]>(prop: K, value: V) => setSelectedTest({...selectedTest(), [prop]: value});
+  const saver = <K extends keyof Test, V extends Test[K]>(prop: K) => (value: V) => {
+    setProp(prop, value);
+    props.saveTest(selectedTest());
+  };
 
   createEffect(async () => {
     const testId = testResult().id;
@@ -113,9 +122,15 @@ export default function DisplayTest(props: DisplayTestProps): JSX.Element {
       <Show when={selectedTest()}>
         {(test) => <>
           <div style="border-bottom:1px solid rgba(210,221,234,.5)" class="flex items-center justify-between px-4 py-4">
-            <h3 class="text-lg text-gray-700">{test.description}</h3>
+            <input
+              type="text"
+              value={test.description}
+              class="border border-opacity-0 border-gray-300 rounded hover:border-opacity-100  cursor-default hover:cursor-text focus-within:cursor-text w-full"
+              use:$model={onBlur(getter("description"), saver("description"))}
+              onkeydown={(e) => { if (e.key == "Enter") { e.target.blur(); }  }}
+            />
             <div class="relative">
-              <button onclick={() => setMenu(!showMenu())} class="relative z-10 block rounded-md bg-white p-2 focus:outline-none">
+              <button onclick={() => setMenu(!showMenu())} class="relative z-10 block rounded-md bg-white m-2 ml-4 focus:outline-none">
                 <FiMoreVertical color="gray" size="16px" className="custom-icon" title="a11y" />
               </button>
 

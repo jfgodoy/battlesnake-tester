@@ -1,6 +1,6 @@
 import { createMemo } from "solid-js";
 import { createStore, Store, SetStoreFunction } from "solid-js/store";
-import { Test, TestResult, Passed, Failed } from "../model";
+import { Test, TestResult, Passed, Failed, Pending } from "../model";
 import { indexdbTestStore } from "./test-store";
 import { signalFromStore, SignalFromStoreReturnType } from "../solid-utils";
 import { runTest } from "../core/tester";
@@ -23,10 +23,9 @@ const [state, setState] = (function bootstrap(): [Store<MyStore>, SetStoreFuncti
   const storeData: MyStore = Object.assign({}, storeDefaults, savedProps);
   const [state, setStateRaw] = createStore(storeData);
   type SetStateType = typeof setStateRaw;
-  type SetStateReturnType = ReturnType<typeof setStateRaw>
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const setState: SetStateType = (...args: any[]): SetStateReturnType => {
+  const setState: SetStateType = (...args: any[]): void => {
     const res =  setStateRaw.call(null, ...args);
     const savedProps = JSON.parse(localStorage.getItem("state") || "{}");
     savedProps.server = state.server;
@@ -57,14 +56,29 @@ const [state, setState] = (function bootstrap(): [Store<MyStore>, SetStoreFuncti
     }
     // updated
     if (before && after) {
-      const previousMove = state.testResults.find(t => t.id != after.id)?.result?.move || undefined;
-      const resultType = previousMove ? (after.expectedResult.includes(previousMove) ? "passed" : "failed") : "pending";
-      const updatedResult = previousMove ? {type: resultType, move: previousMove} : {type: resultType};
+      const getUpdatedResult = (): Passed | Failed | Pending => {
+        const previousResult = state.testResults.find(t => t.id != after.id)?.result || {type: "pending"};
+        if (previousResult.type == "pending") {
+          return previousResult;
+        }
+        const previousMove = previousResult.move;
+        if (!previousMove) {
+          return { type: "failed", msg: previousResult.msg};
+        }
+
+        const passed = after.expectedResult.includes(previousMove);
+        if (passed) {
+          return {type: "passed", move: previousMove};
+        } else {
+          return {type: "failed", move: previousMove, msg: "incorrect move"};
+        }
+      };
+
       const testResult: TestResult = {
         id: after.id,
         description: after.description,
         timestamp: after.timestamp,
-        result: updatedResult,
+        result: getUpdatedResult(),
       };
       const updated = state.testResults.map(t => t.id == after.id ? testResult : t);
       setState("testResults", updated);

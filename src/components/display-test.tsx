@@ -23,15 +23,21 @@ export default function DisplayTest(props: DisplayTestProps): JSX.Element {
   const mySnakeStyle = props.mySnakeStyle;
   const testResult = props.testResult;
 
-  const [selectedTest, setSelectedTest] = createSignal(null as Test | null);
+  const [selectedTest, setSelectedTest] = createSignal<Test | undefined>();
   const [displayTurn, setDisplayTurn] = createSignal(0);
 
-  const getter = <K extends keyof Test>(prop: K) => () => selectedTest()[prop];
-  const setter = <K extends keyof Test, V extends Test[K]>(prop: K) => (value: V) => setSelectedTest({...selectedTest(), [prop]: value});
-  const setProp = <K extends keyof Test, V extends Test[K]>(prop: K, value: V) => setSelectedTest({...selectedTest(), [prop]: value});
+  const getter = <K extends keyof Test>(prop: K) => () => {
+    const test = selectedTest() || (() => { throw new Error("!"); })();
+    return test[prop];
+  };
+  const setProp = <K extends keyof Test, V extends Test[K]>(prop: K, value: V) => {
+    const test = selectedTest() || (() => { throw new Error("!"); })();
+    setSelectedTest({...test, [prop]: value});
+  };
   const saver = <K extends keyof Test, V extends Test[K]>(prop: K) => (value: V) => {
     setProp(prop, value);
-    props.saveTest(selectedTest());
+    const test = selectedTest() || (() => { throw new Error("!"); })();
+    props.saveTest(test);
   };
 
   createEffect(async () => {
@@ -127,7 +133,7 @@ export default function DisplayTest(props: DisplayTestProps): JSX.Element {
               value={test.description}
               class="border border-opacity-0 border-gray-300 rounded hover:border-opacity-100  cursor-default hover:cursor-text focus-within:cursor-text w-full"
               use:$model={onBlur(getter("description"), saver("description"))}
-              onkeydown={(e) => { if (e.key == "Enter") { e.target.blur(); }  }}
+              onkeydown={(e) => { if (e.key == "Enter") {(e.target as HTMLInputElement).blur(); }  }}
             />
             <div class="relative">
               <button onclick={() => setMenu(!showMenu())} class="relative z-10 block rounded-md bg-white m-2 ml-4 focus:outline-none">

@@ -76,7 +76,7 @@ export default function Importer(props: { server: Getter<string>, saveTest: Sett
       return match[0];
     }
     return val;
-  }
+  };
 
   createEffect(() => {
     const match = GAMEID_REGEX.exec(gameId());

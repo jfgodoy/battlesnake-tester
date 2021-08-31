@@ -7,6 +7,8 @@ import { prefetchSvgs } from "../utils/render";
 import { Getter, $model, onBlur } from "../solid-utils";
 import * as R from "ramda";
 import IconMoreVertical from "~icons/feather/more-vertical";
+import IconHeart from "~icons/clarity/heart-solid";
+import IconLength from "~icons/el/resize-horizontal";
 
 
 type DisplayTestProps = {
@@ -173,10 +175,10 @@ export default function DisplayTest(props: DisplayTestProps): JSX.Element {
                 {(snake) => (
                   <tr class="" style={{opacity: snake.death ? 0.2 : 1}}>
                     <td class="pr-2 py-1" style="font-size:0"><SnakeComponent color={snake.color} head={snake.headType} tail={snake.tailType}/></td>
-                    <td>length:</td>
-                    <td class="px-2 text-right tabular-nums">{snake.body.length}</td>
-                    <td>health:</td>
+                    <td class="text-right tabular-nums">{snake.body.length}</td>
+                    <td><IconLength class="text-gray-500"/></td>
                     <td class="text-right tabular-nums w-10">{snake.health}</td>
+                    <td><IconHeart class="text-red-500" /></td>
                   </tr>
                 )}
               </For>

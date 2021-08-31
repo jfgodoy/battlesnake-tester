@@ -57,7 +57,7 @@ const [state, setState] = (function bootstrap(): [Store<MyStore>, SetStoreFuncti
     // updated
     if (before && after) {
       const getUpdatedResult = (): Passed | Failed | Pending => {
-        const previousResult = state.testResults.find(t => t.id != after.id)?.result || {type: "pending"};
+        const previousResult = state.testResults.find(t => t.id == after.id)?.result || {type: "pending"};
         if (previousResult.type == "pending") {
           return previousResult;
         }

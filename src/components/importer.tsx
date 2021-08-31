@@ -1,19 +1,29 @@
-import { createSignal, Show, JSX } from "solid-js";
+import { createSignal, createEffect, Show, JSX } from "solid-js";
 import { nanoid } from "nanoid";
 import { Test } from "../model";
 import { importGame } from "../core/importer";
 import { prefetchSvgs } from "../utils/render";
 import { runTest } from "../core/tester";
-import { Getter, Setter } from "../solid-utils";
+import { Getter, Setter, $model, onInput } from "../solid-utils";
 import TestEditor from "./test-editor";
+
+const GAMEID_REGEX = /([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/;
 
 export default function Importer(props: { server: Getter<string>, saveTest: Setter<Test>, theme: string }): JSX.Element {
   const [gameId, setGameId] = createSignal("");
+  const [importState, setImportState] = createSignal("");
   const [currentTest, setCurrentTest] = createSignal(undefined as Test | undefined);
   const [answer, setAnswer] = createSignal("");
 
   const doImport = async () => {
-    const res = await importGame(gameId());
+    setImportState("importing...");
+    const res = await importGame(gameId())
+      .catch(e => {
+        // TODO: improve error messages
+        setImportState(e);
+        throw e;
+      });
+
     const test: Test = {
       id: nanoid(10),
       description: "",
@@ -60,6 +70,21 @@ export default function Importer(props: { server: Getter<string>, saveTest: Sett
     }
   };
 
+  const textToGameId = (val: string): string => {
+    const match = GAMEID_REGEX.exec(val);
+    if (match) {
+      return match[0];
+    }
+    return val;
+  }
+
+  createEffect(() => {
+    const match = GAMEID_REGEX.exec(gameId());
+    if (match) {
+      doImport();
+    }
+  });
+
   return (
     <div class="m-4 p-4 bg-white">
       <h3 class="text-lg text-gray-700">Game importer</h3>
@@ -68,8 +93,8 @@ export default function Importer(props: { server: Getter<string>, saveTest: Sett
           <Show when={!currentTest()}>
             <div>
               <span>Game ID:</span>
-              <input class="py-0 rounded border-gray-400 mx-2" type="text" value={gameId()} onBlur={(e) => setGameId((e.target as HTMLInputElement).value)} />
-              <button class="bg-blue-400 text-white px-2 font-bold rounded" onclick={() => doImport()}>Import game</button>
+              <input class="py-0 rounded border-gray-400 mx-2 w-80 inline-block" type="text" placeholder="Game ID or url" use:$model={onInput(gameId, val => setGameId(textToGameId(val)))} />
+              <span>{importState}</span>
             </div>
           </Show>
           <Show when={currentTest()}>

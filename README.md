@@ -2,19 +2,28 @@
 
 Check it out at https://jfgodoy.github.io/battlesnake-tester
 
-The app allow you to import a game played in https://play.battlesnake.com/, navigate all the turns and create a test
-for your server.
+The app allow you to import games played in https://play.battlesnake.com/, navigate all the turns and create tests
+for your server. The test created are saved locally in your browser in a IndexedDB.
 
 
 This project is in active development. Suggestions of new features are welcome.
 
+Leave a star if you found this project useful :star:
+
+## Features
+
+- allow import a game from https://play.battlesnake.com/ and create a test
+- remove a saved test
+- change description of test
+- export test as curl
+
 ## TODO List
 
-- [x] remove a saved test
 - [ ] edit a saved test
-- [ ] export test to curl
 - [ ] export/import database
 - [ ] get played games for your snake in https://play.battlesnake.com/, to easily import them
 
+## Acknowledgement
 
-Leave a star if you found this project useful :star:
+Many thanks to the team [BattlesnakeOfficial](https://github.com/BattlesnakeOfficial) and its [board](https://github.com/BattlesnakeOfficial/board) project from were I borrowed the display
+

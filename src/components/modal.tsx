@@ -1,4 +1,4 @@
-import { Show, JSX, PropsWithChildren } from "solid-js";
+import { Show, JSX, PropsWithChildren, onCleanup } from "solid-js";
 import { Portal } from "solid-js/web";
 import { Getter, Setter } from "../solid-utils/index";
 import IconBiX from "~icons/bi/x";
@@ -6,6 +6,16 @@ import IconBiX from "~icons/bi/x";
 export default function Modal(props: PropsWithChildren<{title: string, switch: [Getter<boolean>, Setter<boolean>]}>): JSX.Element {
   const [modal, setModal] = props.switch;
   const closeModal = () => setModal(false);
+  const closeOnEsc = (e: KeyboardEvent) => {
+    if (e.key == "Escape") {
+      closeModal();
+    }
+  };
+  document.addEventListener("keydown", closeOnEsc);
+
+  onCleanup(() => {
+    document.removeEventListener("keydown", closeOnEsc);
+  });
 
   return (
     <Show when={modal()}>

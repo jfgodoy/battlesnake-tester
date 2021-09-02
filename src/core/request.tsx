@@ -6,6 +6,7 @@ export interface MoveRequest {
     snakes: SnakeRequest[],
     width: number,
     height: number,
+    hazards: Coord[],
   },
   game: {
     id: string,

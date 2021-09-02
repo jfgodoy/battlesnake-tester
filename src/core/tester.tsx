@@ -12,6 +12,7 @@ export function createRequestData(test: Test): MoveRequest | string {
       snakes: snakes,
       width: test.game.width,
       height: test.game.height,
+      hazards: frame.hazards,
     },
     game: {
       id: test.game.id,

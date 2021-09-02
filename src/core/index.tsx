@@ -3,7 +3,7 @@ import { createStore, Store, SetStoreFunction } from "solid-js/store";
 import { Test, TestResult, Passed, Failed, Pending } from "../model";
 import { indexdbTestStore } from "./test-store";
 import { signalFromStore, SignalFromStoreReturnType } from "../solid-utils";
-import { runTest } from "../core/tester";
+import { runTest, createRequestData } from "../core/tester";
 
 const testStorage = indexdbTestStore();
 
@@ -123,5 +123,11 @@ export function signalFor<PathType extends string>(path: PathType extends "" ? n
   return signalFromStore(state, setState, path);
 }
 
-
+export const asCurl = (test: Test): string => {
+  const reqData = createRequestData(test);
+  if (typeof reqData == "string") {
+    return "Error: " + reqData;
+  }
+  return `curl -H "Content-type:application/json" --data-raw '${JSON.stringify(reqData)}' ${state.server}/move`;
+};
 

@@ -48,6 +48,7 @@ const App: Component = () => {
                   readTest={core.readTest}
                   deleteTest={core.deleteTest}
                   saveTest={core.saveTest}
+                  asCurl={core.asCurl}
                 />
               </Match>
               <Match when={view() == "importer"}>

@@ -2,6 +2,7 @@
 import { createSignal, createMemo, createEffect, batch, Show, Switch, Match, For, JSX } from "solid-js";
 import Board from "./board";
 import SnakeComponent from "./snake";
+import Modal from "./modal";
 import { Test, TestResult, Passed, Failed, Pending } from "../model";
 import { prefetchSvgs } from "../utils/render";
 import { Getter, $model, onBlur } from "../solid-utils";
@@ -19,6 +20,7 @@ type DisplayTestProps = {
   readTest: (id: string) => Promise<Test>,
   saveTest: (test: Test) => Promise<void>,
   deleteTest: (id: string) => Promise<void>,
+  asCurl: (test: Test) => string,
 }
 
 export default function DisplayTest(props: DisplayTestProps): JSX.Element {
@@ -125,6 +127,8 @@ export default function DisplayTest(props: DisplayTestProps): JSX.Element {
     };
   };
 
+  const [showCurl, setShowCurl] = createSignal(false);
+
   return (
     <div class="flex flex-col m-4 bg-white">
       <Show when={selectedTest()}>
@@ -138,16 +142,16 @@ export default function DisplayTest(props: DisplayTestProps): JSX.Element {
               onkeydown={(e) => { if (e.key == "Enter") {(e.target as HTMLInputElement).blur(); }  }}
             />
             <div class="relative">
-              <button onclick={() => setMenu(!showMenu())} class="relative z-10 block rounded-md bg-white m-2 ml-4 focus:outline-none">
+              <button onclick={() => setMenu(!showMenu())} class="relative block rounded-md bg-white p-2 ml-1 border border-white hover:border-gray-200 focus:outline-none">
                 <IconMoreVertical class="text-gray-500" />
               </button>
 
               <Show when={showMenu()}>
                 <div onclick={() => setMenu(false)} class="fixed inset-0 h-full w-full z-10"></div>
                 <div class="absolute right-0 mt-2 py-2 w-48 bg-white rounded-md shadow-md z-20 border border-gray-100">
-                  {/* <button onclick={() => {setMenu(false);  console.log("edit");}} class="block w-full text-left px-4 py-2 text-sm capitalize text-gray-700 hover:bg-yellow-100">
-                    edit
-                  </button> */}
+                  <button onclick={() => {setShowCurl(true); setMenu(false);}} class="block w-full text-left px-4 py-2 text-sm capitalize text-gray-700 hover:bg-yellow-100">
+                    export as curl
+                  </button>
                   <button onclick={handleAction(props.deleteTest, test.id)} class="block w-full text-left px-4 py-2 text-sm capitalize text-red-700 hover:bg-yellow-100">
                     delete
                   </button>
@@ -189,6 +193,9 @@ export default function DisplayTest(props: DisplayTestProps): JSX.Element {
             <p>Your Answer: <FormattedAnswer testResult={testResult()} /> </p>
             <button class="bg-blue-400 text-white mt-2 px-2 font-bold rounded" onclick={() => props.runSingleTest(test.id)}>Run Test</button>
           </div>
+          <Modal title="Export as curl" switch={[showCurl, setShowCurl]}>
+            <div class="flex-1 p-4">{() => <textarea class="w-full h-full border-gray-200">{props.asCurl(selectedTest()!)}</textarea> }</div>
+          </Modal>
         </>}
       </Show>
     </div>

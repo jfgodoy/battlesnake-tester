@@ -1,9 +1,9 @@
 import { Direction, DirectionStr, Test, Passed, Failed } from "../model";
 import { createSnakeRequest, MoveRequest, sendRequest } from "./request";
 
-export async function runTest(url: string, test: Test): Promise<Passed | Failed>  {
+export function createRequestData(test: Test): MoveRequest | string {
   const frame = test.frames.find(fr => fr.turn == test.frameToTest);
-  if (!frame) { return {type: "failed", msg: "frame to test not found" };}
+  if (!frame) { return "frame to test not found"; }
   const you = createSnakeRequest(frame.snakes[test.snakeToTest]);
   const snakes = frame.snakes.filter(s => !s.death).map(createSnakeRequest);
   const moveRequest: MoveRequest = {
@@ -21,6 +21,14 @@ export async function runTest(url: string, test: Test): Promise<Passed | Failed>
     turn: frame.turn,
     you,
   };
+  return moveRequest;
+}
+
+export async function runTest(url: string, test: Test): Promise<Passed | Failed>  {
+  const moveRequest = createRequestData(test);
+  if (typeof moveRequest == "string") {
+    return {type: "failed", msg: moveRequest};
+  }
   const result = await sendRequest(url, moveRequest);
   const expected: DirectionStr[] = test.expectedResult;
   switch (result.type) {

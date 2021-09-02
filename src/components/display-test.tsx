@@ -7,9 +7,6 @@ import { Test, TestResult, Passed, Failed, Pending } from "../model";
 import { prefetchSvgs } from "../utils/render";
 import { Getter, $model, onBlur } from "../solid-utils";
 import * as R from "ramda";
-import IconMoreVertical from "~icons/feather/more-vertical";
-import IconHeart from "~icons/clarity/heart-solid";
-import IconLength from "~icons/el/resize-horizontal";
 
 
 type DisplayTestProps = {
@@ -143,7 +140,7 @@ export default function DisplayTest(props: DisplayTestProps): JSX.Element {
             />
             <div class="relative">
               <button onclick={() => setMenu(!showMenu())} class="relative block rounded-md bg-white p-2 ml-1 border border-white hover:border-gray-200 focus:outline-none">
-                <IconMoreVertical class="text-gray-500" />
+                <IconFeatherMoreVertical class="text-gray-500" />
               </button>
 
               <Show when={showMenu()}>
@@ -180,9 +177,9 @@ export default function DisplayTest(props: DisplayTestProps): JSX.Element {
                   <tr class="" style={{opacity: snake.death ? 0.2 : 1}}>
                     <td class="pr-2 py-1" style="font-size:0"><SnakeComponent color={snake.color} head={snake.headType} tail={snake.tailType}/></td>
                     <td class="text-right tabular-nums">{snake.body.length}</td>
-                    <td><IconLength class="text-gray-500"/></td>
+                    <td><IconElResizeHorizontal class="text-gray-500"/></td>
                     <td class="text-right tabular-nums w-10">{snake.health}</td>
-                    <td><IconHeart class="text-red-500" /></td>
+                    <td><IconClarityHeartSolid class="text-red-500" /></td>
                   </tr>
                 )}
               </For>

@@ -194,7 +194,7 @@ export default function DisplayTest(props: DisplayTestProps): JSX.Element {
             <button class="bg-blue-400 text-white mt-2 px-2 font-bold rounded" onclick={() => props.runSingleTest(test.id)}>Run Test</button>
           </div>
           <Modal title="Export as curl" switch={[showCurl, setShowCurl]}>
-            <div class="flex-1 p-4">{() => <textarea class="w-full h-full border-gray-200">{props.asCurl(selectedTest()!)}</textarea> }</div>
+            <div class="flex-1 p-4">{() => <textarea readonly class="w-full h-full border-gray-200">{props.asCurl(selectedTest()!)}</textarea> }</div>
           </Modal>
         </>}
       </Show>

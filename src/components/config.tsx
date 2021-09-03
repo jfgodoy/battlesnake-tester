@@ -1,15 +1,16 @@
 import { Switch, Match, createEffect, createResource, JSX } from "solid-js";
 import { Setter, Signal, onBlur, $model, $autoresize } from "../solid-utils";
 import SnakeComponent from "./snake";
+import { Snake } from "../model";
 
-export default function Config(props: { server: Signal<string>, style: Signal<{color: string, head: string, tail: string} | undefined>, setView: Setter<string>}): JSX.Element {
+export default function Config(props: { server: Signal<string>, style: Signal<Pick<Snake, "color" | "headType" | "tailType"> | undefined>, setView: Setter<string>}): JSX.Element {
   const [server, setServer] = props.server;
   const [style, setStyle] = props.style;
 
   const fetchStyle = async (server: string) => {
     const resp = await fetch(server).then(res => res.json());
     const {color, head, tail} = resp;
-    return {color, head, tail};
+    return {color, headType: head, tailType: tail};
   };
 
   const [resource, { refetch }] = createResource(server, fetchStyle);
@@ -33,7 +34,7 @@ export default function Config(props: { server: Signal<string>, style: Signal<{c
           </>}
         </Match>
         <Match when={style()}>
-          {(s) => <SnakeComponent class="mx-2" color={s.color} head={s.head} tail={s.tail} />}
+          {(s) => <SnakeComponent class="mx-2" color={s.color} head={s.headType} tail={s.tailType} />}
         </Match>
       </Switch>
       <button class="bg-blue-400 text-white ml-8 px-2 font-bold rounded" onclick={() => props.setView("importer")}>Import Game</button>

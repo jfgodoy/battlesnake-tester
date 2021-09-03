@@ -1,6 +1,6 @@
 import { createMemo } from "solid-js";
 import { createStore, Store, SetStoreFunction } from "solid-js/store";
-import { Test, TestResult, Passed, Failed, Pending } from "../model";
+import { Test, TestResult, Passed, Failed, Pending, Snake } from "../model";
 import { indexdbTestStore } from "./test-store";
 import { signalFromStore, SignalFromStoreReturnType } from "../solid-utils";
 import { runTest, createRequestData } from "../core/tester";
@@ -10,7 +10,7 @@ const testStorage = indexdbTestStore();
 const storeDefaults = {
   server: "http://localhost:8080",
   testedSnake: {
-    style: undefined as {color: string, head: string, tail: string} | undefined,
+    style: undefined as Pick<Snake, "color" | "headType" | "tailType"> | undefined,
   },
   testResults: [] as TestResult[],
   selected: 0,

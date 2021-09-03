@@ -3,7 +3,7 @@ import { createSignal, createMemo, createEffect, batch, Show, Switch, Match, For
 import Board from "./board";
 import SnakeComponent from "./snake";
 import Modal from "./modal";
-import { Test, TestResult, Passed, Failed, Pending } from "../model";
+import { Test, TestResult, Passed, Failed, Pending, Snake } from "../model";
 import { prefetchSvgs } from "../utils/render";
 import { Getter, $model, onBlur } from "../solid-utils";
 import * as R from "ramda";
@@ -11,7 +11,7 @@ import * as R from "ramda";
 
 type DisplayTestProps = {
   theme: string,
-  mySnakeStyle: Getter<{color: string, head: string, tail: string} | undefined>,
+  mySnakeStyle: Getter<Pick<Snake, "color" | "headType" | "tailType"> | undefined>,
   testResult: Getter<TestResult>,
   runSingleTest: (id: string) => unknown,
   readTest: (id: string) => Promise<Test>,

@@ -1,7 +1,8 @@
-import { colors, themes } from "../theme/index";
-import { Snake, Game, Frame, Direction } from "../model";
-import { createRenderableSnake, PartType, RenderableSnake, SnakePart } from "../utils/render";
-import { createMemo, JSX } from "solid-js";
+import { colors, themes } from "../../theme/index";
+import { Snake, Direction } from "../../model";
+import { createRenderableSnake, PartType, RenderableSnake, SnakePart } from "../../utils/render";
+import { JSX } from "solid-js";
+import { GridOptions } from "./index";
 
 const DEAD_OPACITY = 0.1;
 const OVERLAP_OPACITY = 0.3;
@@ -403,17 +404,9 @@ function renderTailPart(snake: RenderableSnake, snakeIndex: number, part: SnakeP
   );
 }
 
-interface GridOptions {
-  frame: Frame,
-  game: Game,
-  maxWidth: number,
-  maxHeight: number,
-  x:number,
-  y:number,
-  theme: string,
-}
 
-function renderGrid(props: GridOptions) {
+
+export function renderGrid(props: GridOptions): JSX.Element {
   const unsortedSnakes = props.frame.snakes || [];
   const food = props.frame.food || [];
   const hazards = props.frame.hazards || [];
@@ -524,10 +517,3 @@ function renderGrid(props: GridOptions) {
   );
 }
 
-function Grid(props: GridOptions): JSX.Element {
-  // hack to rerender all the Grid
-  const el = createMemo(() => renderGrid(props));
-  return el;
-}
-
-export default Grid;

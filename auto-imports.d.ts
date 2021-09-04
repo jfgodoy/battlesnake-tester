@@ -5,5 +5,6 @@ declare global {
   const IconElResizeHorizontal: typeof import('~icons/el/resize-horizontal')['default']
   const IconClarityHeartSolid: typeof import('~icons/clarity/heart-solid')['default']
   const IconBiX: typeof import('~icons/bi/x')['default']
+  const IconOcticonTriangleRight: typeof import('~icons/octicon/triangle-right')['default']
 }
 export {}

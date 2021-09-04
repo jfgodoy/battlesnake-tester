@@ -72,7 +72,8 @@ export default function DisplayTest(props: DisplayTestProps): JSX.Element {
       const frames = test.frames;
       const lastFrame = frames[frames.length - 1];
       const deaths = lastFrame.snakes.map(s => s.death ? s.death.turn : lastFrame.turn + 1);
-      const pairs = R.zip(frame.snakes, deaths);
+      const snakes: Array<Snake & {selected: boolean}> = frame.snakes.map((s, i) => ({...s, selected: i == test.snakeToTest}));
+      const pairs = R.zip(snakes, deaths);
       const sortedPairs = R.sortBy(pair => -pair[1], pairs);
       return sortedPairs.map(pair => pair[0]);
     }
@@ -175,6 +176,7 @@ export default function DisplayTest(props: DisplayTestProps): JSX.Element {
               <For each={snakesSortedByDeath()}>
                 {(snake) => (
                   <tr class="" style={{opacity: snake.death ? 0.2 : 1}}>
+                    <td><IconOcticonTriangleRight class="text-gray-200" classList={{"text-blue-400": snake.selected}} /></td>
                     <td class="pr-2 py-1" style="font-size:0"><SnakeComponent color={snake.color} head={snake.headType} tail={snake.tailType}/></td>
                     <td class="text-right tabular-nums">{snake.body.length}</td>
                     <td><IconElResizeHorizontal class="text-gray-500"/></td>

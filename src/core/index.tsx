@@ -95,7 +95,9 @@ export async function runSingleTest(id: string): Promise<Passed | Failed> {
   const res = await runTest(`${state.server}/move`, test);
   const found = state.testResults.findIndex(tr => tr.id == id);
   if (found >= 0) {
-    setState("testResults", found, "result", res);
+    // set state merge objects, so we create a cleaned result
+    const clean = {type: undefined, move: undefined, msg: undefined};
+    setState("testResults", found, "result", {...clean, ...res});
   }
   return res;
 }

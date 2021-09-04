@@ -134,7 +134,7 @@ export default function DisplayTest(props: DisplayTestProps): JSX.Element {
             <input
               type="text"
               value={test.description}
-              class="border border-opacity-0 border-gray-300 rounded hover:border-opacity-100  cursor-default hover:cursor-text focus-within:cursor-text w-full"
+              class="border border-opacity-0 border-gray-300 rounded hover:border-opacity-100 cursor-default hover:cursor-text focus-within:cursor-text w-full overflow-ellipsis"
               use:$model={onBlur(getter("description"), saver("description"))}
               onkeydown={(e) => { if (e.key == "Enter") {(e.target as HTMLInputElement).blur(); }  }}
             />

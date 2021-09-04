@@ -6,5 +6,9 @@ declare global {
   const IconClarityHeartSolid: typeof import('~icons/clarity/heart-solid')['default']
   const IconBiX: typeof import('~icons/bi/x')['default']
   const IconOcticonTriangleRight: typeof import('~icons/octicon/triangle-right')['default']
+  const IconTypcnArrowUpThick: typeof import('~icons/typcn/arrow-up-thick')['default']
+  const IconTypcnArrowDownThick: typeof import('~icons/typcn/arrow-down-thick')['default']
+  const IconTypcnArrowLeftThick: typeof import('~icons/typcn/arrow-left-thick')['default']
+  const IconTypcnArrowRightThick: typeof import('~icons/typcn/arrow-right-thick')['default']
 }
 export {}

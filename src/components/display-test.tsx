@@ -1,9 +1,9 @@
 
-import { createSignal, createMemo, createEffect, batch, Show, Switch, Match, For, JSX } from "solid-js";
+import { createSignal, createMemo, createEffect, batch, Show, For, JSX } from "solid-js";
 import Board from "./board";
 import SnakeComponent from "./snake";
 import Modal from "./modal";
-import { Test, TestResult, Passed, Failed, Pending, Snake } from "../model";
+import { Test, TestResult, Snake, DirectionStr } from "../model";
 import { prefetchSvgs } from "../utils/render";
 import { Getter, $model, onBlur } from "../solid-utils";
 import * as R from "ramda";
@@ -94,29 +94,6 @@ export default function DisplayTest(props: DisplayTestProps): JSX.Element {
     }
   };
 
-  const FormattedAnswer = (props: {testResult: TestResult }) => {
-    const result = createMemo(() => props.testResult.result);
-    function matches<S extends T, T=unknown>(e:T, predicate:((e:T) => e is S)):S|false {
-      return predicate(e) ? e : false;
-    }
-    const isPassed = (e: Passed | Failed | Pending):e is Passed => e.type == "passed";
-    const isFailed = (e: Passed | Failed | Pending):e is Failed => e.type == "failed";
-    const isPending = (e: Passed | Failed | Pending):e is Pending => e.type == "pending";
-    return (
-      <Switch>
-        <Match when={matches(result(), isPending)}>
-          <span></span>
-        </Match>
-        <Match when={matches(result(), isPassed)}>
-          {(item) => <span style="color:green">{item.move}</span>}
-        </Match>
-        <Match when={matches(result(), isFailed)}>
-          {(item) => <span style="color:red">{item.move || item.msg}</span>}
-        </Match>
-      </Switch>
-    );
-  };
-
   const [showMenu, setMenu] = createSignal(false);
   const handleAction = <T extends Array<unknown>>(fn: (...args: T) => void, ...args: T): (() => void) => {
     return () => {
@@ -126,6 +103,21 @@ export default function DisplayTest(props: DisplayTestProps): JSX.Element {
   };
 
   const [showCurl, setShowCurl] = createSignal(false);
+
+  const isOkAnswer = (dir: DirectionStr) => {
+    const tr = testResult();
+    return tr.result.type == "passed" && tr.result.move == dir;
+  };
+
+  const isWrongAnswer = (dir: DirectionStr) => {
+    const tr = testResult();
+    return tr.result.type == "failed" && tr.result.move == dir;
+  };
+
+  const failedMsg = () => {
+    const tr = testResult();
+    return (tr.result.type == "failed" && !tr.result.move) ? tr.result.msg : "";
+  };
 
   return (
     <div class="flex flex-col m-4 bg-white">
@@ -188,8 +180,25 @@ export default function DisplayTest(props: DisplayTestProps): JSX.Element {
             </table>
           </div>
           <div class="p-4">
-            <p>Expected: {test.expectedResult.join(" or ") }</p>
-            <p>Your Answer: <FormattedAnswer testResult={testResult()} /> </p>
+            <p class="text-gray-900">
+              <span class="inline-block w-24">Saved test:</span>
+              <span>Turn {test.frameToTest}</span>
+            </p>
+            <p>
+              <span class="inline-block w-24 text-gray-800">Expected:</span>
+              <button class="bg-gray-200 rounded p-1 text-white mr-2" classList={{"bg-blue-400": test.expectedResult.includes("Up")}}><IconTypcnArrowUpThick /></button>
+              <button class="bg-gray-200 rounded p-1 text-white mr-2" classList={{"bg-blue-400": test.expectedResult.includes("Down")}}><IconTypcnArrowDownThick /></button>
+              <button class="bg-gray-200 rounded p-1 text-white mr-2" classList={{"bg-blue-400": test.expectedResult.includes("Left")}}><IconTypcnArrowLeftThick /></button>
+              <button class="bg-gray-200 rounded p-1 text-white mr-2" classList={{"bg-blue-400": test.expectedResult.includes("Right")}}><IconTypcnArrowRightThick /></button>
+            </p>
+            <p>
+              <span class="inline-block w-24 text-gray-800">Answered:</span>
+              <button class="bg-gray-200 rounded p-1 text-white mr-2" classList={{"bg-green-400": isOkAnswer("Up"), "bg-red-400": isWrongAnswer("Up")}}><IconTypcnArrowUpThick /></button>
+              <button class="bg-gray-200 rounded p-1 text-white mr-2" classList={{"bg-green-400": isOkAnswer("Down"), "bg-red-400": isWrongAnswer("Down")}}><IconTypcnArrowDownThick /></button>
+              <button class="bg-gray-200 rounded p-1 text-white mr-2" classList={{"bg-green-400": isOkAnswer("Left"), "bg-red-400": isWrongAnswer("Left")}}><IconTypcnArrowLeftThick /></button>
+              <button class="bg-gray-200 rounded p-1 text-white mr-2" classList={{"bg-green-400": isOkAnswer("Right"), "bg-red-400": isWrongAnswer("Right")}}><IconTypcnArrowRightThick /></button>
+              <span class="text-red-500">{failedMsg()}</span>
+            </p>
             <button class="bg-blue-400 text-white mt-2 px-2 font-bold rounded" onclick={() => props.runSingleTest(test.id)}>Run Test</button>
           </div>
           <Modal title="Export as curl" switch={[showCurl, setShowCurl]}>

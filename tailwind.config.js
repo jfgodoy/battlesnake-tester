@@ -3,6 +3,9 @@ module.exports = {
   darkMode: false, // or 'media' or 'class'
   theme: {
     extend: {
+      width: {
+        84: "21rem",
+      },
       minWidth: {
         px: "1px",
         0: "0px",

@@ -1,4 +1,4 @@
-import { createSignal, createEffect, Show, JSX } from "solid-js";
+import { createSignal, createEffect, Show, JSX, onMount } from "solid-js";
 import { nanoid } from "nanoid";
 import { Test } from "../model";
 import { importGame } from "../core/importer";
@@ -85,6 +85,9 @@ export default function Importer(props: { server: Getter<string>, saveTest: Sett
     }
   });
 
+  let gameIdInput: HTMLInputElement | undefined;
+  onMount(() => gameIdInput?.focus());
+
   return (
     <div class="m-4 p-4 bg-white">
       <h3 class="text-lg text-gray-700">Game importer</h3>
@@ -93,8 +96,8 @@ export default function Importer(props: { server: Getter<string>, saveTest: Sett
           <Show when={!currentTest()}>
             <div>
               <span>Game ID:</span>
-              <input class="py-0 rounded border-gray-400 mx-2 w-80 inline-block" type="text" placeholder="Game ID or url" use:$model={onInput(gameId, val => setGameId(textToGameId(val)))} />
-              <span>{importState}</span>
+              <input ref={gameIdInput} class="py-0 rounded border-gray-400 mx-2 w-84 inline-block" type="text" placeholder="Game ID or url" use:$model={onInput(gameId, val => setGameId(textToGameId(val)))} />
+              <p>{importState}</p>
             </div>
           </Show>
           <Show when={currentTest()}>

@@ -59,7 +59,7 @@ export default function DisplayTest(props: DisplayTestProps): JSX.Element {
     const frame = test?.frames.find(fr => fr.turn == displayTurn());
     if (test && frame) {
       // use styles from config in the tested snake
-      const snakes = [...frame.snakes];
+      const snakes = frame.snakes.map(s => ({...s}));
       Object.assign(snakes[test.snakeToTest], mySnakeStyle());
       return {...frame, snakes};
     }
@@ -72,7 +72,7 @@ export default function DisplayTest(props: DisplayTestProps): JSX.Element {
       const frames = test.frames;
       const lastFrame = frames[frames.length - 1];
       const deaths = lastFrame.snakes.map(s => s.death ? s.death.turn : lastFrame.turn + 1);
-      const snakes: Array<Snake & {selected: boolean}> = frame.snakes.map((s, i) => ({...s, selected: i == test.snakeToTest}));
+      const snakes: Array<Snake & {idx: number}> = frame.snakes.map((s, i) => ({...s, idx: i}));
       const pairs = R.zip(snakes, deaths);
       const sortedPairs = R.sortBy(pair => -pair[1], pairs);
       return sortedPairs.map(pair => pair[0]);
@@ -127,6 +127,12 @@ export default function DisplayTest(props: DisplayTestProps): JSX.Element {
     props.saveTest(modifiedTest);
   };
 
+  const changeSelectedSnake = (idx: number) => () => {
+    setProp("snakeToTest", idx);
+    const test = selectedTest() || (() => { throw new Error("!"); })();
+    props.saveTest(test);
+  };
+
   return (
     <div class="flex flex-col m-4 bg-white">
       <Show when={selectedTest()}>
@@ -174,16 +180,19 @@ export default function DisplayTest(props: DisplayTestProps): JSX.Element {
             </div>
             <table>
               <For each={snakesSortedByDeath()}>
-                {(snake) => (
-                  <tr class="" style={{opacity: snake.death ? 0.2 : 1}}>
-                    <td><IconOcticonTriangleRight class="text-gray-200" classList={{"text-blue-400": snake.selected}} /></td>
-                    <td class="pr-2 py-1" style="font-size:0"><SnakeComponent color={snake.color} head={snake.headType} tail={snake.tailType}/></td>
-                    <td class="text-right tabular-nums">{snake.body.length}</td>
-                    <td><IconElResizeHorizontal class="text-gray-500"/></td>
-                    <td class="text-right tabular-nums w-10">{snake.health}</td>
-                    <td><IconClarityHeartSolid class="text-red-500" /></td>
-                  </tr>
-                )}
+                {(snake) => {
+                  const opacity = snake.death ? 0.3 : 1;
+                  return (
+                    <tr>
+                      <td><IconOcticonTriangleRight class="text-gray-300" classList={{"text-blue-400": snake.idx == test.snakeToTest}} onclick={changeSelectedSnake(snake.idx)} /></td>
+                      <td class="pr-2 py-1" style={{"font-size": 0, opacity}}><SnakeComponent color={snake.color} head={snake.headType} tail={snake.tailType}/></td>
+                      <td class="text-right tabular-nums" style={{opacity}} >{snake.body.length}</td>
+                      <td style={{opacity}}><IconElResizeHorizontal class="text-gray-500"/></td>
+                      <td class="text-right tabular-nums w-10" style={{opacity}}>{snake.health}</td>
+                      <td style={{opacity}}><IconClarityHeartSolid class="text-red-500" /></td>
+                    </tr>
+                  );
+                }}
               </For>
             </table>
           </div>

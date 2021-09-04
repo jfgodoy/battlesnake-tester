@@ -4,7 +4,11 @@ import { createSnakeRequest, MoveRequest, sendRequest } from "./request";
 export function createRequestData(test: Test): MoveRequest | string {
   const frame = test.frames.find(fr => fr.turn == test.frameToTest);
   if (!frame) { return "frame to test not found"; }
-  const you = createSnakeRequest(frame.snakes[test.snakeToTest]);
+  const snakeToTest = frame.snakes[test.snakeToTest];
+  if (snakeToTest.death) {
+    return "Omae Wa Mou Shindeiru";
+  }
+  const you = createSnakeRequest(snakeToTest);
   const snakes = frame.snakes.filter(s => !s.death).map(createSnakeRequest);
   const moveRequest: MoveRequest = {
     board: {

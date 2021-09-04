@@ -119,6 +119,14 @@ export default function DisplayTest(props: DisplayTestProps): JSX.Element {
     return (tr.result.type == "failed" && !tr.result.move) ? tr.result.msg : "";
   };
 
+  const toggleDir = (dir: DirectionStr) => () => {
+    const test = selectedTest() || (() => { throw new Error("!"); })();
+    const expected = test.expectedResult.includes(dir) ? test.expectedResult.filter(d => d != dir) : test.expectedResult.concat(dir);
+    setProp("expectedResult", expected);
+    const modifiedTest = selectedTest()!;
+    props.saveTest(modifiedTest);
+  };
+
   return (
     <div class="flex flex-col m-4 bg-white">
       <Show when={selectedTest()}>
@@ -186,10 +194,10 @@ export default function DisplayTest(props: DisplayTestProps): JSX.Element {
             </p>
             <p>
               <span class="inline-block w-24 text-gray-800">Expected:</span>
-              <button class="bg-gray-200 rounded p-1 text-white mr-2" classList={{"bg-blue-400": test.expectedResult.includes("Up")}}><IconTypcnArrowUpThick /></button>
-              <button class="bg-gray-200 rounded p-1 text-white mr-2" classList={{"bg-blue-400": test.expectedResult.includes("Down")}}><IconTypcnArrowDownThick /></button>
-              <button class="bg-gray-200 rounded p-1 text-white mr-2" classList={{"bg-blue-400": test.expectedResult.includes("Left")}}><IconTypcnArrowLeftThick /></button>
-              <button class="bg-gray-200 rounded p-1 text-white mr-2" classList={{"bg-blue-400": test.expectedResult.includes("Right")}}><IconTypcnArrowRightThick /></button>
+              <button class="bg-gray-200 rounded p-1 text-white mr-2" classList={{"bg-blue-400": test.expectedResult.includes("Up")}} onclick={toggleDir("Up")}><IconTypcnArrowUpThick /></button>
+              <button class="bg-gray-200 rounded p-1 text-white mr-2" classList={{"bg-blue-400": test.expectedResult.includes("Down")}} onclick={toggleDir("Down")}><IconTypcnArrowDownThick /></button>
+              <button class="bg-gray-200 rounded p-1 text-white mr-2" classList={{"bg-blue-400": test.expectedResult.includes("Left")}} onclick={toggleDir("Left")}><IconTypcnArrowLeftThick /></button>
+              <button class="bg-gray-200 rounded p-1 text-white mr-2" classList={{"bg-blue-400": test.expectedResult.includes("Right")}} onclick={toggleDir("Right")}><IconTypcnArrowRightThick /></button>
             </p>
             <p>
               <span class="inline-block w-24 text-gray-800">Answered:</span>

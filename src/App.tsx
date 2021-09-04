@@ -1,17 +1,28 @@
-import { Component, Switch, Match } from "solid-js";
+import { Component, Switch, Match, createSignal, createMemo, on, PropsWithChildren } from "solid-js";
 import ConfigComponent from "./components/config";
 import ImporterComponent from "./components/importer";
 import DisplayTest from "./components/display-test";
 import TestList from "./components/test-list";
+import { Getter } from "./solid-utils";
 import { themes } from "./theme";
 import * as core from "./core";
 
 const App: Component = () => {
   const [server, setServer] = core.signalFor("server");
-  const [view, setView] = core.signalFor("view");
+  const [view, setViewRaw] = core.signalFor("view");
   const [testResults, _] = core.signalFor("testResults");
   const [style, setStyle] = core.signalFor("testedSnake.style");
   const selectedSignal = core.signalFor("selected");
+  const [tick, setTick] = createSignal(true);
+
+  const setView = (view: string) => {
+    setViewRaw(view);
+    setTick(!tick());
+  };
+
+  function Refresh<T>(props: PropsWithChildren<{on: Getter<T>}>) {
+    return createMemo(on(props.on, () => props.children));
+  }
 
   return (
     <div class="flex flex-col h-screen">
@@ -52,11 +63,13 @@ const App: Component = () => {
                 />
               </Match>
               <Match when={view() == "importer"}>
-                <ImporterComponent
-                  theme={themes.light}
-                  server={server}
-                  saveTest={core.saveTest}
-                />
+                <Refresh on={tick}>
+                  <ImporterComponent
+                    theme={themes.light}
+                    server={server}
+                    saveTest={core.saveTest}
+                  />
+                </Refresh>
               </Match>
             </Switch>
           </div>

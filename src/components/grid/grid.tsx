@@ -1,7 +1,7 @@
 import { colors, themes } from "../../theme/index";
 import { Snake, Direction } from "../../model";
 import { createRenderableSnake, PartType, RenderableSnake, SnakePart } from "../../utils/render";
-import { JSX } from "solid-js";
+import { JSX, PropsWithChildren } from "solid-js";
 import { GridOptions } from "./index";
 
 const DEAD_OPACITY = 0.1;
@@ -11,7 +11,6 @@ const FULL_OPACITY = 1.0;
 
 const CELL_SIZE = 20;
 const CELL_SPACING = 4;
-const FOOD_SIZE = (CELL_SIZE / 3.25).toFixed(2);
 const END_OVERLAP = 0.2;
 const DIRECTIONS_CW = [Direction.Up, Direction.Right, Direction.Down, Direction.Left];
 
@@ -406,10 +405,8 @@ function renderTailPart(snake: RenderableSnake, snakeIndex: number, part: SnakeP
 
 
 
-export function renderGrid(props: GridOptions): JSX.Element {
+export function RenderGrid(props: PropsWithChildren<GridOptions>): JSX.Element {
   const unsortedSnakes = props.frame.snakes || [];
-  const food = props.frame.food || [];
-  const hazards = props.frame.hazards || [];
 
   // Make alive snakes render on top of dead snakes and create renderable snakes
   const renderableSnakes = sortAliveSnakesOnTop(unsortedSnakes).map(s => createRenderableSnake(s));
@@ -447,8 +444,6 @@ export function renderGrid(props: GridOptions): JSX.Element {
     (CELL_SIZE + CELL_SPACING) * props.game.width + CELL_SPACING;
   const viewBoxHeight =
     (CELL_SIZE + CELL_SPACING) * props.game.height + CELL_SPACING;
-
-  const hazardOpacity = parseFloat(colors.hazardOpacity);
 
   return (
     <svg
@@ -494,25 +489,7 @@ export function renderGrid(props: GridOptions): JSX.Element {
         );
       })}
 
-      {food.map(f => (
-        <circle
-          cx={toGridSpaceX(f.x) + CELL_SIZE / 2}
-          cy={toGridSpaceY(f.y, props.game.height) + CELL_SIZE / 2}
-          r={FOOD_SIZE}
-          fill={colors.food}
-        />
-      ))}
-
-      {hazards.map(o => (
-        <rect
-          x={toGridSpaceX(o.x)}
-          y={toGridSpaceY(o.y, props.game.height)}
-          width={CELL_SIZE}
-          height={CELL_SIZE}
-          fill={colors.hazard}
-          fill-opacity={hazardOpacity}
-        />
-      ))}
+      {props.children}
     </svg>
   );
 }

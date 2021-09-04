@@ -9,7 +9,7 @@ import TestEditor from "./test-editor";
 
 const GAMEID_REGEX = /([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/;
 
-export default function Importer(props: { server: Getter<string>, saveTest: Setter<Test>, theme: string }): JSX.Element {
+export default function Importer(props: { server: Getter<string>, saveTest: Setter<Test>}): JSX.Element {
   const [gameId, setGameId] = createSignal("");
   const [importState, setImportState] = createSignal("");
   const [currentTest, setCurrentTest] = createSignal(undefined as Test | undefined);
@@ -101,7 +101,7 @@ export default function Importer(props: { server: Getter<string>, saveTest: Sett
             </div>
           </Show>
           <Show when={currentTest()}>
-              <TestEditor test={[() => currentTest()!, (test: Test) => setCurrentTest(test)]} theme={props.theme}/>
+              <TestEditor test={[() => currentTest()!, (test: Test) => setCurrentTest(test)]}/>
               <Show when={answer()}>
                 <div>
                   <span>your answer: {answer()}</span>

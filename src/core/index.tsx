@@ -48,11 +48,13 @@ const [state, setState] = (function bootstrap(): [Store<MyStore>, SetStoreFuncti
         result: {type: "pending"},
       };
       setState("testResults", l => [...l, testResult]);
+      setState("selected", state.testResults.length - 1);
     }
     // deleted
     if (before && !after) {
       const filtered = state.testResults.filter(t => t.id != before.id);
       setState("testResults", filtered);
+      setState("selected", Math.min(state.testResults.length - 1, state.selected));
     }
     // updated
     if (before && after) {
@@ -115,6 +117,10 @@ export async function runAllTests(): Promise<void> {
   });
 
   setState("testResults", updatedTestResults);
+}
+
+export function runUnsavedTest(test: Test): Promise<Passed | Failed> {
+  return runTest(`${state.server}/move`, test);
 }
 
 export const saveTest = (test: Test): Promise<void> => testStorage.save(test);

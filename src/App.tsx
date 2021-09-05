@@ -54,6 +54,7 @@ const App: Component = () => {
                   mySnakeStyle={style}
                   testResult={core.selectedTestResult}
                   runSingleTest={core.runSingleTest}
+                  runUnsavedTest={core.runUnsavedTest}
                   readTest={core.readTest}
                   deleteTest={core.deleteTest}
                   saveTest={core.saveTest}

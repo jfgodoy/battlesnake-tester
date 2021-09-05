@@ -2,13 +2,16 @@
 // We suggest you to commit this file into source control
 declare global {
   const IconFeatherMoreVertical: typeof import('~icons/feather/more-vertical')['default']
+  const IconBiLightning: typeof import('~icons/bi/lightning')['default']
+  const IconBiBoxArrowDown: typeof import('~icons/bi/box-arrow-down')['default']
+  const IconOcticonRepoForked24: typeof import('~icons/octicon/repo-forked24')['default']
+  const IconOcticonTriangleRight: typeof import('~icons/octicon/triangle-right')['default']
   const IconElResizeHorizontal: typeof import('~icons/el/resize-horizontal')['default']
   const IconClarityHeartSolid: typeof import('~icons/clarity/heart-solid')['default']
-  const IconBiX: typeof import('~icons/bi/x')['default']
-  const IconOcticonTriangleRight: typeof import('~icons/octicon/triangle-right')['default']
   const IconTypcnArrowUpThick: typeof import('~icons/typcn/arrow-up-thick')['default']
   const IconTypcnArrowDownThick: typeof import('~icons/typcn/arrow-down-thick')['default']
   const IconTypcnArrowLeftThick: typeof import('~icons/typcn/arrow-left-thick')['default']
   const IconTypcnArrowRightThick: typeof import('~icons/typcn/arrow-right-thick')['default']
+  const IconBiX: typeof import('~icons/bi/x')['default']
 }
 export {}

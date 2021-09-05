@@ -3,16 +3,18 @@ import { createSignal, createMemo, createEffect, batch, Show, For, JSX } from "s
 import Board from "./board";
 import SnakeComponent from "./snake";
 import Modal from "./modal";
-import { Test, TestResult, Snake, DirectionStr } from "../model";
+import { Test, TestResult, Snake, DirectionStr, Passed, Failed } from "../model";
 import { prefetchSvgs } from "../utils/render";
 import { Getter, $model, onBlur } from "../solid-utils";
 import * as R from "ramda";
+import { nanoid } from "nanoid";
 
 
 type DisplayTestProps = {
   mySnakeStyle: Getter<Pick<Snake, "color" | "headType" | "tailType"> | undefined>,
   testResult: Getter<TestResult>,
   runSingleTest: (id: string) => unknown,
+  runUnsavedTest: (test: Test) => Promise<Passed | Failed>,
   readTest: (id: string) => Promise<Test>,
   saveTest: (test: Test) => Promise<void>,
   deleteTest: (id: string) => Promise<void>,
@@ -25,6 +27,7 @@ export default function DisplayTest(props: DisplayTestProps): JSX.Element {
 
   const [selectedTest, setSelectedTest] = createSignal<Test | undefined>();
   const [displayTurn, setDisplayTurn] = createSignal(0);
+  const [temporalTest, setTemporalTest] = createSignal<{turn: number, move?: DirectionStr, msg?: string} | undefined>();
 
   const getter = <K extends keyof Test>(prop: K) => () => {
     const test = selectedTest() || (() => { throw new Error("!"); })();
@@ -50,6 +53,7 @@ export default function DisplayTest(props: DisplayTestProps): JSX.Element {
     batch(() => {
       setDisplayTurn(turn);
       setSelectedTest(test);
+      setTemporalTest(undefined);
     });
   });
 
@@ -132,6 +136,36 @@ export default function DisplayTest(props: DisplayTestProps): JSX.Element {
     props.saveTest(test);
   };
 
+  const changeTestedTurn = () => {
+    setProp("frameToTest", displayTurn());
+    const test = selectedTest() || (() => { throw new Error("!"); })();
+    props.saveTest(test);
+  };
+
+  const cloneTest = () => {
+    const test = selectedTest() || (() => { throw new Error("!"); })();
+    const newTest = R.clone(test);
+    newTest.id = nanoid(10);
+    newTest.timestamp = Date.now();
+    newTest.description = "(cloned) " + test.description;
+    newTest.frameToTest = displayTurn();
+    props.saveTest(newTest);
+    setSelectedTest(newTest);
+  };
+
+  const testCurrentTurn = async () => {
+    const test = selectedTest() || (() => { throw new Error("!"); })();
+    const newTest = R.clone(test);
+    newTest.frameToTest = displayTurn();
+    newTest.expectedResult = ["Up", "Down", "Left", "Right"];
+    const res = await props.runUnsavedTest(newTest);
+    setTemporalTest({
+      turn: newTest.frameToTest,
+      move: res.move,
+      msg: res.type == "failed" ? res.msg : undefined,
+    });
+  };
+
   return (
     <div class="flex flex-col m-4 bg-white">
       <Show when={selectedTest()}>
@@ -172,8 +206,19 @@ export default function DisplayTest(props: DisplayTestProps): JSX.Element {
                   />
                 }
               </Show>
-              <div>
-                <span>turn:</span><input class="py-0 w-24 text-center focus:ring-0 border-none" type="number" value={displayTurn()} onInput={(e) => handleDisplayTurn(e)} />
+              <div class="flex items-center mr-1">
+                <div class="flex-1">
+                  <span>turn:</span><input class="py-0 w-24 text-center focus:ring-0 border-none" type="number" value={displayTurn()} onInput={(e) => handleDisplayTurn(e)} />
+                </div>
+                <button title="test this turn" class="text-gray-500 p-1 rounded-md border border-white hover:border-gray-200" onclick={testCurrentTurn}>
+                  <IconBiLightning />
+                </button>
+                <button title="use this turn for saved test" class="text-gray-500 p-1 rounded-md border border-white hover:border-gray-200" onclick={changeTestedTurn}>
+                  <IconBiBoxArrowDown />
+                </button>
+                <button title="clone this test" class="text-gray-500 p-1 rounded-md border border-white hover:border-gray-200" onclick={cloneTest}>
+                  <IconOcticonRepoForked24 />
+                </button>
               </div>
             </div>
             <table>
@@ -194,6 +239,22 @@ export default function DisplayTest(props: DisplayTestProps): JSX.Element {
               </For>
             </table>
           </div>
+          <Show when={temporalTest()}>
+            <div class="p-4">
+              <p class="text-gray-900">
+                <span class="inline-block w-24">tested:</span>
+                <span>Turn {temporalTest()?.turn}</span>
+              </p>
+              <p>
+                <span class="inline-block w-24 text-gray-800">Answered:</span>
+                <button class="bg-gray-200 rounded p-1 text-white mr-2" classList={{"bg-green-400": temporalTest()!.move == "Up"}}><IconTypcnArrowUpThick /></button>
+                <button class="bg-gray-200 rounded p-1 text-white mr-2" classList={{"bg-green-400": temporalTest()!.move == "Down"}}><IconTypcnArrowDownThick /></button>
+                <button class="bg-gray-200 rounded p-1 text-white mr-2" classList={{"bg-green-400": temporalTest()!.move == "Left"}}><IconTypcnArrowLeftThick /></button>
+                <button class="bg-gray-200 rounded p-1 text-white mr-2" classList={{"bg-green-400": temporalTest()!.move == "Right"}}><IconTypcnArrowRightThick /></button>
+                <span class="text-red-500">{temporalTest()!.msg}</span>
+              </p>
+            </div>
+          </Show>
           <div class="p-4">
             <p class="text-gray-900">
               <span class="inline-block w-24">Saved test:</span>

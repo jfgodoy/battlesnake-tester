@@ -1,4 +1,4 @@
-import { createSelector, For, Switch, Match, batch, JSX } from "solid-js";
+import { createSelector, For, Switch, Match, batch, createEffect, JSX } from "solid-js";
 import { Signal, Getter, Setter } from "../solid-utils";
 import { TestResult } from "../model";
 
@@ -22,13 +22,17 @@ export default function TestList(props: TestListProps): JSX.Element {
     });
   };
 
+  const scrollToSelected = (el: HTMLElement) => {
+    createEffect(() => el.querySelectorAll("li")[selected()]?.scrollIntoView());
+  };
+
   return (
     <div class="flex flex-col w-full">
       <div class="flex flex-0 justify-between mb-4">
         <p class="font-bold text-gray-500">Tests available:</p>
         <button class="bg-blue-400 text-white px-2 font-bold rounded" onclick={props.runAllTests}>Run all tests</button>
       </div>
-      <div class="overflow-y-auto">
+      <div class="overflow-y-auto" ref={scrollToSelected}>
         <ul>
           <For each={testResults()}>
             {(tr, i) => (

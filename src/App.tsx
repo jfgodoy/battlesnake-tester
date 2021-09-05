@@ -66,6 +66,7 @@ const App: Component = () => {
                   <ImporterComponent
                     server={server}
                     saveTest={core.saveTest}
+                    setView={setView}
                   />
                 </Refresh>
               </Match>

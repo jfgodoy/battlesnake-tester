@@ -3,7 +3,7 @@ import { DirectionStr, Test } from "../model";
 import { Getter, Setter, $model, onBlur } from "../solid-utils";
 import Board from "./board";
 
-export default function TestEditor(props: { test: [Getter<Test>, Setter<Test>], theme: string }): JSX.Element {
+export default function TestEditor(props: { test: [Getter<Test>, Setter<Test>] }): JSX.Element {
   const [test, setTest] = props.test;
 
   const getter = <K extends keyof Test>(prop: K) => () => test()[prop];
@@ -111,7 +111,6 @@ export default function TestEditor(props: { test: [Getter<Test>, Setter<Test>], 
         <Board
           game={test().game}
           frame={frameToTest()}
-          theme={props.theme}
         />
       </div>
     </div>

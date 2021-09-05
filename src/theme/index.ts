@@ -54,9 +54,3 @@ export const breakpoints = {
   xl: "1200px",
   xxl: "1650px"
 };
-
-export const themes = {
-  // Themes
-  dark: "dark",
-  light: "light"
-};

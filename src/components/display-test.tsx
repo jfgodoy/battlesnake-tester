@@ -10,7 +10,6 @@ import * as R from "ramda";
 
 
 type DisplayTestProps = {
-  theme: string,
   mySnakeStyle: Getter<Pick<Snake, "color" | "headType" | "tailType"> | undefined>,
   testResult: Getter<TestResult>,
   runSingleTest: (id: string) => unknown,
@@ -170,7 +169,6 @@ export default function DisplayTest(props: DisplayTestProps): JSX.Element {
                   <Board
                     game={test.game}
                     frame={frame}
-                    theme={props.theme}
                   />
                 }
               </Show>

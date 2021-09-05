@@ -1,7 +1,8 @@
-import { colors, themes } from "../theme/index";
-import { Snake, Game, Frame, Direction } from "../model";
-import { createRenderableSnake, PartType, RenderableSnake, SnakePart } from "../utils/render";
-import { createMemo, JSX } from "solid-js";
+import { colors } from "../../theme/index";
+import { Snake, Direction, Frame } from "../../model";
+import { createRenderableSnake, PartType, RenderableSnake, SnakePart } from "../../utils/render";
+import { JSX } from "solid-js";
+import { RenderCtx } from "./index";
 
 const DEAD_OPACITY = 0.1;
 const OVERLAP_OPACITY = 0.3;
@@ -10,7 +11,6 @@ const FULL_OPACITY = 1.0;
 
 const CELL_SIZE = 20;
 const CELL_SPACING = 4;
-const FOOD_SIZE = (CELL_SIZE / 3.25).toFixed(2);
 const END_OVERLAP = 0.2;
 const DIRECTIONS_CW = [Direction.Up, Direction.Right, Direction.Down, Direction.Left];
 
@@ -167,14 +167,6 @@ function getPartColor(snake: Snake, part: SnakePart): string {
   } else {
     return snake.color;
   }
-}
-
-function range(size: number) {
-  const result: number[] = [];
-  for (let i = 0; i < size; i++) {
-    result.push(i);
-  }
-  return result;
 }
 
 function sortAliveSnakesOnTop(snakes: Snake[]): Snake[] {
@@ -403,30 +395,21 @@ function renderTailPart(snake: RenderableSnake, snakeIndex: number, part: SnakeP
   );
 }
 
-interface GridOptions {
-  frame: Frame,
-  game: Game,
-  maxWidth: number,
-  maxHeight: number,
-  x:number,
-  y:number,
-  theme: string,
-}
 
-function renderGrid(props: GridOptions) {
+
+export default function SnakeComponent(props: {ctx: RenderCtx, frame: Frame}): JSX.Element {
+  const ctx = props.ctx;
   const unsortedSnakes = props.frame.snakes || [];
-  const food = props.frame.food || [];
-  const hazards = props.frame.hazards || [];
 
   // Make alive snakes render on top of dead snakes and create renderable snakes
   const renderableSnakes = sortAliveSnakesOnTop(unsortedSnakes).map(s => createRenderableSnake(s));
 
   // track all of the grid cells that will have a snake part drawn in them.  Successive snake parts
   // drawn in the same cell need to be flagged so they render differently and layer properly
-  const gridCellsWithSnakeParts = Array(props.game.height);
+  const gridCellsWithSnakeParts = Array(ctx.gameHeight);
   for (let i = 0; i < gridCellsWithSnakeParts.length; i++) {
-    gridCellsWithSnakeParts[i] = Array(props.game.width);
-    for (let j = 0; j < props.game.width; j++) {
+    gridCellsWithSnakeParts[i] = Array(ctx.gameWidth);
+    for (let j = 0; j < ctx.gameWidth; j++) {
       gridCellsWithSnakeParts[i][j] = false;
     }
   }
@@ -449,38 +432,8 @@ function renderGrid(props: GridOptions) {
     }
   }
 
-
-  const viewBoxWidth =
-    (CELL_SIZE + CELL_SPACING) * props.game.width + CELL_SPACING;
-  const viewBoxHeight =
-    (CELL_SIZE + CELL_SPACING) * props.game.height + CELL_SPACING;
-
-  const hazardOpacity = parseFloat(colors.hazardOpacity);
-
   return (
-    <svg
-      width={props.maxWidth}
-      height={props.maxHeight}
-      x={props.x}
-      y={props.y}
-      viewBox={`0 0 ${viewBoxWidth} ${viewBoxHeight}`}
-    >
-      {range(props.game.height).map((_, row) =>
-        range(props.game.width).map((_, col) => (
-          <rect
-            x={toGridSpaceX(col)}
-            y={toGridSpaceY(row, props.game.height)}
-            width={CELL_SIZE}
-            height={CELL_SIZE}
-            fill={
-              props.theme === themes.dark
-                ? colors.gridCellBackgroundDark
-                : colors.gridCellBackground
-            }
-          />
-        ))
-      )}
-
+    <>
       {renderableSnakes.map((snake, snakeIndex) => {
         return (
           <g
@@ -494,40 +447,13 @@ function renderGrid(props: GridOptions) {
                   snakeIndex,
                   part,
                   snake.parts.length - partIndex - 1,
-                  props.game.height,
+                  ctx.gameHeight,
                 )
               )}
           </g>
         );
       })}
-
-      {food.map(f => (
-        <circle
-          cx={toGridSpaceX(f.x) + CELL_SIZE / 2}
-          cy={toGridSpaceY(f.y, props.game.height) + CELL_SIZE / 2}
-          r={FOOD_SIZE}
-          fill={colors.food}
-        />
-      ))}
-
-      {hazards.map(o => (
-        <rect
-          x={toGridSpaceX(o.x)}
-          y={toGridSpaceY(o.y, props.game.height)}
-          width={CELL_SIZE}
-          height={CELL_SIZE}
-          fill={colors.hazard}
-          fill-opacity={hazardOpacity}
-        />
-      ))}
-    </svg>
+    </>
   );
 }
 
-function Grid(props: GridOptions): JSX.Element {
-  // hack to rerender all the Grid
-  const el = createMemo(() => renderGrid(props));
-  return el;
-}
-
-export default Grid;

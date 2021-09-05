@@ -4,7 +4,6 @@ import ImporterComponent from "./components/importer";
 import DisplayTest from "./components/display-test";
 import TestList from "./components/test-list";
 import { Getter } from "./solid-utils";
-import { themes } from "./theme";
 import * as core from "./core";
 
 const App: Component = () => {
@@ -53,7 +52,6 @@ const App: Component = () => {
               <Match when={view() == "test" && core.selectedTestResult()}>
                 <DisplayTest
                   mySnakeStyle={style}
-                  theme={themes.light}
                   testResult={core.selectedTestResult}
                   runSingleTest={core.runSingleTest}
                   readTest={core.readTest}
@@ -65,7 +63,6 @@ const App: Component = () => {
               <Match when={view() == "importer"}>
                 <Refresh on={tick}>
                   <ImporterComponent
-                    theme={themes.light}
                     server={server}
                     saveTest={core.saveTest}
                   />

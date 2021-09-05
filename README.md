@@ -14,12 +14,11 @@ Leave a star if you found this project useful :star:
 
 - allow import a game from https://play.battlesnake.com/ and create a test
 - remove a saved test
-- change description of test
+- edit a saved test
 - export test as curl
 
 ## TODO List
 
-- [ ] edit a saved test
 - [ ] export/import database
 - [ ] get played games for your snake in https://play.battlesnake.com/, to easily import them
 

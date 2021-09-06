@@ -19,6 +19,7 @@ type DisplayTestProps = {
   saveTest: (test: Test) => Promise<void>,
   deleteTest: (id: string) => Promise<void>,
   asCurl: (test: Test) => string,
+  asJson: (test: Test) => string,
 }
 
 export default function DisplayTest(props: DisplayTestProps): JSX.Element {
@@ -106,6 +107,7 @@ export default function DisplayTest(props: DisplayTestProps): JSX.Element {
   };
 
   const [showCurl, setShowCurl] = createSignal(false);
+  const [showJson, setShowJson] = createSignal(false);
 
   const isOkAnswer = (dir: DirectionStr) => {
     const tr = testResult();
@@ -188,6 +190,9 @@ export default function DisplayTest(props: DisplayTestProps): JSX.Element {
                 <div class="absolute right-0 mt-2 py-2 w-48 bg-white rounded-md shadow-md z-20 border border-gray-100">
                   <button onclick={() => {setShowCurl(true); setMenu(false);}} class="block w-full text-left px-4 py-2 text-sm capitalize text-gray-700 hover:bg-yellow-100">
                     export as curl
+                  </button>
+                  <button onclick={() => {setShowJson(true); setMenu(false);}} class="block w-full text-left px-4 py-2 text-sm capitalize text-gray-700 hover:bg-yellow-100">
+                    export as JSON
                   </button>
                   <button onclick={handleAction(props.deleteTest, test.id)} class="block w-full text-left px-4 py-2 text-sm capitalize text-red-700 hover:bg-yellow-100">
                     delete
@@ -279,6 +284,9 @@ export default function DisplayTest(props: DisplayTestProps): JSX.Element {
           </div>
           <Modal title="Export as curl" switch={[showCurl, setShowCurl]}>
             <div class="flex-1 p-4">{() => <textarea readonly class="w-full h-full border-gray-200">{props.asCurl(selectedTest()!)}</textarea> }</div>
+          </Modal>
+          <Modal title="Export as json" switch={[showJson, setShowJson]}>
+            <div class="flex-1 p-4">{() => <textarea readonly class="w-full h-full border-gray-200">{props.asJson(selectedTest()!)}</textarea> }</div>
           </Modal>
         </>}
       </Show>

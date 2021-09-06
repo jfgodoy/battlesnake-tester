@@ -63,6 +63,7 @@ const App: Component = () => {
                   deleteTest={core.deleteTest}
                   saveTest={core.saveTest}
                   asCurl={core.asCurl}
+                  asJson={core.asJson}
                 />
               </Match>
               <Match when={view() == "importer"}>

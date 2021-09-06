@@ -141,3 +141,6 @@ export const asCurl = (test: Test): string => {
   return `curl -H "Content-type:application/json" --data-raw '${JSON.stringify(reqData)}' ${state.server}/move`;
 };
 
+export const asJson = (test: Test): string => {
+  return JSON.stringify(test);
+};

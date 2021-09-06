@@ -23,7 +23,7 @@ export default function TestList(props: TestListProps): JSX.Element {
   };
 
   const scrollToSelected = (el: HTMLElement) => {
-    createEffect(() => el.querySelectorAll("li")[selected()]?.scrollIntoView());
+    createEffect(() => el.querySelectorAll("li")[selected()]?.scrollIntoView({block: "nearest"}));
   };
 
   return (

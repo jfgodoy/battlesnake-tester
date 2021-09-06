@@ -14,7 +14,7 @@ const storeDefaults = {
   },
   testResults: [] as TestResult[],
   selected: 0,
-  view: "test",
+  view: "home",
 };
 type MyStore = typeof storeDefaults;
 
@@ -29,6 +29,8 @@ const [state, setState] = (function bootstrap(): [Store<MyStore>, SetStoreFuncti
     const res =  setStateRaw.call(null, ...args);
     const savedProps = JSON.parse(localStorage.getItem("state") || "{}");
     savedProps.server = state.server;
+    savedProps.selected = state.selected;
+    savedProps.view = state.view;
     localStorage.setItem("state", JSON.stringify(savedProps));
     return res;
   };

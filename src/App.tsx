@@ -3,6 +3,7 @@ import ConfigComponent from "./components/config";
 import ImporterComponent from "./components/importer";
 import DisplayTest from "./components/display-test";
 import TestList from "./components/test-list";
+import Home from "./components/home";
 import { Getter } from "./solid-utils";
 import * as core from "./core";
 
@@ -27,7 +28,7 @@ const App: Component = () => {
     <div class="flex flex-col h-screen">
       <header>
         <div class="p-4" style="background-color:#72268c;">
-          <h1 class="text-center text-white text-2xl font-semibold tracking-wide">Battlesnake Tester</h1>
+          <h1 class="text-center text-white text-2xl font-semibold tracking-wide" onclick={() => setView("home")}>Battlesnake Tester</h1>
         </div>
         <div class="p-4 bg-white" style="box-shadow:0 1px 1px 1px rgb(18 106 211 / 8%);" >
           <ConfigComponent
@@ -49,6 +50,9 @@ const App: Component = () => {
         <main class="flex-1 p-4">
           <div class="flex">
             <Switch>
+              <Match when={view() == "home"}>
+                <Home />
+              </Match>
               <Match when={view() == "test" && core.selectedTestResult()}>
                 <DisplayTest
                   mySnakeStyle={style}

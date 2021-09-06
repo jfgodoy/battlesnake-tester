@@ -13,12 +13,24 @@ export interface TestStore {
 
 
 export function indexdbTestStore(): TestStore {
+  let addExamples = false;
   const STORE_NAME = "Tests";
   const dbPromise = openDB("TestStorage", 1, {
-    upgrade(db) {
-      db.createObjectStore(STORE_NAME, {keyPath: "id"});
-    },
-  });
+      async upgrade(db, oldversion) {
+        db.createObjectStore(STORE_NAME, {keyPath: "id"});
+        if (oldversion == 0) {
+          addExamples = true;
+        }
+      },
+    })
+    .then(async db => {
+      if (addExamples) {
+        const examples = (await import("./examples")).default;
+        const store = db.transaction(STORE_NAME, "readwrite").objectStore(STORE_NAME);
+        await Promise.all(examples.map(example => store.put(example)));
+      }
+      return db;
+    });
 
   const subscribers: Subscriber[] = [];
   const notify = (before?: Test, after?: Test) => subscribers.forEach(fn => fn(before, after));

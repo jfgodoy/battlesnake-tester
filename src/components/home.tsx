@@ -2,7 +2,7 @@ import { JSX } from "solid-js";
 
 export default function Home(): JSX.Element {
   return (
-    <div class="flex flex-col m-4 p-6 bg-white max-w-4xl text-gray-700">
+    <div class="flex flex-col m-4 p-6 bg-white max-w-4xl text-gray-700 shadow">
       <h1 class="py-4 text-2xl text-gray-500 font-semibold">Welcome!</h1>
       <p>
         This app allow you to import games played in <a target="_blank" class="text-purple-600" href="https://play.battlesnake.com/">https://play.battlesnake.com/</a>, navigate all the turns and create tests

@@ -60,7 +60,7 @@ export default function Importer(props: { server: Getter<string>, saveTest: Sett
   onMount(() => gameIdInput?.focus());
 
   return (
-    <div class="m-4 p-4 bg-white">
+    <div class="m-4 p-4 bg-white shadow">
       <h3 class="text-lg text-gray-700">Game importer</h3>
       <div class="flex my-4">
         <div class="space-y-2">

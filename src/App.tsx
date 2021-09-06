@@ -39,7 +39,7 @@ const App: Component = () => {
         </div>
       </header>
       <div class="flex flex-1 flex-row mt-1 overflow-hidden">
-        <aside class="flex bg-white w-80 p-4">
+        <aside class="flex bg-white w-80 p-4 shadow">
           <TestList
             runAllTests={core.runAllTests}
             selected={selectedSignal}

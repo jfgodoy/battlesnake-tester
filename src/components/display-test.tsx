@@ -167,7 +167,7 @@ export default function DisplayTest(props: DisplayTestProps): JSX.Element {
   };
 
   return (
-    <div class="flex flex-col m-4 bg-white">
+    <div class="flex flex-col m-4 bg-white shadow">
       <Show when={selectedTest()}>
         {(test) => <>
           <div style="border-bottom:1px solid rgba(210,221,234,.5)" class="flex items-center justify-between px-4 py-4">
@@ -196,7 +196,7 @@ export default function DisplayTest(props: DisplayTestProps): JSX.Element {
               </Show>
             </div>
           </div>
-          <div class="flex items-start flex-wrap p-4">
+          <div class="flex items-start flex-wrap p-6">
             <div class="inline-block">
               <Show when={selectedFrame()}>
                 {(frame) =>
@@ -240,7 +240,7 @@ export default function DisplayTest(props: DisplayTestProps): JSX.Element {
             </table>
           </div>
           <Show when={temporalTest()}>
-            <div class="p-4">
+            <div class="p-6">
               <p class="text-gray-900">
                 <span class="inline-block w-24">tested:</span>
                 <span>Turn {temporalTest()?.turn}</span>
@@ -255,7 +255,7 @@ export default function DisplayTest(props: DisplayTestProps): JSX.Element {
               </p>
             </div>
           </Show>
-          <div class="p-4">
+          <div class="p-6">
             <p class="text-gray-900">
               <span class="inline-block w-24">Saved test:</span>
               <span>Turn {test.frameToTest}</span>

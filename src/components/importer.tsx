@@ -61,12 +61,12 @@ export default function Importer(props: { server: Getter<string>, saveTest: Sett
 
   return (
     <div class="m-4 p-4 bg-white shadow">
-      <h3 class="text-lg text-gray-700">Game importer</h3>
+      <h3 class="text-lg text-gray-700">Create test from game</h3>
       <div class="flex my-4">
         <div class="space-y-2">
           <div>
-            <span>Game ID:</span>
-            <input ref={gameIdInput} class="py-0 rounded border-gray-400 mx-2 w-84 inline-block" type="text" placeholder="Game ID or url" use:$model={onInput(gameId, val => setGameId(textToGameId(val)))} />
+            <span>Game ID or URL:</span>
+            <input ref={gameIdInput} class="py-0 rounded border-gray-400 mx-2 w-84 inline-block" type="text" use:$model={onInput(gameId, val => setGameId(textToGameId(val)))} />
             <p>{importState}</p>
           </div>
         </div>

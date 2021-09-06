@@ -37,7 +37,7 @@ export default function Config(props: { server: Signal<string>, style: Signal<Pi
           {(s) => <SnakeComponent class="mx-2" color={s.color} head={s.headType} tail={s.tailType} />}
         </Match>
       </Switch>
-      <button class="bg-blue-400 text-white ml-8 px-2 font-bold rounded" onclick={() => props.setView("importer")}>Import Game</button>
+      <button class="bg-blue-400 text-white ml-8 px-2 font-bold rounded" onclick={() => props.setView("importer")}>New Test</button>
     </div>
   );
 }

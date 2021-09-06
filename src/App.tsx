@@ -25,7 +25,7 @@ const App: Component = () => {
   }
 
   return (
-    <div class="flex flex-col h-screen">
+    <div class="flex flex-col h-screen min-w-max">
       <header>
         <div class="p-4" style="background-color:#72268c;">
           <h1 class="text-center text-white text-2xl font-semibold tracking-wide" onclick={() => setView("home")}>Battlesnake Tester</h1>
@@ -47,7 +47,7 @@ const App: Component = () => {
             testResults={testResults}
           />
         </aside>
-        <main class="flex-1 p-4">
+        <main class="flex-1 p-4 overflow-y-auto">
           <div class="flex">
             <Switch>
               <Match when={view() == "home"}>

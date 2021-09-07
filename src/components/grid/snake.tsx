@@ -1,7 +1,7 @@
 import { colors } from "../../theme/index";
 import { Snake, Direction, Frame } from "../../model";
 import { createRenderableSnake, PartType, RenderableSnake, SnakePart } from "../../utils/render";
-import { JSX } from "solid-js";
+import { createMemo, JSX } from "solid-js";
 import { RenderCtx } from "./index";
 
 const DEAD_OPACITY = 0.1;
@@ -399,42 +399,45 @@ function renderTailPart(snake: RenderableSnake, snakeIndex: number, part: SnakeP
 
 export default function SnakeComponent(props: {ctx: RenderCtx, frame: Frame}): JSX.Element {
   const ctx = props.ctx;
-  const unsortedSnakes = props.frame.snakes || [];
+  const renderableSnakes = createMemo(() => {
+    const unsortedSnakes = props.frame.snakes || [];
 
-  // Make alive snakes render on top of dead snakes and create renderable snakes
-  const renderableSnakes = sortAliveSnakesOnTop(unsortedSnakes).map(s => createRenderableSnake(s));
+    // Make alive snakes render on top of dead snakes and create renderable snakes
+    const renderableSnakes = sortAliveSnakesOnTop(unsortedSnakes).map(s => createRenderableSnake(s));
 
-  // track all of the grid cells that will have a snake part drawn in them.  Successive snake parts
-  // drawn in the same cell need to be flagged so they render differently and layer properly
-  const gridCellsWithSnakeParts = Array(ctx.gameHeight);
-  for (let i = 0; i < gridCellsWithSnakeParts.length; i++) {
-    gridCellsWithSnakeParts[i] = Array(ctx.gameWidth);
-    for (let j = 0; j < ctx.gameWidth; j++) {
-      gridCellsWithSnakeParts[i][j] = false;
+    // track all of the grid cells that will have a snake part drawn in them.  Successive snake parts
+    // drawn in the same cell need to be flagged so they render differently and layer properly
+    const gridCellsWithSnakeParts = Array(ctx.gameHeight);
+    for (let i = 0; i < gridCellsWithSnakeParts.length; i++) {
+      gridCellsWithSnakeParts[i] = Array(ctx.gameWidth);
+      for (let j = 0; j < ctx.gameWidth; j++) {
+        gridCellsWithSnakeParts[i][j] = false;
+      }
     }
-  }
 
-  // Go through each snake, in the order they will be drawn and mark the cells they will occupy.
-  // flag parts that would be drawn in cells that are already claimed
-  for (let i = 0; i < renderableSnakes.length; i++) {
-    const snake = renderableSnakes[i];
-    if (!isDead(snake)) {
-      for (let x = 0; x < snake.parts.length; x++) {
-        const part = snake.parts[x];
-        if (!isOverlappedByTail(snake, part)) {
-          if (gridCellsWithSnakeParts[part.y][part.x]) {
-            part.shadeForOverlap = true;
-          } else {
-            gridCellsWithSnakeParts[part.y][part.x] = true;
+    // Go through each snake, in the order they will be drawn and mark the cells they will occupy.
+    // flag parts that would be drawn in cells that are already claimed
+    for (let i = 0; i < renderableSnakes.length; i++) {
+      const snake = renderableSnakes[i];
+      if (!isDead(snake)) {
+        for (let x = 0; x < snake.parts.length; x++) {
+          const part = snake.parts[x];
+          if (!isOverlappedByTail(snake, part)) {
+            if (gridCellsWithSnakeParts[part.y][part.x]) {
+              part.shadeForOverlap = true;
+            } else {
+              gridCellsWithSnakeParts[part.y][part.x] = true;
+            }
           }
         }
       }
     }
-  }
+    return renderableSnakes;
+  });
 
   return (
     <>
-      {renderableSnakes.map((snake, snakeIndex) => {
+      {renderableSnakes().map((snake, snakeIndex) => {
         return (
           <g
             opacity={getOpacity(snake)}

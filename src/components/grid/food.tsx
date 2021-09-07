@@ -1,4 +1,4 @@
-import { JSX, For } from "solid-js";
+import { createMemo, JSX, For } from "solid-js";
 import { RenderCtx } from "./index";
 import { Frame } from "../../model";
 import { colors } from "../../theme/index";
@@ -6,9 +6,9 @@ import { colors } from "../../theme/index";
 export default function Food(props:{ctx: RenderCtx, frame: Frame}): JSX.Element {
   const ctx = props.ctx;
   const FOOD_SIZE = (ctx.cellSize / 3.25).toFixed(2);
-  const food = props.frame.food || [];
+  const food = createMemo(() => props.frame.food || []);
   return (
-    <For each={food}>
+    <For each={food()}>
       {(f) =>  (
         <circle
           cx={ctx.toGridSpaceX(f.x) + ctx.cellSize / 2}

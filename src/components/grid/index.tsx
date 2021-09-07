@@ -1,4 +1,4 @@
-import { createMemo, JSX } from "solid-js";
+import { JSX } from "solid-js";
 import { Frame, Game } from "../../model";
 import RenderGrid from "./grid";
 import SnakeComponent from "./snake";
@@ -34,18 +34,13 @@ function Grid(props: GridOptions): JSX.Element {
   };
 
 
-  // hack to rerender all the Grid
-  const el = createMemo(() => {
-    return (
-      <RenderGrid ctx={ctx}>
-        <SnakeComponent ctx={ctx} frame={props.frame} />
-        <Food ctx={ctx} frame={props.frame}/>
-        <Hazard ctx={ctx} frame={props.frame}/>
-      </RenderGrid>
-    );
-  });
-
-  return el;
+  return (
+    <RenderGrid ctx={ctx}>
+      <SnakeComponent ctx={ctx} frame={props.frame} />
+      <Food ctx={ctx} frame={props.frame}/>
+      <Hazard ctx={ctx} frame={props.frame}/>
+    </RenderGrid>
+  );
 }
 
 export default Grid;

@@ -15,6 +15,7 @@ export default function Food(props:{ctx: RenderCtx, frame: Frame}): JSX.Element 
           cy={ctx.toGridSpaceY(f.y) + ctx.cellSize / 2}
           r={FOOD_SIZE}
           fill={colors.food}
+          class="pointer-events-none"
         />
       )}
     </For>

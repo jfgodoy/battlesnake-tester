@@ -441,6 +441,7 @@ export default function SnakeComponent(props: {ctx: RenderCtx, frame: Frame}): J
         return (
           <g
             opacity={getOpacity(snake)}
+            class="pointer-events-none"
           >
             {[...snake.parts]
               .reverse()

@@ -20,6 +20,7 @@ export type RenderCtx = {
 export interface GridOptions {
   frame: Frame,
   game: Game,
+  ref: (el: SVGRectElement) => void,
 }
 
 function Grid(props: GridOptions): JSX.Element {
@@ -35,7 +36,7 @@ function Grid(props: GridOptions): JSX.Element {
 
 
   return (
-    <RenderGrid ctx={ctx}>
+    <RenderGrid ctx={ctx} ref={props.ref}>
       <SnakeComponent ctx={ctx} frame={props.frame} />
       <Food ctx={ctx} frame={props.frame}/>
       <Hazard ctx={ctx} frame={props.frame}/>

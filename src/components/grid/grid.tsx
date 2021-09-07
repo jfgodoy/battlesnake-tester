@@ -10,7 +10,8 @@ function range(size: number) {
   return result;
 }
 
-export default function RenderGrid(props: PropsWithChildren<{ctx: RenderCtx}>): JSX.Element {
+
+export default function RenderGrid(props: PropsWithChildren<{ctx: RenderCtx, ref: (el: SVGRectElement) => void}>): JSX.Element {
   const ctx = props.ctx;
   const viewBoxWidth = (ctx.cellSize + ctx.cellSpacing) * ctx.gameWidth + ctx.cellSpacing;
   const viewBoxHeight = (ctx.cellSize + ctx.cellSpacing) * ctx.gameHeight + ctx.cellSpacing;
@@ -26,6 +27,9 @@ export default function RenderGrid(props: PropsWithChildren<{ctx: RenderCtx}>): 
             width={ctx.cellSize}
             height={ctx.cellSize}
             fill={colors.gridCellBackground}
+            data-x={col}
+            data-y={row}
+            ref={props.ref}
           />
         ))
       )}

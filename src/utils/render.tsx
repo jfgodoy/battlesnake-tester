@@ -83,7 +83,9 @@ function shouldRenderPart(snake: Snake, partIndex: number): boolean {
 
 function formatDirection(type: PartType, snake: Snake, part: Coord, partIndex: number) {
   let direction;
-  if (type === PartType.HEAD) {
+  if (snake.body.length == 1) {
+    direction = Direction.Up;
+  } else if (type === PartType.HEAD) {
     direction = getDirection(snake.body[1], snake.body[0]);
   } else {
     // handle special case where parts overlap

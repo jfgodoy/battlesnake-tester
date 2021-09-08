@@ -5,6 +5,9 @@ export function createRequestData(test: Test): MoveRequest | string {
   const frame = test.frames.find(fr => fr.turn == test.frameToTest);
   if (!frame) { return "frame to test not found"; }
   const snakeToTest = frame.snakes[test.snakeToTest];
+  if (!snakeToTest) {
+    return "snake to test not found";
+  }
   if (snakeToTest.death) {
     return "Omae Wa Mou Shindeiru";
   }

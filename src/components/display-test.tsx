@@ -61,7 +61,10 @@ export default function DisplayTest(props: DisplayTestProps): JSX.Element {
     if (test && frame) {
       // use styles from config in the tested snake
       const snakes = frame.snakes.map(s => ({...s}));
-      Object.assign(snakes[test.snakeToTest], mySnakeStyle());
+      const mySnake = snakes[test.snakeToTest];
+      if (mySnake) {
+        Object.assign(mySnake, mySnakeStyle());
+      }
       return {...frame, snakes};
     }
   });

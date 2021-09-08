@@ -4,7 +4,6 @@ import Board from "./board";
 import SnakeComponent from "./snake";
 import Modal from "./modal";
 import { Test, TestResult, Snake, DirectionStr, Passed, Failed } from "../model";
-import { prefetchSvgs } from "../utils/render";
 import { Getter, $model, onBlur } from "../solid-utils";
 import * as R from "ramda";
 import { nanoid } from "nanoid";
@@ -47,8 +46,6 @@ export default function DisplayTest(props: DisplayTestProps): JSX.Element {
   createEffect(async () => {
     const testId = testResult().id;
     const test = await props.readTest(testId);
-    const snakes = test.frames[0].snakes;
-    await prefetchSvgs(snakes);
     const previousTest = selectedTest();
     const turn = previousTest?.id == testId ? displayTurn() : test.frameToTest;
     batch(() => {

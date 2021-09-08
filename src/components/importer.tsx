@@ -2,7 +2,6 @@ import { createSignal, createEffect, JSX, onMount } from "solid-js";
 import { nanoid } from "nanoid";
 import { Test } from "../model";
 import { importGame } from "../core/importer";
-import { prefetchSvgs } from "../utils/render";
 import { Getter, Setter, $model, onInput } from "../solid-utils";
 import ow from "ow";
 import { TestShape } from "../model.validator";
@@ -32,11 +31,6 @@ export default function Importer(props: { server: Getter<string>, saveTest: Sett
       snakeToTest: 0,
       expectedResult: [],
     };
-
-    const firstFrame = res.frames[0];
-    if (firstFrame) {
-      await prefetchSvgs(firstFrame.snakes);
-    }
 
     await props.saveTest(test);
     props.setView("test");

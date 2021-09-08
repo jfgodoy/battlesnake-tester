@@ -15,7 +15,7 @@ function Board(allProps: BoardOptions & JSX.StylableSVGAttributes): JSX.Element 
   const [props, otherProps] = splitProps(allProps, ["frame", "game", "ref"]);
   const gridProps = mergeProps({ref: () => void 0}, props);
   return (
-    <div class={styles.Board} {...otherProps}>
+    <div {...otherProps}  classList={{[styles.Board]: true}} >
       <Grid {...gridProps} />
     </div>
   );

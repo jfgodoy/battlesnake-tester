@@ -1,4 +1,5 @@
 import * as R from "ramda";
+import { ComponentProps } from "solid-js";
 import { fetchHead, fetchTail, getHead, getTail } from "../core/svg-fetcher";
 import {Snake, Coord, Direction} from "../model";
 
@@ -11,11 +12,12 @@ export async function prefetchSvgs(snakes: Snake[]): Promise<void> {
   await Promise.all(tails.map(fetchTail));
 }
 
+type SVGComponent = (props?: ComponentProps<"svg">) => SVGSVGElement;
 export interface RenderableSnake extends Snake {
   parts: SnakePart[],
   effectiveSpace: number,
-  headSvg: SVGSVGElement,
-  tailSvg: SVGSVGElement,
+  headSvg: SVGComponent,
+  tailSvg: SVGComponent,
 }
 
 export function createRenderableSnake(snake: Snake): RenderableSnake {
@@ -23,8 +25,8 @@ export function createRenderableSnake(snake: Snake): RenderableSnake {
   return Object.assign({}, snake, {
     parts: snake.body.map((_, i) => formatSnakePart(snake, i)),
     effectiveSpace: renderedParts.length,
-    headSvg: getHead(snake.headType)(),
-    tailSvg: getTail(snake.tailType)(),
+    headSvg: getHead(snake.headType),
+    tailSvg: getTail(snake.tailType),
   });
 }
 

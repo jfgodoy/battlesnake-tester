@@ -1,7 +1,7 @@
 import { colors } from "../../theme/index";
 import { Snake, Direction, Frame } from "../../model";
 import { createRenderableSnake, PartType, RenderableSnake, SnakePart, prefetchSvgs } from "../../utils/render";
-import { createResource, Show, JSX } from "solid-js";
+import { createMemo, createResource, Show, JSX } from "solid-js";
 import { RenderCtx } from "./index";
 
 const DEAD_OPACITY = 0.1;
@@ -432,9 +432,9 @@ function prepareSnakes(ctx: RenderCtx, snakes: Snake[]): RenderableSnake[] {
 
 export default function SnakeComponent(props: {ctx: RenderCtx, frame: Frame}): JSX.Element {
   const ctx = props.ctx;
+  const snakes = createMemo(() => props.frame.snakes || []);
 
-  const [renderableSnakes] = createResource(async () => {
-    const snakes = props.frame.snakes || [];
+  const [renderableSnakes] = createResource(snakes, async (snakes) => {
     await prefetchSvgs(snakes);
     return prepareSnakes(ctx, snakes);
   });

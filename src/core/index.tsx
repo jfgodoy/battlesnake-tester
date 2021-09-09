@@ -177,3 +177,8 @@ export const createEmptyTest = async (): Promise<Test> => {
   await saveTest(test);
   return test;
 };
+
+export const importExamples = async (): Promise<void> => {
+  const examples = (await import("./examples")).default;
+  await Promise.all(examples.map(example => saveTest(example)));
+};

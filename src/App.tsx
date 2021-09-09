@@ -47,6 +47,7 @@ const App: Component = () => {
             selected={selectedSignal}
             setView={setView}
             testResults={testResults}
+            importExamples={core.importExamples}
           />
         </aside>
         <main class="flex-1 p-4 overflow-y-auto">

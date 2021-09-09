@@ -1,4 +1,4 @@
-import { createSelector, For, Switch, Match, batch, createEffect, JSX } from "solid-js";
+import { createSelector, Show, For, Switch, Match, batch, createEffect, JSX } from "solid-js";
 import { Signal, Getter, Setter } from "../solid-utils";
 import { TestResult } from "../model";
 
@@ -6,7 +6,8 @@ type TestListProps = {
   runAllTests: () => void,
   selected: Signal<number>,
   setView: Setter<string>,
-  testResults: Getter<TestResult[]>
+  testResults: Getter<TestResult[]>,
+  importExamples: () => Promise<void>,
 }
 
 export default function TestList(props: TestListProps): JSX.Element {
@@ -26,15 +27,24 @@ export default function TestList(props: TestListProps): JSX.Element {
     createEffect(() => el.querySelectorAll("li")[selected()]?.scrollIntoView({block: "nearest"}));
   };
 
+  const ImportExamples = () => {
+    return (<div class="text-center">
+      <p class="text-gray-500">You don't have any tests yet. You can create one by importing a game, or just import some examples to get started.</p>
+      <button class="mt-2 bg-blue-400 text-white px-2 font-bold rounded" onclick={() => props.importExamples()}>Import examples</button>
+    </div>);
+  };
+
   return (
     <div class="flex flex-col w-full">
       <div class="flex flex-0 justify-between mb-4">
         <p class="font-bold text-gray-500">Tests available:</p>
-        <button class="bg-blue-400 text-white px-2 font-bold rounded" onclick={props.runAllTests}>Run all tests</button>
+        <Show when={testResults().length > 0}>
+          <button class="bg-blue-400 text-white px-2 font-bold rounded" onclick={props.runAllTests}>Run all tests</button>
+        </Show>
       </div>
       <div class="overflow-y-auto" ref={scrollToSelected}>
         <ul>
-          <For each={testResults()}>
+          <For each={testResults()} fallback={ImportExamples}>
             {(tr, i) => (
               <li class="flex items-center px-2 py-2 font-medium leading-5" classList={{ "bg-yellow-100": isSelected(i()) }} onclick={() => loadTest(i())}>
                 <Switch>

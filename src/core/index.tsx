@@ -1,6 +1,6 @@
 import { createMemo } from "solid-js";
 import { createStore, Store, SetStoreFunction } from "solid-js/store";
-import { Test, TestResult, Passed, Failed, Pending, Snake } from "../model";
+import { Test, TestResult, Passed, Failed, Pending, Snake, AsyncState } from "../model";
 import { indexdbTestStore } from "./test-store";
 import { signalFromStore, SignalFromStoreReturnType } from "../solid-utils";
 import { runTest, createRequestData } from "../core/tester";
@@ -16,6 +16,7 @@ const storeDefaults = {
   testResults: [] as TestResult[],
   selected: 0,
   view: "home",
+  dbStatus: {type: "loading"} as AsyncState,
 };
 type MyStore = typeof storeDefaults;
 
@@ -36,10 +37,15 @@ const [state, setState] = (function bootstrap(): [Store<MyStore>, SetStoreFuncti
     return res;
   };
 
-  testStorage.list().then(tests => {
-    const testResults: TestResult[] = tests.map(preview => ({...preview, result: {type: "pending"}}));
-    setState("testResults", testResults);
-  });
+  testStorage.list()
+    .then(tests => {
+      const testResults: TestResult[] = tests.map(preview => ({...preview, result: {type: "pending"}}));
+      setState("testResults", testResults);
+      setState("dbStatus", {type: "done"});
+    })
+    .catch(err => {
+      setState("dbStatus", {type: "error", message: err.message});
+    });
 
   testStorage.suscribe((before, after) => {
     // added

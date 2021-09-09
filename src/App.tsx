@@ -13,6 +13,7 @@ const App: Component = () => {
   const [view, setViewRaw] = core.signalFor("view");
   const [testResults, _] = core.signalFor("testResults");
   const [style, setStyle] = core.signalFor("testedSnake.style");
+  const [dbStatus] = core.signalFor("dbStatus");
   const selectedSignal = core.signalFor("selected");
   const [tick, setTick] = createSignal(true);
 
@@ -48,6 +49,7 @@ const App: Component = () => {
             setView={setView}
             testResults={testResults}
             importExamples={core.importExamples}
+            dbStatus={dbStatus}
           />
         </aside>
         <main class="flex-1 p-4 overflow-y-auto">

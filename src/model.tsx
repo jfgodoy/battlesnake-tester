@@ -97,3 +97,5 @@ export function ok<T>(val: T): Ok<T> {
 export function error(msg: string): Error {
   return { type: "error", msg};
 }
+
+export type AsyncState = {type: "initial" | "loading"} | {type: "done"} | {type: "error", message: string}

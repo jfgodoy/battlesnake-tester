@@ -49,7 +49,7 @@ export default function Config(props: ConfigOpts): JSX.Element {
           {(s) => <SnakeComponent class="mx-2" color={s.color} head={s.headType} tail={s.tailType} />}
         </Match>
       </Switch>
-      <button class="bg-blue-400 text-white ml-8 px-2 font-bold rounded" onclick={() => props.setView("importer")}>New Test</button>
+      <button class="bg-blue-400 text-white ml-8 px-2 font-bold rounded" onclick={() => props.setView("importer")}>New test</button>
       <button class="bg-blue-400 text-white ml-8 px-2 font-bold rounded" onclick={boardBuilder}>Board builder</button>
     </div>
   );

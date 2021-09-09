@@ -5,6 +5,7 @@ Check it out at https://jfgodoy.github.io/battlesnake-tester
 The app allow you to import games played in https://play.battlesnake.com/, navigate all the turns and create tests
 for your server. The test created are saved locally in your browser in a IndexedDB.
 
+![image](src/assets/screenshot.png)
 
 This project is in active development. Suggestions of new features are welcome.
 

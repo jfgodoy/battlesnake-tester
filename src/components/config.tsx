@@ -31,6 +31,7 @@ export default function Config(props: ConfigOpts): JSX.Element {
 
   return (
     <div class="flex items-center">
+      <div style="min-width:308px">
       <span class="font-bold text-gray-500">Server:</span>
       <input
         class="ml-1 px-3 rounded bg-gray-100 text-gray-700 round min-w-44 w-0"
@@ -49,6 +50,7 @@ export default function Config(props: ConfigOpts): JSX.Element {
           {(s) => <SnakeComponent class="mx-2" color={s.color} head={s.headType} tail={s.tailType} />}
         </Match>
       </Switch>
+      </div>
       <button class="bg-blue-400 text-white ml-8 px-2 font-bold rounded" onclick={() => props.setView("importer")}>New test</button>
       <button class="bg-blue-400 text-white ml-8 px-2 font-bold rounded" onclick={boardBuilder}>Board builder</button>
     </div>

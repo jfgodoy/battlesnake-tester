@@ -1,0 +1,12 @@
+
+  /* Chrome, Safari, Edge, Opera */
+input.hideSpinner::-webkit-outer-spin-button,
+input.hideSpinner::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input.hideSpinner[type=number] {
+  -moz-appearance: textfield;
+}

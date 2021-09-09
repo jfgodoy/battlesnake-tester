@@ -4,7 +4,7 @@ import Board from "./board";
 import SnakeComponent from "./snake";
 import Modal from "./modal";
 import { Test, TestResult, Snake, DirectionStr, Passed, Failed } from "../model";
-import { Getter, $model, onBlur } from "../solid-utils";
+import { Getter, Setter, $model, onBlur } from "../solid-utils";
 import * as R from "ramda";
 import { nanoid } from "nanoid";
 
@@ -19,6 +19,7 @@ type DisplayTestProps = {
   deleteTest: (id: string) => Promise<void>,
   asCurl: (test: Test) => string,
   asJson: (test: Test) => string,
+  setView: Setter<string>,
 }
 
 export default function DisplayTest(props: DisplayTestProps): JSX.Element {
@@ -193,6 +194,9 @@ export default function DisplayTest(props: DisplayTestProps): JSX.Element {
                   </button>
                   <button onclick={() => {setShowJson(true); setMenu(false);}} class="block w-full text-left px-4 py-2 text-sm capitalize text-gray-700 hover:bg-yellow-100">
                     export as JSON
+                  </button>
+                  <button onclick={() => {props.setView("builder"); setMenu(false);}} class="block w-full text-left px-4 py-2 text-sm capitalize text-gray-700 hover:bg-yellow-100">
+                    edit board
                   </button>
                   <button onclick={handleAction(props.deleteTest, test.id)} class="block w-full text-left px-4 py-2 text-sm capitalize text-red-700 hover:bg-yellow-100">
                     delete

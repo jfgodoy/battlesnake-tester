@@ -12,6 +12,9 @@ declare global {
   const IconTypcnArrowDownThick: typeof import('~icons/typcn/arrow-down-thick')['default']
   const IconTypcnArrowLeftThick: typeof import('~icons/typcn/arrow-left-thick')['default']
   const IconTypcnArrowRightThick: typeof import('~icons/typcn/arrow-right-thick')['default']
+  const IconFaSolidHandPointer: typeof import('~icons/fa-solid/hand-pointer')['default']
+  const IconMdiSnake: typeof import('~icons/mdi/snake')['default']
+  const IconFaSolidTrash: typeof import('~icons/fa-solid/trash')['default']
   const IconBiX: typeof import('~icons/bi/x')['default']
 }
 export {}

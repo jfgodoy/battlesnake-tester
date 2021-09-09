@@ -6,6 +6,7 @@ import TestList from "./components/test-list";
 import Home from "./components/home";
 import { Getter } from "./solid-utils";
 import * as core from "./core";
+import BoardBuilder from "./components/board-builder";
 
 const App: Component = () => {
   const [server, setServer] = core.signalFor("server");
@@ -35,6 +36,7 @@ const App: Component = () => {
             server={[server, setServer]}
             style={[style, setStyle]}
             setView={setView}
+            createEmptyTest={core.createEmptyTest}
           />
         </div>
       </header>
@@ -64,12 +66,23 @@ const App: Component = () => {
                   saveTest={core.saveTest}
                   asCurl={core.asCurl}
                   asJson={core.asJson}
+                  setView={setView}
                 />
               </Match>
               <Match when={view() == "importer"}>
                 <Refresh on={tick}>
                   <ImporterComponent
                     server={server}
+                    saveTest={core.saveTest}
+                    setView={setView}
+                  />
+                </Refresh>
+              </Match>
+              <Match when={view() == "builder" && core.selectedTestResult()}>
+                <Refresh on={tick}>
+                  <BoardBuilder
+                    testResult={core.selectedTestResult}
+                    readTest={core.readTest}
                     saveTest={core.saveTest}
                     setView={setView}
                   />

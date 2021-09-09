@@ -1,9 +1,16 @@
 import { Switch, Match, createEffect, createResource, JSX } from "solid-js";
 import { Setter, Signal, onBlur, $model, $autoresize } from "../solid-utils";
 import SnakeComponent from "./snake";
-import { Snake } from "../model";
+import { Snake, Test } from "../model";
 
-export default function Config(props: { server: Signal<string>, style: Signal<Pick<Snake, "color" | "headType" | "tailType"> | undefined>, setView: Setter<string>}): JSX.Element {
+type ConfigOpts = {
+  server: Signal<string>,
+  style: Signal<Pick<Snake, "color" | "headType" | "tailType">| undefined>,
+  setView: Setter<string>,
+  createEmptyTest: () => Promise<Test>,
+}
+
+export default function Config(props: ConfigOpts): JSX.Element {
   const [server, setServer] = props.server;
   const [style, setStyle] = props.style;
 
@@ -16,6 +23,11 @@ export default function Config(props: { server: Signal<string>, style: Signal<Pi
   const [resource, { refetch }] = createResource(server, fetchStyle);
 
   createEffect(() => setStyle((resource.loading || resource.error) ? undefined : resource()));
+
+  const boardBuilder = async () => {
+    await props.createEmptyTest();
+    props.setView("builder");
+  };
 
   return (
     <div class="flex items-center">
@@ -38,6 +50,7 @@ export default function Config(props: { server: Signal<string>, style: Signal<Pi
         </Match>
       </Switch>
       <button class="bg-blue-400 text-white ml-8 px-2 font-bold rounded" onclick={() => props.setView("importer")}>New Test</button>
+      <button class="bg-blue-400 text-white ml-8 px-2 font-bold rounded" onclick={boardBuilder}>Board builder</button>
     </div>
   );
 }

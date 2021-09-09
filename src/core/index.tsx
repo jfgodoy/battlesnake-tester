@@ -4,6 +4,7 @@ import { Test, TestResult, Passed, Failed, Pending, Snake } from "../model";
 import { indexdbTestStore } from "./test-store";
 import { signalFromStore, SignalFromStoreReturnType } from "../solid-utils";
 import { runTest, createRequestData } from "../core/tester";
+import { nanoid } from "nanoid";
 
 const testStorage = indexdbTestStore();
 
@@ -143,4 +144,36 @@ export const asCurl = (test: Test): string => {
 
 export const asJson = (test: Test): string => {
   return JSON.stringify(test);
+};
+
+
+export const createEmptyTest = async (): Promise<Test> => {
+  const test: Test = {
+    id: nanoid(10),
+    description: "new test",
+    timestamp: Date.now(),
+    frameToTest: 0,
+    snakeToTest: 0,
+    expectedResult: [],
+    frames: [
+      {
+        turn: 0,
+        snakes: [],
+        food: [],
+        hazards: [],
+      }
+    ],
+    game: {
+      id: "new game",
+      timeout: 500,
+      width: 11,
+      height: 11,
+      ruleset: {
+        name: "standard",
+        version: "v.1.2.3"
+      }
+    }
+  };
+  await saveTest(test);
+  return test;
 };

@@ -16,6 +16,7 @@ Leave a star if you found this project useful :star:
 - remove a saved test
 - edit a saved test
 - export test as curl
+- edit a turn or create a board from scratch
 
 ## TODO List
 

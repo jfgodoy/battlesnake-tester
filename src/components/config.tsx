@@ -2,6 +2,7 @@ import { Switch, Match, createEffect, createResource, JSX } from "solid-js";
 import { Setter, Signal, onBlur, $model, $autoresize } from "../solid-utils";
 import SnakeComponent from "./snake";
 import { Snake, Test } from "../model";
+import ow from "ow";
 
 type ConfigOpts = {
   server: Signal<string>,
@@ -10,12 +11,27 @@ type ConfigOpts = {
   createEmptyTest: () => Promise<Test>,
 }
 
+const fetchJSON = async (url: string): Promise<unknown> => {
+  return fetch(url)
+    .then(res => res.json())
+    .catch(err => {
+      // check request if failed due to CORS
+      const firstErr = err;
+      return fetch(url, {mode: "no-cors"})
+        .then(
+          _onResolve => { throw new Error("your server hasn't enabled CORS"); },
+          _onReject => { throw firstErr; }
+        );
+    });
+};
+
 export default function Config(props: ConfigOpts): JSX.Element {
   const [server, setServer] = props.server;
   const [style, setStyle] = props.style;
 
   const fetchStyle = async (server: string) => {
-    const resp = await fetch(server).then(res => res.json());
+    const resp = await fetchJSON(server);
+    ow(resp, ow.object.partialShape({color: ow.string, head: ow.string, tail: ow.string}));
     const {color, head, tail} = resp;
     return {color, headType: head, tailType: tail};
   };

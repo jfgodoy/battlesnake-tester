@@ -1,6 +1,6 @@
 import { colors } from "../../theme/index";
 import { Snake, Direction, Frame } from "../../model";
-import { createRenderableSnake, PartType, RenderableSnake, SnakePart, prefetchSvgs } from "../../utils/render";
+import { createRenderableSnake, PartType, RenderableSnake, SnakePart } from "../../utils/render";
 import { createMemo, createResource, Show, JSX } from "solid-js";
 import { RenderCtx } from "./index";
 
@@ -396,9 +396,9 @@ function renderTailPart(snake: RenderableSnake, snakeIndex: number, part: SnakeP
 }
 
 
-function prepareSnakes(ctx: RenderCtx, snakes: Snake[]): RenderableSnake[] {
+async function prepareSnakes(ctx: RenderCtx, snakes: Snake[]): Promise<RenderableSnake[]> {
   // Make alive snakes render on top of dead snakes and create renderable snakes
-  const renderableSnakes = sortAliveSnakesOnTop(snakes).map(s => createRenderableSnake(s));
+  const renderableSnakes = await Promise.all(sortAliveSnakesOnTop(snakes).map(s => createRenderableSnake(s)));
 
   // track all of the grid cells that will have a snake part drawn in them.  Successive snake parts
   // drawn in the same cell need to be flagged so they render differently and layer properly
@@ -433,11 +433,7 @@ function prepareSnakes(ctx: RenderCtx, snakes: Snake[]): RenderableSnake[] {
 export default function SnakeComponent(props: {ctx: RenderCtx, frame: Frame}): JSX.Element {
   const ctx = props.ctx;
   const snakes = createMemo(() => props.frame.snakes || []);
-
-  const [renderableSnakes] = createResource(snakes, async (snakes) => {
-    await prefetchSvgs(snakes);
-    return prepareSnakes(ctx, snakes);
-  });
+  const [renderableSnakes] = createResource(snakes, (snakes) => prepareSnakes(ctx, snakes));
 
   return (
     <Show when={!renderableSnakes.loading}>

@@ -1,16 +1,8 @@
-import * as R from "ramda";
 import { ComponentProps } from "solid-js";
-import { fetchHead, fetchTail, getHead, getTail } from "../core/svg-fetcher";
+import { fetchSVG } from "../core/svg-fetcher";
 import {Snake, Coord, Direction} from "../model";
 
 const DEFAULT_DIRECTION = Direction.Up;
-
-export async function prefetchSvgs(snakes: Snake[]): Promise<void> {
-  const heads = R.uniq(R.map(R.prop("headType"), snakes));
-  const tails = R.uniq(R.map(R.prop("tailType"), snakes));
-  await Promise.all(heads.map(fetchHead));
-  await Promise.all(tails.map(fetchTail));
-}
 
 type SVGComponent = (props?: ComponentProps<"svg">) => SVGSVGElement;
 export interface RenderableSnake extends Snake {
@@ -20,13 +12,15 @@ export interface RenderableSnake extends Snake {
   tailSvg: SVGComponent,
 }
 
-export function createRenderableSnake(snake: Snake): RenderableSnake {
+export async function createRenderableSnake(snake: Snake): Promise<RenderableSnake> {
+  const head = fetchSVG("head", snake.headType);
+  const tail = fetchSVG("tail", snake.tailType);
   const renderedParts = snake.body.filter((_, i) => shouldRenderPart(snake, i));
   return Object.assign({}, snake, {
     parts: snake.body.map((_, i) => formatSnakePart(snake, i)),
     effectiveSpace: renderedParts.length,
-    headSvg: getHead(snake.headType),
-    tailSvg: getTail(snake.tailType),
+    headSvg: await head,
+    tailSvg: await tail,
   });
 }
 

@@ -1,12 +1,12 @@
 import { Show, createResource, ComponentProps, splitProps, JSX } from "solid-js";
-import { fetchHead, fetchTail } from "../core/svg-fetcher";
+import { fetchSVG } from "../core/svg-fetcher";
 import styles from "./snake.module.css";
 
 const Snake = (props: ComponentProps<"div"> & {color: string, head: string, tail: string}): JSX.Element => {
   const [_, otherProps] = splitProps(props, ["color", "head", "tail"]);
   const fetchSvg = async () => {
-    const Head = await fetchHead(props.head);
-    const Tail = await fetchTail(props.tail);
+    const Head = await fetchSVG("head", props.head);
+    const Tail = await fetchSVG("tail", props.tail);
     return {Head, Tail};
   };
 

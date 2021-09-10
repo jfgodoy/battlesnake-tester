@@ -18,7 +18,10 @@ const cache: Cache = {
   tail: {},
 };
 
+const cleanName = (name: string) => name.replace(/^bwc-/, "").replace(/^shac-/, "");
+
 export async function fetchSVG(type: "head" | "tail", name: string): Promise<SVGComponent> {
+  name = cleanName(name);
   if (cache[type][name]) {
     return cache[type][name];
   }

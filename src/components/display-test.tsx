@@ -52,7 +52,9 @@ export default function DisplayTest(props: DisplayTestProps): JSX.Element {
     batch(() => {
       setDisplayTurn(turn);
       setSelectedTest(test);
-      setTemporalTest(undefined);
+      if (testId != previousTest?.id) {
+        setTemporalTest(undefined);
+      }
     });
   });
 

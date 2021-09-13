@@ -26,5 +26,8 @@ Leave a star if you found this project useful :star:
 
 ## Acknowledgement
 
-Many thanks to the team [BattlesnakeOfficial](https://github.com/BattlesnakeOfficial) and its [board](https://github.com/BattlesnakeOfficial/board) project from were I borrowed the display
+Many thanks to the team [BattlesnakeOfficial](https://github.com/BattlesnakeOfficial) and its [board](https://github.com/BattlesnakeOfficial/board) project from were I borrowed the display.
 
+## Credits
+
+[Assets used with permission from Battlesnake](https://play.battlesnake.com/)

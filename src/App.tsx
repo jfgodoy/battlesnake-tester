@@ -52,7 +52,7 @@ const App: Component = () => {
             dbStatus={dbStatus}
           />
         </aside>
-        <main class="flex-1 p-4 overflow-y-auto">
+        <main class="flex flex-1 flex-col p-4 overflow-y-auto">
           <div class="flex">
             <Switch>
               <Match when={view() == "home"}>
@@ -92,6 +92,9 @@ const App: Component = () => {
                 </Refresh>
               </Match>
             </Switch>
+          </div>
+          <div class="flex flex-1 items-end">
+            <a class="m-4 text-gray-500 hover:text-blue-400 text-sm" href="https://play.battlesnake.com/">Assets used with permission from Battlesnake</a>
           </div>
         </main>
       </div>

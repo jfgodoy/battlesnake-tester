@@ -94,7 +94,7 @@ const App: Component = () => {
             </Switch>
           </div>
           <div class="flex flex-1 items-end">
-            <a class="m-4 text-gray-500 hover:text-blue-400 text-sm" href="https://play.battlesnake.com/">Assets used with permission from Battlesnake</a>
+            <a class="m-4 text-gray-500 hover:text-blue-400 text-sm" target="_blank" href="https://play.battlesnake.com/">Assets used with permission from Battlesnake</a>
           </div>
         </main>
       </div>

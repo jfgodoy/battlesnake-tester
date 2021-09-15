@@ -27,7 +27,7 @@
     "type-fest": "^2.1.0",
     "unplugin-auto-import": "^0.3.3",
     "unplugin-icons": "^0.7.5",
-    "vite": "^2.5.3",
+    "vite": "^2.5.7",
     "vite-plugin-solid": "^2.0.3",
     "vite-plugin-solid-svg": "^0.1.2"
   },

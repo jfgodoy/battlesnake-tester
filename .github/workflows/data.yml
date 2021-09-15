@@ -1,7 +1,7 @@
 name: data
 on:
   schedule:
-    - cron:  '* * * * *'
+    - cron:  '15 * * * *'
 
 jobs:
   generate:
@@ -25,11 +25,7 @@ jobs:
             ${{ runner.os }}-node-
 
       - run: npm ci
-      - run: mkdir data
-      - run: node scripts/parse-arena.mjs https://play.battlesnake.com/arena/global/ > data/global-arena.json
-      - run: node scripts/parse-arena.mjs https://play.battlesnake.com/arena/global-duels/ > data/global-duels.json
-      - run: node scripts/parse-arena.mjs https://play.battlesnake.com/arena/global-royale/ > data/global-royale.json
-
+      - run: npm run update-arena
 
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3

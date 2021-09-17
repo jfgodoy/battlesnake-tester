@@ -13,7 +13,7 @@
   },
   "license": "MIT",
   "devDependencies": {
-    "@iconify/json": "^1.1.402",
+    "@iconify/json": "^1.1.403",
     "@tailwindcss/forms": "^0.3.3",
     "@types/ramda": "^0.27.44",
     "@typescript-eslint/eslint-plugin": "^4.31.1",

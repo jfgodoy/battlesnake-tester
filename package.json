@@ -24,7 +24,7 @@
     "node-html-parser": "^4.1.4",
     "postcss": "^8.3.6",
     "tailwindcss": "^2.2.15",
-    "type-fest": "^2.3.2",
+    "type-fest": "^2.3.3",
     "unplugin-auto-import": "^0.4.5",
     "unplugin-icons": "^0.11.3",
     "vite": "^2.5.7",

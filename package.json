@@ -8,7 +8,6 @@
     "build": "vite build",
     "serve": "vite preview",
     "lint": "eslint src && tsc  --noEmit --skipLibCheck  -p .",
-    "update-styles": "curl -s https://play.battlesnake.com/references/customizations/ | grep -oP '(?<=<small>)[a-zA-Z-]+(?=</small>)' | sort | uniq | xargs -I {} bash -c 'curl -sf https://media.battlesnake.com/snakes/heads/{}.svg?board_version=1.0.38 -o src/assets/snakes/heads/{}.svg & curl -sf https://media.battlesnake.com/snakes/tails/{}.svg?board_version=1.0.38 -o src/assets/snakes/tails/{}.svg'",
     "update-arena": "mkdir -p public/data; node scripts/parse-arena.mjs https://play.battlesnake.com/arena/global/ > public/data/global-arena.json & node scripts/parse-arena.mjs https://play.battlesnake.com/arena/global-duels/ > public/data/global-duels.json & node scripts/parse-arena.mjs https://play.battlesnake.com/arena/global-royale/ > public/data/global-royale.json"
   },
   "license": "MIT",

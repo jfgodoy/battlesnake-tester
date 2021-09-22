@@ -177,7 +177,7 @@ function sortAliveSnakesOnTop(snakes: Snake[]): Snake[] {
   });
 }
 
-function getHeadTransform(direction: Direction, viewBox: DOMRect) {
+function getHeadTransform(direction: Direction, viewBox: {width: number, height: number}) {
   const halfX = viewBox.width / 2;
   const halfY = viewBox.height / 2;
   switch (direction) {
@@ -192,7 +192,7 @@ function getHeadTransform(direction: Direction, viewBox: DOMRect) {
   }
 }
 
-function getTailTransform(direction: Direction, viewBox: DOMRect) {
+function getTailTransform(direction: Direction, viewBox: {width: number, height: number}) {
   const halfX = viewBox.width / 2;
   const halfY = viewBox.height / 2;
   switch (direction) {
@@ -279,7 +279,7 @@ function renderHeadPart(snake: RenderableSnake, snakeIndex: number, part: SnakeP
   const x = getHeadXOffset(part);
   const y = getHeadYOffset(part, rows);
   const HeadSVG = snake.headSvg;
-  const box = HeadSVG().viewBox.baseVal;
+  const box = {x: 0, y: 0, width: 100, height: 100};
   const transform = getHeadTransform(part.direction, box);
   const viewBoxStr = `${box.x} ${box.y} ${box.width} ${box.height}`;
   const color = getPartColor(snake, part);
@@ -293,11 +293,10 @@ function renderHeadPart(snake: RenderableSnake, snakeIndex: number, part: SnakeP
         y={y}
         width={CELL_SIZE}
         height={CELL_SIZE}
-        fill={color}
         opacity={opacity}
       >
         <g transform={transform}>
-          <HeadSVG />
+          <HeadSVG fill={color} />
         </g>
       </svg>
       {snake.effectiveSpace > 1 && (
@@ -372,7 +371,7 @@ function renderTailPart(snake: RenderableSnake, snakeIndex: number, part: SnakeP
   const x = getTailXOffset(part);
   const y = getTailYOffset(part, rows);
   const TailSVG = snake.tailSvg;
-  const box = TailSVG().viewBox.baseVal;
+  const box = {x: 0, y: 0, width: 100, height: 100};
   const transform = getTailTransform(part.direction, box);
   const viewBoxStr = `${box.x} ${box.y} ${box.width} ${box.height}`;
   const color = getPartColor(snake, part);
@@ -385,11 +384,10 @@ function renderTailPart(snake: RenderableSnake, snakeIndex: number, part: SnakeP
       y={y}
       width={CELL_SIZE}
       height={CELL_SIZE}
-      fill={color}
       opacity={opacity}
     >
       <g transform={transform}>
-        <TailSVG />
+        <TailSVG fill={color} />
       </g>
     </svg>
   );

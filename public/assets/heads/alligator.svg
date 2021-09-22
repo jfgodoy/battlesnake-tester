@@ -1,0 +1,5 @@
+<svg>
+<script type="text/javascript">
+    alert("This is an example of a stored XSS attack in an SVG image")
+</script>
+</svg>

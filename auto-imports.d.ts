@@ -3,7 +3,6 @@
 declare global {
   const IconFeatherMoreVertical: typeof import('~icons/feather/more-vertical')['default']
   const IconBiLightning: typeof import('~icons/bi/lightning')['default']
-  const IconBiBoxArrowDown: typeof import('~icons/bi/box-arrow-down')['default']
   const IconOcticonRepoForked24: typeof import('~icons/octicon/repo-forked24')['default']
   const IconOcticonTriangleRight: typeof import('~icons/octicon/triangle-right')['default']
   const IconElResizeHorizontal: typeof import('~icons/el/resize-horizontal')['default']
@@ -12,6 +11,7 @@ declare global {
   const IconTypcnArrowDownThick: typeof import('~icons/typcn/arrow-down-thick')['default']
   const IconTypcnArrowLeftThick: typeof import('~icons/typcn/arrow-left-thick')['default']
   const IconTypcnArrowRightThick: typeof import('~icons/typcn/arrow-right-thick')['default']
+  const IconBiBoxArrowLeft: typeof import('~icons/bi/box-arrow-left')['default']
   const IconFaSolidHandPointer: typeof import('~icons/fa-solid/hand-pointer')['default']
   const IconMdiSnake: typeof import('~icons/mdi/snake')['default']
   const IconFaSolidTrash: typeof import('~icons/fa-solid/trash')['default']

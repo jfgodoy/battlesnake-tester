@@ -219,13 +219,10 @@ export default function DisplayTest(props: DisplayTestProps): JSX.Element {
               </Show>
               <div class="flex items-center mr-1">
                 <div class="flex-1">
-                  <span>turn:</span><input class="py-0 w-24 text-center focus:ring-0 border-none" type="number" value={displayTurn()} onInput={(e) => handleDisplayTurn(e)} />
+                  <span>Turn:</span><input class="py-0 w-24 text-center focus:ring-0 border-none" type="number" value={displayTurn()} onInput={(e) => handleDisplayTurn(e)} />
                 </div>
                 <button title="test this turn" class="text-gray-500 p-1 rounded-md border border-white hover:border-gray-200" onclick={testCurrentTurn}>
                   <IconBiLightning />
-                </button>
-                <button title="use this turn for saved test" class="text-gray-500 p-1 rounded-md border border-white hover:border-gray-200" onclick={changeTestedTurn}>
-                  <IconBiBoxArrowDown />
                 </button>
                 <button title="clone this test" class="text-gray-500 p-1 rounded-md border border-white hover:border-gray-200" onclick={cloneTest}>
                   <IconOcticonRepoForked24 />
@@ -253,7 +250,7 @@ export default function DisplayTest(props: DisplayTestProps): JSX.Element {
           <Show when={temporalTest()}>
             <div class="p-6">
               <p class="text-gray-900">
-                <span class="inline-block w-24">tested:</span>
+                <span class="inline-block w-24">Tested:</span>
                 <span>Turn {temporalTest()?.turn}</span>
               </p>
               <p>
@@ -267,25 +264,28 @@ export default function DisplayTest(props: DisplayTestProps): JSX.Element {
             </div>
           </Show>
           <div class="p-6">
-            <p class="text-gray-900">
+            <div class="flex items-center text-gray-900">
               <span class="inline-block w-24">Saved test:</span>
               <span>Turn {test.frameToTest}</span>
-            </p>
-            <p>
+              <button title="use current turn for saved test" class="mx-3 text-gray-500 p-1 rounded-md border border-white hover:border-gray-200" onclick={changeTestedTurn}>
+                <IconBiBoxArrowLeft />
+              </button>
+            </div>
+            <div class="flex items-center">
               <span class="inline-block w-24 text-gray-800">Expected:</span>
               <button class="bg-gray-200 rounded p-1 text-white mr-2" classList={{"bg-blue-400": test.expectedResult.includes("Up")}} onclick={toggleDir("Up")}><IconTypcnArrowUpThick /></button>
               <button class="bg-gray-200 rounded p-1 text-white mr-2" classList={{"bg-blue-400": test.expectedResult.includes("Down")}} onclick={toggleDir("Down")}><IconTypcnArrowDownThick /></button>
               <button class="bg-gray-200 rounded p-1 text-white mr-2" classList={{"bg-blue-400": test.expectedResult.includes("Left")}} onclick={toggleDir("Left")}><IconTypcnArrowLeftThick /></button>
               <button class="bg-gray-200 rounded p-1 text-white mr-2" classList={{"bg-blue-400": test.expectedResult.includes("Right")}} onclick={toggleDir("Right")}><IconTypcnArrowRightThick /></button>
-            </p>
-            <p>
+            </div>
+            <div class="flex items-center my-2">
               <span class="inline-block w-24 text-gray-800">Answered:</span>
               <button class="bg-gray-200 rounded p-1 text-white mr-2" classList={{"bg-green-400": isOkAnswer("Up"), "bg-red-400": isWrongAnswer("Up")}}><IconTypcnArrowUpThick /></button>
               <button class="bg-gray-200 rounded p-1 text-white mr-2" classList={{"bg-green-400": isOkAnswer("Down"), "bg-red-400": isWrongAnswer("Down")}}><IconTypcnArrowDownThick /></button>
               <button class="bg-gray-200 rounded p-1 text-white mr-2" classList={{"bg-green-400": isOkAnswer("Left"), "bg-red-400": isWrongAnswer("Left")}}><IconTypcnArrowLeftThick /></button>
               <button class="bg-gray-200 rounded p-1 text-white mr-2" classList={{"bg-green-400": isOkAnswer("Right"), "bg-red-400": isWrongAnswer("Right")}}><IconTypcnArrowRightThick /></button>
               <span class="text-red-500">{failedMsg()}</span>
-            </p>
+            </div>
             <button class="bg-blue-400 text-white mt-2 px-2 font-bold rounded" onclick={() => props.runSingleTest(test.id)}>Run Test</button>
           </div>
           <Modal title="Export as curl" switch={[showCurl, setShowCurl]}>

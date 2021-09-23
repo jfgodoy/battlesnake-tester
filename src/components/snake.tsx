@@ -15,9 +15,9 @@ const Snake = (props: ComponentProps<"div"> & {color: string, head: string, tail
     <Show when={res()}>
       {({Head, Tail}) => (
         <div {...otherProps} classList={{"flex": true, [styles.snake]: true}}>
-          <span class={styles.tail}><Tail fill={props.color} /></span>
+          <span class={styles.tail}><svg viewBox="0 0 100 100" width="20" height="20"><Tail fill={props.color} /></svg></span>
           <span class={styles.body} style={{"background-color": props.color}}></span>
-          <span class={styles.head}><Head fill={props.color}/></span>
+          <span class={styles.head}><svg viewBox="0 0 100 100" width="20" height="20"><Head fill={props.color}/></svg></span>
         </div>
       )}
     </Show>

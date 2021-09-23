@@ -1,10 +1,10 @@
 import { ComponentProps, JSX } from "solid-js";
 import hexRgb from "hex-rgb";
 
-type SVGComponent = (props?: ComponentProps<"svg">) => SVGSVGElement;
+type SVGGComponent = (props?: ComponentProps<"image"> & {fill: string}) => SVGGElement;
 interface Cache {
-  head: {[key: string]: SVGComponent },
-  tail: {[key: string]: SVGComponent },
+  head: {[key: string]: SVGGComponent },
+  tail: {[key: string]: SVGGComponent },
 }
 
 const cache: Cache = {
@@ -14,7 +14,7 @@ const cache: Cache = {
 
 const cleanName = (name: string) => name.replace(/^bwc-/, "").replace(/^shac-/, "");
 
-export async function fetchSVG(type: "head" | "tail", name: string): Promise<SVGComponent> {
+export async function fetchSVG(type: "head" | "tail", name: string): Promise<SVGGComponent> {
   name = cleanName(name);
   if (cache[type][name]) {
     return cache[type][name];
@@ -31,14 +31,15 @@ export async function fetchSVG(type: "head" | "tail", name: string): Promise<SVG
     .then(blob => {
       const imgsrc = URL.createObjectURL(blob);
 
-      return (props: ComponentProps<"svg"> & {fill: string}): SVGSVGElement => {
-        return <svg viewBox="0 0 100 100" {...props}>
+      return (props: ComponentProps<"image"> & {fill: string}): SVGGElement => {
+        return <g>
           <ColorFilter color={props.fill} />
           <image
             filter={`url(#${filterIdForColor(props.fill)}`}
             xlink:href={imgsrc}
+            {...props}
           />
-        </svg> as SVGSVGElement;
+        </g> as SVGGElement;
       };
     });
 

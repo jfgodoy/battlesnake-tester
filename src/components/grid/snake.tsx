@@ -1,7 +1,7 @@
 import { colors } from "../../theme/index";
 import { Snake, Direction, Frame } from "../../model";
 import { createRenderableSnake, PartType, RenderableSnake, SnakePart } from "../../utils/render";
-import { createMemo, createResource, Show, JSX } from "solid-js";
+import { createMemo, createResource, Show, JSX, onMount } from "solid-js";
 import { RenderCtx } from "./index";
 
 const DEAD_OPACITY = 0.1;
@@ -9,7 +9,7 @@ const OVERLAP_OPACITY = 0.3;
 const SNAKE_ON_SNAKE_OPACITY = 0.8;
 const FULL_OPACITY = 1.0;
 
-const END_OVERLAP = 0.2;
+const END_OVERLAP = 0;
 const DIRECTIONS_CW = [Direction.Up, Direction.Right, Direction.Down, Direction.Left];
 
 enum CornerType { TopLeft, TopRight, BottomRight, BottomLeft }
@@ -166,33 +166,29 @@ function sortAliveSnakesOnTop(snakes: Snake[]): Snake[] {
   });
 }
 
-function getHeadTransform(direction: Direction, viewBox: {width: number, height: number}) {
-  const halfX = viewBox.width / 2;
-  const halfY = viewBox.height / 2;
+function getHeadTransform(direction: Direction, gap: number) {
   switch (direction) {
     case Direction.Left:
-      return `scale(-1,1) translate(-100, 0)`;
+      return `scale(1,-1) rotate(180) translate(-${gap} 0)`;
     case Direction.Up:
-      return `rotate(-90 ${halfX} ${halfY})`;
+      return `rotate(270) translate(-${gap} 0)`;
     case Direction.Down:
-      return `rotate(90 ${halfX} ${halfY})`;
+      return `rotate(90) translate(-${gap} 0)`;
     default:
-      return "";
+      return `translate(-${gap} 0)`;
   }
 }
 
-function getTailTransform(direction: Direction, viewBox: {width: number, height: number}) {
-  const halfX = viewBox.width / 2;
-  const halfY = viewBox.height / 2;
+function getTailTransform(direction: Direction, gap: number) {
   switch (direction) {
     case Direction.Right:
-      return `scale(-1,1) translate(-100,0)`;
+      return `rotate(180) translate(-${gap} 0)`;
     case Direction.Down:
-      return `scale(-1,1) translate(-100,0) rotate(-90 ${halfX} ${halfY})`;
+      return `rotate(270) translate(-${gap} 0)`;
     case Direction.Up:
-      return `scale(-1,1) translate(-100,0) rotate(90 ${halfX} ${halfY})`;
+      return `rotate(90) translate(-${gap} 0)`;
     default:
-      return "";
+      return `translate(-${gap} 0)`;
   }
 }
 
@@ -268,26 +264,33 @@ function renderHeadPart(snake: RenderableSnake, snakeIndex: number, part: SnakeP
   const x = getHeadXOffset(part, ctx);
   const y = getHeadYOffset(part, ctx);
   const HeadSVG = snake.headSvg;
-  const box = {x: 0, y: 0, width: 100, height: 100};
-  const transform = getHeadTransform(part.direction, box);
-  const viewBoxStr = `${box.x} ${box.y} ${box.width} ${box.height}`;
+  const transform = getHeadTransform(part.direction, 0);
   const color = getPartColor(snake, part);
   const opacity = getPartOpacity(part);
 
+  const setTransform = (el: SVGGElement) => {
+    el.setAttribute("transform", transform);
+    onMount(() => {
+      const r = el.getBoundingClientRect();
+      const gap = 1 * (100 / r.width);
+      el.setAttribute("transform", getHeadTransform(part.direction, gap));
+    });
+  };
+
   return (
     <g>
-      <svg
-        viewBox={viewBoxStr}
-        x={x}
-        y={y}
-        width={ctx.cellSize}
-        height={ctx.cellSize}
-        opacity={opacity}
-      >
-        <g transform={transform}>
-          <HeadSVG fill={color} />
-        </g>
-      </svg>
+      <HeadSVG
+          x={x}
+          y={y}
+          width={ctx.cellSize}
+          height={ctx.cellSize}
+          opacity={opacity}
+          transform-origin="center"
+          style="transform-box: fill-box"
+          fill={color}
+          ref={setTransform}
+        />
+
       {snake.effectiveSpace > 1 && (
         // only add filler if the snake is effectively longer than one tile
         <rect
@@ -360,25 +363,31 @@ function renderTailPart(snake: RenderableSnake, snakeIndex: number, part: SnakeP
   const x = getTailXOffset(part, ctx);
   const y = getTailYOffset(part, ctx);
   const TailSVG = snake.tailSvg;
-  const box = {x: 0, y: 0, width: 100, height: 100};
-  const transform = getTailTransform(part.direction, box);
-  const viewBoxStr = `${box.x} ${box.y} ${box.width} ${box.height}`;
+  const transform = getTailTransform(part.direction, 0);
   const color = getPartColor(snake, part);
   const opacity = getPartOpacity(part);
 
+  const setTransform = (el: SVGImageElement) => {
+    el.setAttribute("transform", transform);
+    onMount(() => {
+      const r = el.getBoundingClientRect();
+      const gap = 1 * (100 / r.width);
+      el.setAttribute("transform", getTailTransform(part.direction, gap));
+    });
+  };
+
   return (
-    <svg
-      viewBox={viewBoxStr}
+    <TailSVG
       x={x}
       y={y}
       width={ctx.cellSize}
       height={ctx.cellSize}
       opacity={opacity}
-    >
-      <g transform={transform}>
-        <TailSVG fill={color} />
-      </g>
-    </svg>
+      transform-origin="center"
+      style="transform-box: fill-box"
+      fill={color}
+      ref={setTransform}
+    />
   );
 }
 

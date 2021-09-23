@@ -4,12 +4,12 @@ import {Snake, Coord, Direction} from "../model";
 
 const DEFAULT_DIRECTION = Direction.Up;
 
-type SVGComponent = (props?: ComponentProps<"svg">) => SVGSVGElement;
+type SVGGComponent = (props?: ComponentProps<"image"> & {fill: string}) => SVGGElement;
 export interface RenderableSnake extends Snake {
   parts: SnakePart[],
   effectiveSpace: number,
-  headSvg: SVGComponent,
-  tailSvg: SVGComponent,
+  headSvg: SVGGComponent,
+  tailSvg: SVGGComponent,
 }
 
 export async function createRenderableSnake(snake: Snake): Promise<RenderableSnake> {

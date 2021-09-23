@@ -5,8 +5,8 @@ import SnakeComponent from "./snake";
 import Food from "./food";
 import Hazard from "./hazard";
 
-const CELL_SIZE = 20;
-const CELL_SPACING = 4;
+const CELL_SIZE = 100;
+const CELL_SPACING = 20;
 
 export type RenderCtx = {
   cellSize: number,

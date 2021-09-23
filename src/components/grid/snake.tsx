@@ -9,138 +9,127 @@ const OVERLAP_OPACITY = 0.3;
 const SNAKE_ON_SNAKE_OPACITY = 0.8;
 const FULL_OPACITY = 1.0;
 
-const CELL_SIZE = 20;
-const CELL_SPACING = 4;
 const END_OVERLAP = 0.2;
 const DIRECTIONS_CW = [Direction.Up, Direction.Right, Direction.Down, Direction.Left];
 
 enum CornerType { TopLeft, TopRight, BottomRight, BottomLeft }
 
-function toGridSpaceX(slot: number) {
-  return (CELL_SIZE + CELL_SPACING) * slot + CELL_SPACING;
-}
-
-function toGridSpaceY(slot: number, rows: number) {
-  // Y-Axis in board space is inverted, positive goes up
-  return (CELL_SIZE + CELL_SPACING) * (rows - 1 - slot) + CELL_SPACING;
-}
-
-function getPartWidth(part: SnakePart) {
+function getPartWidth(part: SnakePart, ctx: RenderCtx) {
   const extraWidth =
     part.direction === Direction.Left || part.direction === Direction.Right
-      ? 2 * CELL_SPACING
+      ? 2 * ctx.cellSpacing
       : 0;
-  return CELL_SIZE + extraWidth;
+  return ctx.cellSize + extraWidth;
 }
 
-function getPartHeight(part: SnakePart) {
+function getPartHeight(part: SnakePart, ctx: RenderCtx) {
   const extraHeight =
-    part.direction === Direction.Up || part.direction === Direction.Down ? 2 * CELL_SPACING : 0;
-  return CELL_SIZE + extraHeight;
+    part.direction === Direction.Up || part.direction === Direction.Down ? 2 * ctx.cellSpacing : 0;
+  return ctx.cellSize + extraHeight;
 }
 
-function getPartXOffset(part: SnakePart) {
+function getPartXOffset(part: SnakePart, ctx: RenderCtx) {
   const xBias =
-    part.direction === Direction.Left || part.direction === Direction.Right ? -CELL_SPACING : 0;
-  return toGridSpaceX(part.x) + xBias;
+    part.direction === Direction.Left || part.direction === Direction.Right ? - ctx.cellSpacing : 0;
+  return ctx.toGridSpaceX(part.x) + xBias;
 }
 
-function getPartYOffset(part: SnakePart, rows: number) {
+function getPartYOffset(part: SnakePart, ctx: RenderCtx) {
   const yBias =
-    part.direction === Direction.Up || part.direction === Direction.Down ? -CELL_SPACING : 0;
-  return toGridSpaceY(part.y, rows) + yBias;
+    part.direction === Direction.Up || part.direction === Direction.Down ? - ctx.cellSpacing : 0;
+  return ctx.toGridSpaceY(part.y) + yBias;
 }
 
-function getCornerPartXOffset(part: SnakePart) {
-  return toGridSpaceX(part.x) - CELL_SPACING;
+function getCornerPartXOffset(part: SnakePart, ctx: RenderCtx) {
+  return ctx.toGridSpaceX(part.x) - ctx.cellSpacing;
 }
 
-function getCornerPartYOffset(part: SnakePart, rows: number) {
-  return toGridSpaceY(part.y, rows) - CELL_SPACING;
+function getCornerPartYOffset(part: SnakePart, ctx: RenderCtx) {
+  return ctx.toGridSpaceY(part.y) - ctx.cellSpacing;
 }
 
-function getTailXOffset(part: SnakePart) {
+function getTailXOffset(part: SnakePart, ctx: RenderCtx) {
   // apply slight offset to avoid ugly white line in between parts (works most of the time)
   switch (part.direction) {
     case Direction.Left:
-      return toGridSpaceX(part.x) - END_OVERLAP;
+      return ctx.toGridSpaceX(part.x) - END_OVERLAP;
     case Direction.Right:
-      return toGridSpaceX(part.x) + END_OVERLAP;
+      return ctx.toGridSpaceX(part.x) + END_OVERLAP;
     default:
-      return toGridSpaceX(part.x);
+      return ctx.toGridSpaceX(part.x);
   }
 }
 
-function getTailYOffset(part: SnakePart, rows: number) {
+function getTailYOffset(part: SnakePart, ctx: RenderCtx) {
   // apply slight offset to avoid ugly white line in between parts (works most of the time)
   switch (part.direction) {
     case Direction.Up:
-      return toGridSpaceY(part.y, rows) - END_OVERLAP;
+      return ctx.toGridSpaceY(part.y) - END_OVERLAP;
     case Direction.Down:
-      return toGridSpaceY(part.y, rows) + END_OVERLAP;
+      return ctx.toGridSpaceY(part.y) + END_OVERLAP;
     default:
-      return toGridSpaceY(part.y, rows);
+      return ctx.toGridSpaceY(part.y);
   }
 }
 
-function getHeadXOffset(part: SnakePart) {
+function getHeadXOffset(part: SnakePart, ctx: RenderCtx) {
   // apply slight offset to avoid ugly white line in between parts (works most of the time)
   switch (part.direction) {
     case Direction.Left:
-      return toGridSpaceX(part.x) + END_OVERLAP;
+      return ctx.toGridSpaceX(part.x) + END_OVERLAP;
     case Direction.Right:
-      return toGridSpaceX(part.x) - END_OVERLAP;
+      return ctx.toGridSpaceX(part.x) - END_OVERLAP;
     default:
-      return toGridSpaceX(part.x);
+      return ctx.toGridSpaceX(part.x);
   }
 }
 
-function getHeadYOffset(part: SnakePart, rows: number) {
+function getHeadYOffset(part: SnakePart, ctx: RenderCtx) {
   // apply slight offset to avoid ugly white line in between parts (works most of the time)
   switch (part.direction) {
     case Direction.Up:
-      return toGridSpaceY(part.y, rows) + END_OVERLAP;
+      return ctx.toGridSpaceY(part.y) + END_OVERLAP;
     case Direction.Down:
-      return toGridSpaceY(part.y, rows) - END_OVERLAP;
+      return ctx.toGridSpaceY(part.y) - END_OVERLAP;
     default:
-      return toGridSpaceY(part.y, rows);
+      return ctx.toGridSpaceY(part.y);
   }
 }
 
-function getHeadFillerXOffset(part: SnakePart) {
+function getHeadFillerXOffset(part: SnakePart, ctx: RenderCtx) {
   // apply slight offset to avoid ugly white line in between parts (works most of the time)
   switch (part.direction) {
     case Direction.Left:
-      return toGridSpaceX(part.x + 1) - CELL_SPACING - END_OVERLAP;
+      return ctx.toGridSpaceX(part.x + 1) - ctx.cellSpacing - END_OVERLAP;
     case Direction.Right:
-      return toGridSpaceX(part.x) - CELL_SPACING - END_OVERLAP;
+      return ctx.toGridSpaceX(part.x) - ctx.cellSpacing - END_OVERLAP;
     default:
-      return toGridSpaceX(part.x);
+      return ctx.toGridSpaceX(part.x);
   }
 }
 
-function getHeadFillerYOffset(part: SnakePart, rows: number) {
+function getHeadFillerYOffset(part: SnakePart, ctx: RenderCtx) {
   // apply slight offset to avoid ugly white line in between parts (works most of the time)
   switch (part.direction) {
     case Direction.Up:
-      return toGridSpaceY(part.y - 1, rows) - CELL_SPACING - END_OVERLAP;
+      return ctx.toGridSpaceY(part.y - 1) - ctx.cellSpacing - END_OVERLAP;
     case Direction.Down:
-      return toGridSpaceY(part.y, rows) - CELL_SPACING - END_OVERLAP;
+      return ctx.toGridSpaceY(part.y) - ctx.cellSpacing - END_OVERLAP;
     default:
-      return toGridSpaceY(part.y, rows);
+      return ctx.toGridSpaceY(part.y);
   }
 }
 
-function getFillerWidth(part: SnakePart) {
+function getFillerWidth(part: SnakePart, ctx: RenderCtx) {
   return part.direction === Direction.Left || part.direction === Direction.Right
-    ? CELL_SPACING + 2 * END_OVERLAP
-    : CELL_SIZE;
+    ? ctx.cellSpacing + 2 * END_OVERLAP
+    : ctx.cellSize;
 }
 
-function getFillerHeight(part: SnakePart) {
+function getFillerHeight(part: SnakePart, ctx: RenderCtx) {
   return part.direction === Direction.Left || part.direction === Direction.Right
-    ? CELL_SIZE
-    : CELL_SPACING + 2 * END_OVERLAP;
+    ? ctx.cellSize
+    : ctx.cellSpacing + 2 * END_OVERLAP;
 }
 
 function isDead(snake: Snake) {
@@ -259,25 +248,25 @@ function isOverlappedByTail(snake: RenderableSnake, part: SnakePart) {
   return part.isOverlapped && tail.x === part.x && tail.y === part.y;
 }
 
-function renderPart(snake: RenderableSnake, snakeIndex: number, part: SnakePart, partIndex: number, rows: number) {
+function renderPart(snake: RenderableSnake, snakeIndex: number, part: SnakePart, partIndex: number, ctx: RenderCtx) {
   if (isOverlappedByTail(snake, part)) { return; }
   switch (part.type) {
     case PartType.HEAD:
-      return renderHeadPart(snake, snakeIndex, part, rows);
+      return renderHeadPart(snake, snakeIndex, part, ctx);
     case PartType.TAIL:
-      return renderTailPart(snake, snakeIndex, part, rows);
+      return renderTailPart(snake, snakeIndex, part, ctx);
     case PartType.BODY:
       if (checkIfCornerPart(snake, partIndex)) {
-        return renderCornerPart(snake, snakeIndex, part, partIndex, rows);
+        return renderCornerPart(snake, snakeIndex, part, partIndex, ctx);
       } else {
-        return renderMiddlePart(snake, snakeIndex, part, partIndex, rows);
+        return renderMiddlePart(snake, snakeIndex, part, partIndex, ctx);
       }
   }
 }
 
-function renderHeadPart(snake: RenderableSnake, snakeIndex: number, part: SnakePart, rows: number) {
-  const x = getHeadXOffset(part);
-  const y = getHeadYOffset(part, rows);
+function renderHeadPart(snake: RenderableSnake, snakeIndex: number, part: SnakePart, ctx: RenderCtx) {
+  const x = getHeadXOffset(part, ctx);
+  const y = getHeadYOffset(part, ctx);
   const HeadSVG = snake.headSvg;
   const box = {x: 0, y: 0, width: 100, height: 100};
   const transform = getHeadTransform(part.direction, box);
@@ -291,8 +280,8 @@ function renderHeadPart(snake: RenderableSnake, snakeIndex: number, part: SnakeP
         viewBox={viewBoxStr}
         x={x}
         y={y}
-        width={CELL_SIZE}
-        height={CELL_SIZE}
+        width={ctx.cellSize}
+        height={ctx.cellSize}
         opacity={opacity}
       >
         <g transform={transform}>
@@ -302,10 +291,10 @@ function renderHeadPart(snake: RenderableSnake, snakeIndex: number, part: SnakeP
       {snake.effectiveSpace > 1 && (
         // only add filler if the snake is effectively longer than one tile
         <rect
-          x={getHeadFillerXOffset(part)}
-          y={getHeadFillerYOffset(part, rows)}
-          width={getFillerWidth(part)}
-          height={getFillerHeight(part)}
+          x={getHeadFillerXOffset(part, ctx)}
+          y={getHeadFillerYOffset(part, ctx)}
+          width={getFillerWidth(part, ctx)}
+          height={getFillerHeight(part, ctx)}
           fill={color}
           opacity={opacity}
         />
@@ -314,23 +303,23 @@ function renderHeadPart(snake: RenderableSnake, snakeIndex: number, part: SnakeP
   );
 }
 
-function renderMiddlePart(snake: Snake, snakeIndex: number, part: SnakePart, partIndex: number, rows: number) {
+function renderMiddlePart(snake: Snake, snakeIndex: number, part: SnakePart, partIndex: number, ctx: RenderCtx) {
   const color = getPartColor(snake, part);
   const opacity = getPartOpacity(part);
 
   return (
     <rect
-      x={getPartXOffset(part)}
-      y={getPartYOffset(part, rows)}
-      width={getPartWidth(part)}
-      height={getPartHeight(part)}
+      x={getPartXOffset(part, ctx)}
+      y={getPartYOffset(part, ctx)}
+      width={getPartWidth(part, ctx)}
+      height={getPartHeight(part, ctx)}
       fill={color}
       opacity={opacity}
     />
   );
 }
 
-function renderCornerPart(snake: RenderableSnake, snakeIndex: number, part: SnakePart, partIndex: number, rows: number) {
+function renderCornerPart(snake: RenderableSnake, snakeIndex: number, part: SnakePart, partIndex: number, ctx: RenderCtx) {
   const path = "M0,20 h60 a60,60 0 0 1 60,60 v60 h-100 v-20 h-20 z";
   const color = getPartColor(snake, part);
   const opacity = getPartOpacity(part);
@@ -354,10 +343,10 @@ function renderCornerPart(snake: RenderableSnake, snakeIndex: number, part: Snak
 
   return (
     <svg
-      x={getCornerPartXOffset(part)}
-      y={getCornerPartYOffset(part, rows)}
-      width={CELL_SIZE + 2 * CELL_SPACING}
-      height={CELL_SIZE + 2 * CELL_SPACING}
+      x={getCornerPartXOffset(part, ctx)}
+      y={getCornerPartYOffset(part, ctx)}
+      width={ctx.cellSize + 2 * ctx.cellSpacing}
+      height={ctx.cellSize + 2 * ctx.cellSpacing}
       fill={color}
       opacity={opacity}
       viewBox={viewBox}
@@ -367,9 +356,9 @@ function renderCornerPart(snake: RenderableSnake, snakeIndex: number, part: Snak
   );
 }
 
-function renderTailPart(snake: RenderableSnake, snakeIndex: number, part: SnakePart, rows: number) {
-  const x = getTailXOffset(part);
-  const y = getTailYOffset(part, rows);
+function renderTailPart(snake: RenderableSnake, snakeIndex: number, part: SnakePart, ctx: RenderCtx) {
+  const x = getTailXOffset(part, ctx);
+  const y = getTailYOffset(part, ctx);
   const TailSVG = snake.tailSvg;
   const box = {x: 0, y: 0, width: 100, height: 100};
   const transform = getTailTransform(part.direction, box);
@@ -382,8 +371,8 @@ function renderTailPart(snake: RenderableSnake, snakeIndex: number, part: SnakeP
       viewBox={viewBoxStr}
       x={x}
       y={y}
-      width={CELL_SIZE}
-      height={CELL_SIZE}
+      width={ctx.cellSize}
+      height={ctx.cellSize}
       opacity={opacity}
     >
       <g transform={transform}>
@@ -449,7 +438,7 @@ export default function SnakeComponent(props: {ctx: RenderCtx, frame: Frame}): J
                   snakeIndex,
                   part,
                   snake.parts.length - partIndex - 1,
-                  ctx.gameHeight,
+                  ctx,
                 )
               )}
           </g>

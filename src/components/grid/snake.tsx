@@ -9,7 +9,6 @@ const OVERLAP_OPACITY = 0.3;
 const SNAKE_ON_SNAKE_OPACITY = 0.8;
 const FULL_OPACITY = 1.0;
 
-const END_OVERLAP = 0;
 const DIRECTIONS_CW = [Direction.Up, Direction.Right, Direction.Down, Direction.Left];
 
 enum CornerType { TopLeft, TopRight, BottomRight, BottomLeft }
@@ -48,73 +47,23 @@ function getCornerPartYOffset(part: SnakePart, ctx: RenderCtx) {
   return ctx.toGridSpaceY(part.y) - ctx.cellSpacing;
 }
 
-function getTailXOffset(part: SnakePart, ctx: RenderCtx) {
-  // apply slight offset to avoid ugly white line in between parts (works most of the time)
-  switch (part.direction) {
-    case Direction.Left:
-      return ctx.toGridSpaceX(part.x) - END_OVERLAP;
-    case Direction.Right:
-      return ctx.toGridSpaceX(part.x) + END_OVERLAP;
-    default:
-      return ctx.toGridSpaceX(part.x);
-  }
-}
-
-function getTailYOffset(part: SnakePart, ctx: RenderCtx) {
-  // apply slight offset to avoid ugly white line in between parts (works most of the time)
-  switch (part.direction) {
-    case Direction.Up:
-      return ctx.toGridSpaceY(part.y) - END_OVERLAP;
-    case Direction.Down:
-      return ctx.toGridSpaceY(part.y) + END_OVERLAP;
-    default:
-      return ctx.toGridSpaceY(part.y);
-  }
-}
-
-function getHeadXOffset(part: SnakePart, ctx: RenderCtx) {
-  // apply slight offset to avoid ugly white line in between parts (works most of the time)
-  switch (part.direction) {
-    case Direction.Left:
-      return ctx.toGridSpaceX(part.x) + END_OVERLAP;
-    case Direction.Right:
-      return ctx.toGridSpaceX(part.x) - END_OVERLAP;
-    default:
-      return ctx.toGridSpaceX(part.x);
-  }
-}
-
-function getHeadYOffset(part: SnakePart, ctx: RenderCtx) {
-  // apply slight offset to avoid ugly white line in between parts (works most of the time)
-  switch (part.direction) {
-    case Direction.Up:
-      return ctx.toGridSpaceY(part.y) + END_OVERLAP;
-    case Direction.Down:
-      return ctx.toGridSpaceY(part.y) - END_OVERLAP;
-    default:
-      return ctx.toGridSpaceY(part.y);
-  }
-}
-
 function getHeadFillerXOffset(part: SnakePart, ctx: RenderCtx) {
-  // apply slight offset to avoid ugly white line in between parts (works most of the time)
   switch (part.direction) {
     case Direction.Left:
-      return ctx.toGridSpaceX(part.x + 1) - ctx.cellSpacing - END_OVERLAP;
+      return ctx.toGridSpaceX(part.x + 1) - ctx.cellSpacing;
     case Direction.Right:
-      return ctx.toGridSpaceX(part.x) - ctx.cellSpacing - END_OVERLAP;
+      return ctx.toGridSpaceX(part.x) - ctx.cellSpacing;
     default:
       return ctx.toGridSpaceX(part.x);
   }
 }
 
 function getHeadFillerYOffset(part: SnakePart, ctx: RenderCtx) {
-  // apply slight offset to avoid ugly white line in between parts (works most of the time)
   switch (part.direction) {
     case Direction.Up:
-      return ctx.toGridSpaceY(part.y - 1) - ctx.cellSpacing - END_OVERLAP;
+      return ctx.toGridSpaceY(part.y - 1) - ctx.cellSpacing;
     case Direction.Down:
-      return ctx.toGridSpaceY(part.y) - ctx.cellSpacing - END_OVERLAP;
+      return ctx.toGridSpaceY(part.y) - ctx.cellSpacing;
     default:
       return ctx.toGridSpaceY(part.y);
   }
@@ -122,14 +71,14 @@ function getHeadFillerYOffset(part: SnakePart, ctx: RenderCtx) {
 
 function getFillerWidth(part: SnakePart, ctx: RenderCtx) {
   return part.direction === Direction.Left || part.direction === Direction.Right
-    ? ctx.cellSpacing + 2 * END_OVERLAP
+    ? ctx.cellSpacing
     : ctx.cellSize;
 }
 
 function getFillerHeight(part: SnakePart, ctx: RenderCtx) {
   return part.direction === Direction.Left || part.direction === Direction.Right
     ? ctx.cellSize
-    : ctx.cellSpacing + 2 * END_OVERLAP;
+    : ctx.cellSpacing;
 }
 
 function isDead(snake: Snake) {
@@ -261,8 +210,8 @@ function renderPart(snake: RenderableSnake, snakeIndex: number, part: SnakePart,
 }
 
 function renderHeadPart(snake: RenderableSnake, snakeIndex: number, part: SnakePart, ctx: RenderCtx) {
-  const x = getHeadXOffset(part, ctx);
-  const y = getHeadYOffset(part, ctx);
+  const x = ctx.toGridSpaceX(part.x);
+  const y = ctx.toGridSpaceY(part.y);
   const HeadSVG = snake.headSvg;
   const transform = getHeadTransform(part.direction, 0);
   const color = getPartColor(snake, part);
@@ -360,8 +309,8 @@ function renderCornerPart(snake: RenderableSnake, snakeIndex: number, part: Snak
 }
 
 function renderTailPart(snake: RenderableSnake, snakeIndex: number, part: SnakePart, ctx: RenderCtx) {
-  const x = getTailXOffset(part, ctx);
-  const y = getTailYOffset(part, ctx);
+  const x = ctx.toGridSpaceX(part.x);
+  const y = ctx.toGridSpaceY(part.y);
   const TailSVG = snake.tailSvg;
   const transform = getTailTransform(part.direction, 0);
   const color = getPartColor(snake, part);

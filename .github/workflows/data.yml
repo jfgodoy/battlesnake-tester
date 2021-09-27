@@ -45,3 +45,5 @@ jobs:
           publish_dir: ./public/data
           destination_dir: data
           keep_files: true
+          user_name: 'github-actions[bot]'
+          user_email: 'github-actions[bot]@users.noreply.github.com'

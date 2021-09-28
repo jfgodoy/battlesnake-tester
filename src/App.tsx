@@ -4,6 +4,7 @@ import ImporterComponent from "./components/importer";
 import DisplayTest from "./components/display-test";
 import TestList from "./components/test-list";
 import Home from "./components/home";
+import ExportImportDBComponent from "./components/export-import-db";
 import { Getter } from "./solid-utils";
 import * as core from "./core";
 import BoardBuilder from "./components/board-builder";
@@ -80,6 +81,12 @@ const App: Component = () => {
                     setView={setView}
                   />
                 </Refresh>
+              </Match>
+              <Match when={view() == "exportimportdb"}>
+                  <ExportImportDBComponent
+                    exportToJson={core.exportToJson}
+                    importFromJson={core.importFromJson}
+                  />
               </Match>
               <Match when={view() == "builder" && core.selectedTestResult()}>
                 <Refresh on={tick}>

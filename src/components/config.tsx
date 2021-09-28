@@ -1,4 +1,4 @@
-import { Switch, Match, createEffect, createResource, JSX } from "solid-js";
+import { Show, Switch, Match, createSignal, createEffect, createResource, JSX } from "solid-js";
 import { Setter, Signal, onBlur, $model, $autoresize } from "../solid-utils";
 import SnakeComponent from "./snake";
 import { Snake, Test } from "../model";
@@ -45,6 +45,14 @@ export default function Config(props: ConfigOpts): JSX.Element {
     props.setView("builder");
   };
 
+  const [showMenu, setMenu] = createSignal(false);
+  const handleAction = <T extends Array<unknown>>(fn: (...args: T) => void, ...args: T): (() => void) => {
+    return () => {
+      setMenu(false);
+      fn(...args);
+    };
+  };
+
   return (
     <div class="flex items-center">
       <div style="min-width:308px">
@@ -69,6 +77,22 @@ export default function Config(props: ConfigOpts): JSX.Element {
       </div>
       <button class="bg-blue-400 text-white ml-8 px-2 font-bold rounded" onclick={() => props.setView("importer")}>New test</button>
       <button class="bg-blue-400 text-white ml-8 px-2 font-bold rounded" onclick={boardBuilder}>Board builder</button>
+      <div class="flex-1 flex justify-end">
+        <div class="relative">
+          <button onclick={() => setMenu(!showMenu())} class="relative block rounded-md bg-white p-2 ml-1 border border-white hover:border-gray-200 focus:outline-none">
+            <IconFeatherMoreVertical class="text-gray-500" />
+          </button>
+
+          <Show when={showMenu()}>
+            <div onclick={() => setMenu(false)} class="fixed inset-0 h-full w-full z-10"></div>
+            <div class="absolute right-0 mt-2 py-2 w-48 bg-white rounded-md shadow-md z-20 border border-gray-100">
+              <button onclick={handleAction(props.setView, "exportimportdb")} class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-yellow-100">
+                Export/Import DB
+              </button>
+            </div>
+          </Show>
+        </div>
+      </div>
     </div>
   );
 }

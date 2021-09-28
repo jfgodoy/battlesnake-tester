@@ -14,6 +14,7 @@
   "devDependencies": {
     "@iconify/json": "^1.1.405",
     "@tailwindcss/forms": "^0.3.3",
+    "@types/file-saver": "^2.0.3",
     "@types/ramda": "^0.27.44",
     "@typescript-eslint/eslint-plugin": "^4.31.2",
     "@typescript-eslint/parser": "^4.31.2",
@@ -31,6 +32,7 @@
     "vite-plugin-solid-svg": "^0.1.2"
   },
   "dependencies": {
+    "file-saver": "^2.0.5",
     "hex-rgb": "^5.0.0",
     "idb": "^6.1.4",
     "nanoid": "^3.1.25",

@@ -1,7 +1,7 @@
 import { createMemo } from "solid-js";
 import { createStore, Store, SetStoreFunction } from "solid-js/store";
 import { Test, TestResult, Passed, Failed, Pending, Snake, AsyncState } from "../model";
-import { indexdbTestStore } from "./test-store";
+import { indexdbTestStore, ExportedData } from "./test-store";
 import { signalFromStore, SignalFromStoreReturnType } from "../solid-utils";
 import { runTest, createRequestData } from "../core/tester";
 import { nanoid } from "nanoid";
@@ -135,6 +135,19 @@ export function runUnsavedTest(test: Test): Promise<Passed | Failed> {
 export const saveTest = (test: Test): Promise<void> => testStorage.save(test);
 export const readTest = (id: string): Promise<Test> => testStorage.read(id);
 export const deleteTest = (id: string): Promise<void> => testStorage.delete(id);
+export const exportToJson = (): Promise<ExportedData> => testStorage.exportToJson();
+export const importFromJson = async (data: ExportedData, options: {mode: "add" | "replace"}): Promise<void> => {
+  await testStorage.importFromJson(data, options);
+  testStorage.list()
+    .then(tests => {
+      const testResults: TestResult[] = tests.map(preview => ({...preview, result: {type: "pending"}}));
+      setState("testResults", testResults);
+      setState("dbStatus", {type: "done"});
+    })
+    .catch(err => {
+      setState("dbStatus", {type: "error", message: err.message});
+    });
+};
 
 export function signalFor<PathType extends string>(path: PathType extends "" ? never : PathType): SignalFromStoreReturnType<typeof state, PathType> {
   return signalFromStore(state, setState, path);

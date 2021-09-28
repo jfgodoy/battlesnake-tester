@@ -9,8 +9,13 @@ export interface TestStore {
   delete(id: string): Promise<void>,
   read(id: string): Promise<Test>,
   suscribe(fn: Subscriber): void,
+  exportToJson(): Promise<ExportedData>,
+  importFromJson(data: ExportedData, options: {mode: "add" | "replace"}): Promise<void>,
 }
-
+export type ExportedData = {
+  version: "1",
+  tests: Test[],
+}
 
 export function indexdbTestStore(): TestStore {
   let addExamples = false;
@@ -75,33 +80,36 @@ export function indexdbTestStore(): TestStore {
     suscribe(fn) {
       subscribers.push(fn);
     },
+
+    async exportToJson(): Promise<ExportedData> {
+      const db = await dbPromise;
+      let cursor = await db.transaction(STORE_NAME).store.openCursor();
+      const data: ExportedData = {
+        version: "1",
+        tests: []
+      };
+
+      while (cursor) {
+        data.tests.push(cursor.value);
+        cursor = await cursor.continue();
+      }
+
+      return data;
+    },
+
+    async importFromJson(data: ExportedData, options: {mode: "add" | "replace"}) {
+      const db = await dbPromise;
+      const store = db.transaction(STORE_NAME, "readwrite").objectStore(STORE_NAME);
+
+      if (options.mode == "replace") {
+        store.clear();
+      }
+
+      const promises = data.tests.map(test => store.put(test));
+      await Promise.all(promises);
+    }
   };
 }
 
 
-// async function exportToJson(db: IDBPDatabase): Promise<any> {
-//     const exportObject: {[key: string]: any} = {}
 
-//     for (const storeName of db.objectStoreNames) {
-//       let cursor = await db.transaction(storeName).store.openCursor();
-//       const items = [];
-//       while (cursor) {
-//         items.push(cursor.value);
-//         cursor = await cursor.continue();
-//       }
-//       exportObject[storeName] = items;
-//     }
-
-//     return exportObject;
-// }
-
-// async function importFromJson(db: IDBPDatabase, json: any) {
-//   for (const storeName of db.objectStoreNames) {
-//     const store = db.transaction(storeName, 'readwrite').store;
-//     const promises = [];
-//     for (const toAdd of json[storeName]) {
-//       promises.push(store.add(toAdd))
-//     }
-//     await Promise.all(promises);
-//   }
-// }

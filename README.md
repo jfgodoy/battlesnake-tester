@@ -18,10 +18,10 @@ Leave a star if you found this project useful :star:
 - edit a saved test
 - export test as curl
 - edit a turn or create a board from scratch
+- export/import database
 
 ## TODO List
 
-- [ ] export/import database
 - [ ] get played games for your snake in https://play.battlesnake.com/, to easily import them
 
 ## Acknowledgement

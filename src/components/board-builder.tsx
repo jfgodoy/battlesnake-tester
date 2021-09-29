@@ -324,7 +324,7 @@ export default function BoardBuilder(props: BoardBuilderProps): JSX.Element {
             <For each={stylesAvailable}>
               {(style, i) => (
                 <li class="flex items-center my-2">
-                  <input type="radio" name="snakeStyle" oninput={() => setSelectedStyle(i())} checked/>
+                  <input type="radio" name="snakeStyle" oninput={() => setSelectedStyle(i())} checked={i() == 0}/>
                   <label class="ml-1" style="font-size:0">
                     <SnakeComponent head={style.head} tail={style.tail} color={style.color} />
                   </label>

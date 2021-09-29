@@ -276,16 +276,16 @@ export default function BoardBuilder(props: BoardBuilderProps): JSX.Element {
             <div class="inline-block">
               <Board frame={frame()} game={game()} ref={handleCell} class="cursor-pointer"/>
               <div class="flex items-center mr-1">
-                <button title="edit snake" class="text-gray-500 p-1 rounded-md border border-white hover:border-gray-200" onclick={() => setMode("pointer")}>
+                <button title="edit snake" class="text-gray-500 p-1 rounded-md border border-white hover:border-gray-200" classList={{"border-gray-300": mode() == "pointer"}} onclick={() => setMode("pointer")}>
                   <IconFaSolidHandPointer />
                 </button>
-                <button title="new snake" class="text-gray-500 p-1 rounded-md border border-white hover:border-gray-200" onclick={() => setMode("add snake")}>
+                <button title="new snake" class="text-gray-500 p-1 rounded-md border border-white hover:border-gray-200" classList={{"border-gray-300": mode() == "add snake"}} onclick={() => setMode("add snake")}>
                   <IconMdiSnake />
                 </button>
-                <button title="add hazards" class="text-gray-500 p-1 rounded-md border border-white hover:border-gray-200" onclick={() => setMode("hazards")}>
+                <button title="add hazards" class="text-gray-500 p-1 rounded-md border border-white hover:border-gray-200" classList={{"border-gray-300": mode() == "hazards"}} onclick={() => setMode("hazards")}>
                   <IconHealthiconsHazardous />
                 </button>
-                <button title="delete element" class="text-gray-500 p-1 rounded-md border border-white hover:border-gray-200" onclick={() => setMode("delete")}>
+                <button title="delete element" class="text-gray-500 p-1 rounded-md border border-white hover:border-gray-200" classList={{"border-gray-300": mode() == "delete"}} onclick={() => setMode("delete")}>
                   <IconFaSolidTrash />
                 </button>
               </div>

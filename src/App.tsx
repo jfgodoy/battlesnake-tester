@@ -1,5 +1,5 @@
 import { Component, Switch, Match, createSignal, createMemo, on, PropsWithChildren } from "solid-js";
-import ConfigComponent from "./components/config";
+import HeaderBarComponent from "./components/header-bar";
 import ImporterComponent from "./components/importer";
 import DisplayTest from "./components/display-test";
 import TestList from "./components/test-list";
@@ -34,7 +34,7 @@ const App: Component = () => {
           <h1 class="text-center text-white text-2xl font-semibold tracking-wide" onclick={() => setView("home")}>Battlesnake Tester</h1>
         </div>
         <div class="p-4 bg-white" style="box-shadow:0 1px 1px 1px rgb(18 106 211 / 8%);" >
-          <ConfigComponent
+          <HeaderBarComponent
             server={[server, setServer]}
             style={[style, setStyle]}
             setView={setView}

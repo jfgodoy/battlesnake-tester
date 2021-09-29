@@ -1,6 +1,8 @@
+import ow from "ow";
 import { saveAs } from "file-saver";
 import { createSignal, JSX } from "solid-js";
 import type { ExportedData } from "../core/test-store";
+import { TestShape } from "../model.validator";
 
 type ExportImportDBProps = {
   exportToJson: () => Promise<ExportedData>,
@@ -18,7 +20,7 @@ export default function ExportImportDB(props: ExportImportDBProps): JSX.Element 
   const [mode, setMode] = createSignal("add" as "add" | "replace");
   const [importStatus, setImportStatus] = createSignal("");
   async function handleFile(ev: InputEvent) {
-    setImportStatus("loading...");
+    setImportStatus("");
     const el = ev.target as HTMLInputElement;
     const files = el.files;
     if (!files || files.length == 0) {
@@ -26,6 +28,7 @@ export default function ExportImportDB(props: ExportImportDBProps): JSX.Element 
     }
     const file = files[0];
 
+    setImportStatus("loading...");
     const data: ExportedData = await new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.onload = function () {
@@ -39,6 +42,17 @@ export default function ExportImportDB(props: ExportImportDBProps): JSX.Element 
       };
       reader.readAsText(file);
     });
+
+    try {
+      const DataShape = ow.object.exactShape({
+        version: ow.string.equals("1"),
+        tests: ow.array.ofType(TestShape)
+      });
+      ow(data, DataShape);
+    } catch (e) {
+      setImportStatus(e.message);
+      return;
+    }
 
     props.importFromJson(data, {mode: mode()})
       .then(() => setImportStatus("file imported!"))

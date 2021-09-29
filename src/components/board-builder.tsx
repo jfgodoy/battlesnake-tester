@@ -22,7 +22,7 @@ type BoardBuilderProps = {
 };
 
 export default function BoardBuilder(props: BoardBuilderProps): JSX.Element {
-  const [mode, setMode] = createSignal<"pointer"|"add snake"|"delete">("pointer");
+  const [mode, setMode] = createSignal<"pointer"|"add snake"|"hazards"|"delete">("pointer");
   const [selectedStyle, setSelectedStyle] = createSignal(0);
 
   const [frame, setFrame] = createSignal<Frame>({
@@ -67,6 +67,9 @@ export default function BoardBuilder(props: BoardBuilderProps): JSX.Element {
   const isFood = (c: Coord) => frame().food.some(coord => R.equals(coord, c));
   const isSnakePart = (c: Coord) => frame().snakes.some(s => s.body.some(coord => R.equals(coord, c)));
   const isCellEmpty = (c: Coord) => !isFood(c) && !isSnakePart(c);
+  const isHazard = (c: Coord) => frame().hazards.some(coord => R.equals(coord, c));
+  const isWall = (c: Coord) => c.x < 0 || c.y < 0 || c.x >= game().width || c.y >= game().height;
+  const isWallOrHazard = (c: Coord) => isWall(c) || isHazard(c);
 
   const handleCell = (cell: SVGRectElement): void => {
     cell.addEventListener("mousedown", () => {
@@ -94,6 +97,44 @@ export default function BoardBuilder(props: BoardBuilderProps): JSX.Element {
         setFrame({...frame(), snakes: frame().snakes.concat([snake])});
         setMode("pointer");
         dragState = {dragging: true, snakeIdx: frame().snakes.length - 1, snakeHandler: "head"};
+        return;
+      }
+
+      if (mode() == "hazards") {
+        const top: Coord = {x: coord.x, y: coord.y + 1};
+        const bottom: Coord = {x: coord.x, y: coord.y - 1};
+        const left: Coord = {x: coord.x - 1, y: coord.y};
+        const right: Coord = {x: coord.x + 1, y: coord.y};
+        if (!isHazard(coord)) {
+          const hazards = frame().hazards.slice();
+          if (isWallOrHazard(top) || isWallOrHazard(bottom)) {
+            for (let x = 0, n = game().width; x < n; x++) {
+              hazards.push({x, y: coord.y});
+            }
+          }
+          if (isWallOrHazard(left) || isWallOrHazard(right)) {
+            for (let y = 0, n = game().height; y < n; y++) {
+              hazards.push({x: coord.x, y});
+            }
+          }
+          setFrame({...frame(), hazards: R.uniq(hazards)});
+        } else {
+          let hazards = frame().hazards.slice();
+          if (!isWallOrHazard(top)  || !isWallOrHazard(bottom)) {
+            hazards = hazards.filter(c => c.y != coord.y || (isWallOrHazard({x: c.x, y: c.y + 1}) && isWallOrHazard({x: c.x, y: c.y - 1})));
+          }
+
+          if (!isWallOrHazard(left) || !isWallOrHazard(right)) {
+            hazards = hazards.filter(c => c.x != coord.x || (isWallOrHazard({x: c.x - 1, y: c.y}) && isWallOrHazard({x: c.x + 1, y: c.y})));
+          }
+
+          if (hazards.length === game().height * game().width) {
+            // we are full of hazards
+            hazards = hazards.filter(c => !R.equals(c, coord));
+          }
+
+          setFrame({...frame(), hazards});
+        }
         return;
       }
 
@@ -241,6 +282,9 @@ export default function BoardBuilder(props: BoardBuilderProps): JSX.Element {
                 <button title="new snake" class="text-gray-500 p-1 rounded-md border border-white hover:border-gray-200" onclick={() => setMode("add snake")}>
                   <IconMdiSnake />
                 </button>
+                <button title="add hazards" class="text-gray-500 p-1 rounded-md border border-white hover:border-gray-200" onclick={() => setMode("hazards")}>
+                  <IconHealthiconsHazardous />
+                </button>
                 <button title="delete element" class="text-gray-500 p-1 rounded-md border border-white hover:border-gray-200" onclick={() => setMode("delete")}>
                   <IconFaSolidTrash />
                 </button>
@@ -288,6 +332,9 @@ export default function BoardBuilder(props: BoardBuilderProps): JSX.Element {
               )}
             </For>
           </ul>
+        </Match>
+        <Match when={mode() == "hazards"}>
+          <p>Add hazards in row or column by clicking in a cell next to a wall or another hazards.</p>
         </Match>
         <Match when={mode() == "delete"}>
           <p>Delete a snakes or food by clicking them</p>

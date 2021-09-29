@@ -18,6 +18,7 @@ export default function Hazard(props: {ctx: RenderCtx, frame: Frame}): JSX.Eleme
           height={ctx.cellSize}
           fill={colors.hazard}
           fill-opacity={hazardOpacity}
+          class="pointer-events-none"
         />
       )}
     </For>

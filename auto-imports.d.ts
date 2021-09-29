@@ -16,5 +16,6 @@ declare global {
   const IconMdiSnake: typeof import('~icons/mdi/snake')['default']
   const IconFaSolidTrash: typeof import('~icons/fa-solid/trash')['default']
   const IconBiX: typeof import('~icons/bi/x')['default']
+  const IconHealthiconsHazardous: typeof import('~icons/healthicons/hazardous')['default']
 }
 export {}

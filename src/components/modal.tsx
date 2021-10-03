@@ -21,7 +21,7 @@ export default function Modal(props: PropsWithChildren<{title: string, switch: [
       <Portal>
         <div class="absolute inset-0 flex items-center justify-center">
           <div class="bg-black opacity-25 absolute inset-0" onclick={closeModal} />
-          <div class="flex flex-col bg-white rounded w-6/12 h-1/4 border shadow text-center z-0">
+          <div class="flex flex-col bg-white rounded w-6/12 h-1/4 border shadow z-0">
             <div class="flex flex-row items-center justify-between py-2 px-4 border-b border-gray-200">
               <p class="font-semibold text-gray-800">{props.title}</p>
               <IconBiX onclick={closeModal} class="cursor-pointer" />

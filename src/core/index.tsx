@@ -17,6 +17,7 @@ const storeDefaults = {
   selected: 0,
   view: "home",
   dbStatus: {type: "loading"} as AsyncState,
+  snakeUrl: undefined as undefined | string,
 };
 type MyStore = typeof storeDefaults;
 
@@ -33,6 +34,7 @@ const [state, setState] = (function bootstrap(): [Store<MyStore>, SetStoreFuncti
     savedProps.server = state.server;
     savedProps.selected = state.selected;
     savedProps.view = state.view;
+    savedProps.snakeUrl = state.snakeUrl;
     localStorage.setItem("state", JSON.stringify(savedProps));
     return res;
   };

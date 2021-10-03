@@ -8,6 +8,7 @@ import ExportImportDBComponent from "./components/export-import-db";
 import { Getter } from "./solid-utils";
 import * as core from "./core";
 import BoardBuilder from "./components/board-builder";
+import RecentGames from "./components/recent-games";
 
 const App: Component = () => {
   const [server, setServer] = core.signalFor("server");
@@ -15,6 +16,7 @@ const App: Component = () => {
   const [testResults, _] = core.signalFor("testResults");
   const [style, setStyle] = core.signalFor("testedSnake.style");
   const [dbStatus] = core.signalFor("dbStatus");
+  const [snakeUrl, setSnakeUrl] = core.signalFor("snakeUrl");
   const selectedSignal = core.signalFor("selected");
   const [tick, setTick] = createSignal(true);
 
@@ -104,6 +106,9 @@ const App: Component = () => {
             <a class="m-4 text-gray-500 hover:text-blue-400 text-sm" target="_blank" href="https://play.battlesnake.com/">Assets used with permission from Battlesnake</a>
           </div>
         </main>
+        <aside class="flex bg-white w-80 shadow">
+          <RecentGames saveTest={core.saveTest} setView={setView} snakeUrl={snakeUrl} setSnakeUrl={setSnakeUrl} />
+        </aside>
       </div>
     </div>
   );

@@ -80,7 +80,7 @@ export default function RecentGames(props: { createTest: (game: Game, frames: Fr
       return;
     }
     setLoading(true);
-    const url = "http://143.198.73.242:4000/recent-games/" + snakeUrl.replace("https://play.battlesnake.com/", "");
+    const url = "https://battlesnake-tester-server.jgodoy.cl/recent-games/" + snakeUrl.replace("https://play.battlesnake.com/", "");
     const res = await fetch(url);
     if (!res.ok) {
       setError(res.statusText);

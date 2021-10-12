@@ -1,6 +1,6 @@
 import { createSignal, createEffect, JSX, onMount } from "solid-js";
 import { nanoid } from "nanoid";
-import { Test } from "../model";
+import { Test, Game, Frame } from "../model";
 import { importGame } from "../core/importer";
 import { Getter, Setter, $model, onInput } from "../solid-utils";
 import ow from "ow";
@@ -8,7 +8,7 @@ import { TestShape } from "../model.validator";
 
 const GAMEID_REGEX = /([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/;
 
-export default function Importer(props: { server: Getter<string>, saveTest: Setter<Test>, setView: Setter<string>}): JSX.Element {
+export default function Importer(props: { server: Getter<string>, createTest: (game: Game, frames: Frame[]) => Promise<Test>, saveTest: Setter<Test>, setView: Setter<string>}): JSX.Element {
   const [gameId, setGameId] = createSignal("");
   const [importState, setImportState] = createSignal("");
 
@@ -21,18 +21,7 @@ export default function Importer(props: { server: Getter<string>, saveTest: Sett
         throw e;
       });
 
-    const test: Test = {
-      id: nanoid(10),
-      description: `test for ${res.game.id}`,
-      timestamp: Date.now(),
-      game: res.game,
-      frames: res.frames,
-      frameToTest: 0,
-      snakeToTest: 0,
-      expectedResult: [],
-    };
-
-    await props.saveTest(test);
+    props.createTest(res.game, res.frames);
     props.setView("test");
   };
 

@@ -1,7 +1,6 @@
 import { createSignal, JSX, For, Show, Switch, Match, createEffect } from "solid-js";
 import { createStore } from "solid-js/store";
-import { nanoid } from "nanoid";
-import { Test } from "../model";
+import { Test, Game, Frame } from "../model";
 import { importGame } from "../core/importer";
 import { Getter, Setter, $model, onBlur } from "../solid-utils";
 import Modal from "./modal";
@@ -48,7 +47,7 @@ function ConfigModal(props: {showConfig: Getter<boolean>, setShowConfig: Setter<
 }
 
 
-export default function RecentGames(props: { saveTest: Setter<Test>, setView: Setter<string>, snakeUrl: Getter<string|undefined>, setSnakeUrl: Setter<string|undefined>}): JSX.Element {
+export default function RecentGames(props: { createTest: (game: Game, frames: Frame[]) => Promise<Test>, setView: Setter<string>, snakeUrl: Getter<string|undefined>, setSnakeUrl: Setter<string|undefined>}): JSX.Element {
   const [showConfig, setShowConfig] = createSignal(false);
   const [error, setError] = createSignal("");
   const [recentGames, setRecentGames] = createStore<{games: RecentGame[]}>({games: []});
@@ -65,18 +64,7 @@ export default function RecentGames(props: { saveTest: Setter<Test>, setView: Se
         throw e;
       });
 
-    const test: Test = {
-      id: nanoid(10),
-      description: `test for ${res.game.id}`,
-      timestamp: Date.now(),
-      game: res.game,
-      frames: res.frames,
-      frameToTest: 0,
-      snakeToTest: 0,
-      expectedResult: [],
-    };
-
-    await props.saveTest(test);
+    props.createTest(res.game, res.frames);
     props.setView("test");
     setImportState("done!");
     setTimeout(() => setImportState(""), 1000);

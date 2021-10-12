@@ -1,6 +1,6 @@
 import { createMemo } from "solid-js";
 import { createStore, Store, SetStoreFunction } from "solid-js/store";
-import { Test, TestResult, Passed, Failed, Pending, Snake, AsyncState } from "../model";
+import { Test, TestResult, Passed, Failed, Pending, Snake, AsyncState, Game, Frame } from "../model";
 import { indexdbTestStore, ExportedData } from "./test-store";
 import { signalFromStore, SignalFromStoreReturnType } from "../solid-utils";
 import { runTest, createRequestData } from "../core/tester";
@@ -198,6 +198,40 @@ export const createEmptyTest = async (): Promise<Test> => {
   await saveTest(test);
   return test;
 };
+
+function findMySnake(snakes: Snake[]): number {
+  let idx = 0;
+  if (state.snakeUrl) {
+    const match = /\/u\/([^/]+)\/([^/]+)/.exec(state.snakeUrl);
+    const username = match?.[1];
+    const snakename = match?.[2];
+    idx = snakes.findIndex(s => s.author == username && s.name == snakename);
+  }
+
+  const style = state.testedSnake.style;
+  if (idx < 0 && style) {
+    idx = snakes.findIndex(s => s.color == style.color && s.headType == style.headType && s.tailType == style.tailType);
+  }
+
+  return idx >= 0 ? idx : 0;
+}
+
+export const createTest = async (game: Game, frames: Frame[]): Promise<Test> => {
+  const test: Test = {
+    id: nanoid(10),
+    description: `test for ${game.id}`,
+    timestamp: Date.now(),
+    game: game,
+    frames: frames,
+    frameToTest: 0,
+    snakeToTest: findMySnake(frames[0].snakes),
+    expectedResult: [],
+  };
+
+  await saveTest(test);
+  return test;
+};
+
 
 export const importExamples = async (): Promise<void> => {
   const examples = (await import("./examples")).default;

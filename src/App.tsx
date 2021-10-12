@@ -79,6 +79,7 @@ const App: Component = () => {
                 <Refresh on={tick}>
                   <ImporterComponent
                     server={server}
+                    createTest={core.createTest}
                     saveTest={core.saveTest}
                     setView={setView}
                   />
@@ -107,7 +108,7 @@ const App: Component = () => {
           </div>
         </main>
         <aside class="flex bg-white w-80 shadow">
-          <RecentGames saveTest={core.saveTest} setView={setView} snakeUrl={snakeUrl} setSnakeUrl={setSnakeUrl} />
+          <RecentGames createTest={core.createTest} setView={setView} snakeUrl={snakeUrl} setSnakeUrl={setSnakeUrl} />
         </aside>
       </div>
     </div>

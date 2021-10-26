@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "vite build",
     "serve": "vite preview",
-    "lint": "eslint src && tsc  --noEmit --skipLibCheck  -p ."
+    "lint": "eslint src && tsc  --noEmit --skipLibCheck  -p .",
+    "update-assets": "git clone --depth 1 --filter=blob:none --no-checkout https://github.com/BattlesnakeOfficial/exporter _tmp_ && git -C _tmp_ sparse-checkout set render/assets && git -C _tmp_ checkout && cp _tmp_/render/assets/heads/*png public/assets/heads/ && cp _tmp_/render/assets/tails/*png public/assets/tails/ && rm -rf _tmp_ && chmod 644 public/assets/*/*png"
   },
   "license": "MIT",
   "devDependencies": {

@@ -12,22 +12,22 @@
   },
   "license": "MIT",
   "devDependencies": {
-    "@iconify/json": "^1.1.418",
+    "@iconify/json": "^1.1.426",
     "@tailwindcss/forms": "^0.3.4",
     "@types/file-saver": "^2.0.3",
-    "@types/ramda": "^0.27.45",
-    "@typescript-eslint/eslint-plugin": "^5.1.0",
-    "@typescript-eslint/parser": "^5.1.0",
-    "autoprefixer": "^10.3.7",
-    "eslint": "^8.0.1",
-    "node-fetch": "^3.0.0",
+    "@types/ramda": "^0.27.48",
+    "@typescript-eslint/eslint-plugin": "^5.3.1",
+    "@typescript-eslint/parser": "^5.3.1",
+    "autoprefixer": "^10.4.0",
+    "eslint": "^8.2.0",
+    "node-fetch": "^3.1.0",
     "postcss": "^8.3.11",
-    "tailwindcss": "^2.2.17",
-    "type-fest": "^2.5.1",
-    "unplugin-auto-import": "^0.4.13",
-    "unplugin-icons": "^0.12.16",
-    "vite": "^2.6.10",
-    "vite-plugin-solid": "^2.1.1",
+    "tailwindcss": "^2.2.19",
+    "type-fest": "^2.5.3",
+    "unplugin-auto-import": "^0.4.14",
+    "unplugin-icons": "^0.12.18",
+    "vite": "^2.6.14",
+    "vite-plugin-solid": "^2.1.2",
     "vite-plugin-solid-svg": "^0.1.2"
   },
   "dependencies": {
@@ -37,6 +37,6 @@
     "nanoid": "^3.1.30",
     "ow": "^0.28.1",
     "ramda": "^0.27.1",
-    "solid-js": "^1.1.7"
+    "solid-js": "^1.2.3"
   }
 }

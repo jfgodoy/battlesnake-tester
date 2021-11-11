@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.2.0] - 2021-11-11
+New features:
+- fetch official recent games for your snake, to easily import them
+
 ## [1.1.0] - 2021-09-29
 New features:
 - add board builder

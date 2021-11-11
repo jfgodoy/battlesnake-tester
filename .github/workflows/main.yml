@@ -28,7 +28,6 @@ jobs:
             ${{ runner.os }}-node-
 
       - run: npm ci
-      - run: npm run update-arena
       - run: npm run build
         env:
           VITE_BASE: /battlesnake-tester/
